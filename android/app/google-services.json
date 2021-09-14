@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "666900105933",
+    "project_id": "smu-find-my-path-poc",
+    "storage_bucket": "smu-find-my-path-poc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666900105933:android:b4918e8cfaa889dca43784",
+        "android_client_info": {
+          "package_name": "com.example.find_my_path"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666900105933-7fcvu7pl7qk911q33pj3ad0de0gorlj9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYhCcs1hQ61VuJxnGRATb7DeNUk6hN618"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "666900105933-7fcvu7pl7qk911q33pj3ad0de0gorlj9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
