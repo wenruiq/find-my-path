@@ -149,7 +149,10 @@ class _AuthFormState extends State<AuthForm> {
                     ),
                   if (!widget.isLoading)
                     TextButton(
-                      style: TextButton.styleFrom(primary: Colors.blue),
+                      style: TextButton.styleFrom(
+                        textStyle: Theme.of(context).textTheme.caption,
+                        // primary: Colors.blue,
+                      ),
                       child: Text(_isLogin
                           ? 'Create new account'
                           : 'I already have an account'),
