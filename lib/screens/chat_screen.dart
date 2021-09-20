@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_auth/firebase_auth.dart";
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -15,12 +16,7 @@ class ChatScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            FirebaseFirestore.instance
-                .collection("chats/4Dg0tTMeuDdYcEAIXNwy/messages")
-                .snapshots()
-                .listen((data) {
-              print(data);
-            });
+            FirebaseAuth.instance.signOut();
           }),
     );
   }
