@@ -20,4 +20,6 @@ ThemeData customTheme = ThemeData.from(
   colorScheme: ColorScheme.fromSwatch(
     primarySwatch: _chosenMaterialColor,
   ),
+).copyWith(
+  scaffoldBackgroundColor: const Color(0xFFFFFFFF),
 );

@@ -6,6 +6,8 @@ import "./theme/custom_theme.dart";
 import "./screens/chat_screen.dart";
 import "./screens/splash_screen.dart";
 import "./screens/auth_screen.dart";
+import "./screens/home_screen_vi.dart";
+import "./screens/home_screen_vo.dart";
 
 void main() {
   //* Ensures Firebase initialized bef. running app
@@ -48,7 +50,7 @@ class _MyAppState extends State<MyApp> {
                       return const SplashScreen();
                     }
                     if (userSnapshot.hasData) {
-                      return const ChatScreen();
+                      return const HomeScreenVO();
                     }
                     return const AuthScreen();
                   });
