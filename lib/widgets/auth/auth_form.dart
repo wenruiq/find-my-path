@@ -24,21 +24,26 @@ class _AuthFormState extends State<AuthForm> {
 
   //* Initialize form input variables
   var _isLogin = true;
-  var _userEmail = '';
-  var _userDisplayName = '';
-  var _userPassword = '';
+  var _email = '';
+  var _displayName = '';
+  var _password = '';
+  var _confirmPassword = '';
+
+  //* Input controller (to pass values between input fields)
+  final TextEditingController _passwordController = TextEditingController();
 
   //* Performs validation
   void _trySubmit() {
-    final isValid = _formKey.currentState?.validate();
+    final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
 
-    if (isValid != null && isValid) {
-      _formKey.currentState?.save();
+    if (isValid) {
+      //* save() fires the onSave() method attached to each TextFormField
+      _formKey.currentState!.save();
       widget.submitFn(
-        _userEmail.trim(),
-        _userPassword.trim(),
-        _userDisplayName.trim(),
+        _email.trim(),
+        _password.trim(),
+        _displayName.trim(),
         _isLogin,
         context,
       );
@@ -78,16 +83,19 @@ class _AuthFormState extends State<AuthForm> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(labelText: 'Email'),
                       onSaved: (value) {
-                        _userEmail = value.toString();
+                        _email = value.toString();
                       }),
                   if (!_isLogin)
                     TextFormField(
-                        key: const ValueKey('username'),
+                        key: const ValueKey('displayName'),
                         autocorrect: true,
                         textCapitalization: TextCapitalization.words,
                         enableSuggestions: false,
                         validator: (value) {
-                          if (value!.isEmpty || value.length < 4) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter a display name.";
+                          }
+                          if (value.length < 4) {
                             return 'Display name must be at least 4 characters long.';
                           }
                           return null;
@@ -95,26 +103,48 @@ class _AuthFormState extends State<AuthForm> {
                         decoration:
                             const InputDecoration(labelText: 'Display Name'),
                         onSaved: (value) {
-                          _userDisplayName = value.toString();
+                          _displayName = value.toString();
                         }),
                   TextFormField(
                       key: const ValueKey('password'),
+                      controller: _passwordController,
                       validator: (value) {
-                        if (value!.isEmpty || value.length < 7) {
-                          return "Password must be at least 7 characters long.";
+                        if (value == null || value.isEmpty) {
+                          return "Please enter a password.";
+                        }
+                        if (value.length < 8) {
+                          return 'Password must be at least 8 characters long.';
                         }
                         return null;
                       },
-                      decoration: InputDecoration(labelText: 'Password'),
+                      decoration: const InputDecoration(labelText: 'Password'),
                       obscureText: true,
                       onSaved: (value) {
-                        _userPassword = value.toString();
+                        _password = value.toString();
                       }),
-                  const SizedBox(height: 12),
+                  if (!_isLogin)
+                    TextFormField(
+                        key: const ValueKey('confirmPassword'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please confirm your password.";
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Passwords don\'t match.';
+                          }
+                          return null;
+                        },
+                        decoration: const InputDecoration(
+                            labelText: 'Confirm Password'),
+                        obscureText: true,
+                        onSaved: (value) {
+                          _confirmPassword = value.toString();
+                        }),
+                  const SizedBox(height: 20),
                   if (widget.isLoading) const CircularProgressIndicator(),
                   if (!widget.isLoading)
                     ElevatedButton(
-                      child: Text(_isLogin ? 'Login' : 'Signup'),
+                      child: Text(_isLogin ? 'Login' : 'Sign Up'),
                       onPressed: _trySubmit,
                     ),
                   if (!widget.isLoading)
