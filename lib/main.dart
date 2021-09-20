@@ -7,7 +7,9 @@ import "./screens/splash_screen.dart";
 import "./screens/auth_screen.dart";
 
 void main() {
+  //* Ensures Firebase initialized bef. running app
   WidgetsFlutterBinding.ensureInitialized();
+  
   runApp(const MyApp());
 }
 
@@ -19,6 +21,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  //* Initialize Firebase 
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
@@ -26,28 +29,30 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "Find My Path",
       theme: ThemeData(primarySwatch: Colors.blue),
+      //* FutureBuilder for Firebase init
       home: FutureBuilder(
           future: _initialization,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              //TODO: handle error
+              //TODO: Error handling
               print("Firebase init error");
             }
             if (snapshot.connectionState == ConnectionState.done) {
+              //* StreamBuilder listens to authStateChanges
               return StreamBuilder(
                   stream: FirebaseAuth.instance.authStateChanges(),
                   builder: (ctx, userSnapshot) {
                     if (userSnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return SplashScreen();
+                      return const SplashScreen();
                     }
                     if (userSnapshot.hasData) {
-                      return ChatScreen();
+                      return const ChatScreen();
                     }
-                    return AuthScreen();
+                    return const AuthScreen();
                   });
             }
-            return SplashScreen();
+            return const SplashScreen();
           }),
     );
   }

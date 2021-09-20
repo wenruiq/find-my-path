@@ -12,8 +12,10 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  //* Create FirebaseAuth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  //* Submit form loading state
   var _isLoading = false;
   void setLoading(bool isLoading) {
     _isLoading = isLoading;
@@ -57,7 +59,6 @@ class _AuthScreenState extends State<AuthScreen> {
         setLoading(false);
       });
     } catch (err) {
-      print(err);
       setState(() {
         setLoading(false);
       });

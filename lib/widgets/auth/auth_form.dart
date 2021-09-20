@@ -18,12 +18,17 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
+  //* Create global key to uniquely identify the Form widget and allows validation
+  //* Standard practice for Flutter forms
   final _formKey = GlobalKey<FormState>();
+
+  //* Initialize form input variables
   var _isLogin = true;
   var _userEmail = '';
   var _userDisplayName = '';
   var _userPassword = '';
 
+  //* Performs validation
   void _trySubmit() {
     final isValid = _formKey.currentState?.validate();
     FocusScope.of(context).unfocus();
@@ -48,10 +53,10 @@ class _AuthFormState extends State<AuthForm> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
+            //* Build a Form widget using the _formKey created above
             child: Form(
               key: _formKey,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   TextFormField(
                       key: const ValueKey('email'),
@@ -59,7 +64,13 @@ class _AuthFormState extends State<AuthForm> {
                       textCapitalization: TextCapitalization.none,
                       enableSuggestions: false,
                       validator: (value) {
-                        if (value!.isEmpty || !value.contains('@')) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter an email.";
+                        }
+                        bool emailValid = RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value);
+                        if (!emailValid) {
                           return "Please enter a valid email.";
                         }
                         return null;
