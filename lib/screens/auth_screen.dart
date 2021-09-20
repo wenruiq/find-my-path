@@ -49,11 +49,16 @@ class _AuthScreenState extends State<AuthScreen> {
         });
       }
     } on FirebaseAuthException catch (err) {
-      var message = 'An error occurred, please check your credentials!';
-
-      if (err.message != null) {
-        message = err.message.toString();
-      }
+      //TODO: Clear and focus on password input
+      
+      var message = 'Incorrect email or password, please try again.';
+      
+      //* Gets the specific error message from firebase 
+      //* Not sure how to handle yet
+      //* Use default message for now
+      // if (err.message != null) {
+      //   message = err.message.toString();
+      // }
 
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(

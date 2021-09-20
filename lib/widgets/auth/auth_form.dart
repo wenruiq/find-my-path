@@ -22,6 +22,8 @@ class _AuthFormState extends State<AuthForm> {
   //* Standard practice for Flutter forms
   final _formKey = GlobalKey<FormState>();
 
+  late FocusNode myFocusNode;
+
   //* Initialize form input variables
   bool _isLogin = true;
   String _email = '';
@@ -29,8 +31,9 @@ class _AuthFormState extends State<AuthForm> {
   String _password = '';
   bool _isVolunteer = false;
 
-  //* Input controller (to pass values between input fields)
+  //* Input Controllers
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
   //* Performs validation
   void _trySubmit() {
@@ -52,6 +55,21 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    myFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    myFocusNode.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Card(
@@ -66,9 +84,11 @@ class _AuthFormState extends State<AuthForm> {
                 children: <Widget>[
                   TextFormField(
                       key: const ValueKey('email'),
+                      controller: _emailController,
                       autocorrect: false,
                       textCapitalization: TextCapitalization.none,
                       enableSuggestions: false,
+                      focusNode: myFocusNode,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Please enter an email.";
@@ -148,7 +168,7 @@ class _AuthFormState extends State<AuthForm> {
                             _isVolunteer = value!;
                           });
                         }),
-                  if (!_isLogin) const SizedBox(height: 20),
+                  if (_isLogin) const SizedBox(height: 10),
                   if (widget.isLoading) const CircularProgressIndicator(),
                   if (!widget.isLoading)
                     ElevatedButton(
@@ -164,6 +184,10 @@ class _AuthFormState extends State<AuthForm> {
                           ? 'Create new account'
                           : 'I already have an account'),
                       onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        _emailController.clear();
+                        _passwordController.clear();
+                        myFocusNode.requestFocus();
                         setState(() {
                           _isLogin = !_isLogin;
                         });
