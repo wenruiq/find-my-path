@@ -105,7 +105,14 @@ class _AuthFormState extends State<AuthForm> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(labelText: 'Password'),
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        // labelStyle:
+                        //     TextStyle(color: Theme.of(context).primaryColor),
+                        // floatingLabelStyle:
+                        //     TextStyle(color: Theme.of(context).primaryColor),
+                      ),
+                      style: const TextStyle(color: Colors.red),
                       obscureText: true,
                       onSaved: (value) {
                         _userPassword = value.toString();
@@ -119,7 +126,10 @@ class _AuthFormState extends State<AuthForm> {
                     ),
                   if (!widget.isLoading)
                     TextButton(
-                      style: TextButton.styleFrom(primary: Colors.blue),
+                      style: TextButton.styleFrom(
+                        textStyle: Theme.of(context).textTheme.caption,
+                        // primary: Colors.blue,
+                      ),
                       child: Text(_isLogin
                           ? 'Create new account'
                           : 'I already have an account'),
