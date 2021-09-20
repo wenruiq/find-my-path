@@ -21,8 +21,13 @@ class _AuthScreenState extends State<AuthScreen> {
     _isLoading = isLoading;
   }
 
-  void _submitAuthForm(String email, String password, String displayName,
-      bool isLogin, BuildContext ctx) async {
+  void _submitAuthForm(
+      {required String email,
+      required String displayName,
+      required String password,
+      required bool isVolunteer,
+      required bool isLogin,
+      required BuildContext ctx}) async {
     UserCredential userCredential;
 
     try {
@@ -37,9 +42,11 @@ class _AuthScreenState extends State<AuthScreen> {
             email: email, password: password);
         CollectionReference users =
             FirebaseFirestore.instance.collection('users');
-        await users
-            .doc(userCredential.user?.uid)
-            .set({'email': email, 'displayName': displayName});
+        await users.doc(userCredential.user?.uid).set({
+          'email': email,
+          'displayName': displayName,
+          'isVolunteer': isVolunteer
+        });
       }
     } on FirebaseAuthException catch (err) {
       var message = 'An error occurred, please check your credentials!';

@@ -6,12 +6,12 @@ class AuthForm extends StatefulWidget {
 
   final bool isLoading;
   final void Function(
-    String email,
-    String password,
-    String displayName,
-    bool isLogin,
-    BuildContext ctx,
-  ) submitFn;
+      {required String email,
+      required String displayName,
+      required String password,
+      required bool isVolunteer,
+      required bool isLogin,
+      required BuildContext ctx}) submitFn;
 
   @override
   _AuthFormState createState() => _AuthFormState();
@@ -23,11 +23,11 @@ class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
 
   //* Initialize form input variables
-  var _isLogin = true;
-  var _email = '';
-  var _displayName = '';
-  var _password = '';
-  var _confirmPassword = '';
+  bool _isLogin = true;
+  String _email = '';
+  String _displayName = '';
+  String _password = '';
+  bool _isVolunteer = false;
 
   //* Input controller (to pass values between input fields)
   final TextEditingController _passwordController = TextEditingController();
@@ -41,11 +41,12 @@ class _AuthFormState extends State<AuthForm> {
       //* save() fires the onSave() method attached to each TextFormField
       _formKey.currentState!.save();
       widget.submitFn(
-        _email.trim(),
-        _password.trim(),
-        _displayName.trim(),
-        _isLogin,
-        context,
+        email: _email.trim(),
+        displayName: _displayName.trim(),
+        password: _password.trim(),
+        isVolunteer: _isVolunteer,
+        isLogin: _isLogin,
+        ctx: context,
       );
     }
   }
@@ -124,23 +125,30 @@ class _AuthFormState extends State<AuthForm> {
                       }),
                   if (!_isLogin)
                     TextFormField(
-                        key: const ValueKey('confirmPassword'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please confirm your password.";
-                          }
-                          if (value != _passwordController.text) {
-                            return 'Passwords don\'t match.';
-                          }
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                            labelText: 'Confirm Password'),
-                        obscureText: true,
-                        onSaved: (value) {
-                          _confirmPassword = value.toString();
+                      key: const ValueKey('confirmPassword'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please confirm your password.";
+                        }
+                        if (value != _passwordController.text) {
+                          return 'Passwords don\'t match.';
+                        }
+                        return null;
+                      },
+                      decoration:
+                          const InputDecoration(labelText: 'Confirm Password'),
+                      obscureText: true,
+                    ),
+                  if (!_isLogin)
+                    CheckboxListTile(
+                        title: const Text("I am a volunteer"),
+                        value: _isVolunteer,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isVolunteer = value!;
+                          });
                         }),
-                  const SizedBox(height: 20),
+                  if (!_isLogin) const SizedBox(height: 20),
                   if (widget.isLoading) const CircularProgressIndicator(),
                   if (!widget.isLoading)
                     ElevatedButton(
@@ -151,7 +159,6 @@ class _AuthFormState extends State<AuthForm> {
                     TextButton(
                       style: TextButton.styleFrom(
                         textStyle: Theme.of(context).textTheme.caption,
-                        // primary: Colors.blue,
                       ),
                       child: Text(_isLogin
                           ? 'Create new account'
