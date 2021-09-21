@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import "../widgets/auth/auth_form.dart";
+import "../widgets/util//dismiss_keyboard.dart";
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -50,10 +51,10 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     } on FirebaseAuthException catch (err) {
       //TODO: Clear and focus on password input
-      
+
       var message = 'Incorrect email or password, please try again.';
-      
-      //* Gets the specific error message from firebase 
+
+      //* Gets the specific error message from firebase
       //* Not sure how to handle yet
       //* Use default message for now
       // if (err.message != null) {
@@ -79,8 +80,10 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        body: AuthForm(submitFn: _submitAuthForm, isLoading: _isLoading));
+    return DismissKeyboard(
+      child: Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
+          body: AuthForm(submitFn: _submitAuthForm, isLoading: _isLoading)),
+    );
   }
 }
