@@ -4,6 +4,7 @@ import "package:firebase_auth/firebase_auth.dart";
 
 import "./theme/custom_theme.dart";
 import "./screens/chat_screen.dart";
+import "./screens/query_screen.dart";
 import "./screens/splash_screen.dart";
 import "./screens/auth_screen.dart";
 import "./screens/home_screen_vi.dart";
@@ -30,10 +31,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Find My Path",
-      theme: customTheme,
-      //* FutureBuilder for Firebase init
-      home: FutureBuilder(
+        title: "Find My Path",
+        theme: customTheme,
+        //* FutureBuilder for Firebase init
+        home: FutureBuilder(
           future: _initialization,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
@@ -50,13 +51,19 @@ class _MyAppState extends State<MyApp> {
                       return const SplashScreen();
                     }
                     if (userSnapshot.hasData) {
-                      return const HomeScreenVO();
+                      return HomeScreenVI();
                     }
                     return const AuthScreen();
                   });
             }
             return const SplashScreen();
-          }),
-    );
+          },
+        ),
+        routes: {
+          "/homeVI": (context) => const HomeScreenVI(),
+          "/homeVO": (context) => HomeScreenVO(),
+          "/query": (context) => const QueryScreen(),
+          "/chat": (context) => const ChatScreen(),
+        });
   }
 }
