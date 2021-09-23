@@ -3,10 +3,9 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:provider/provider.dart';
 
-//TODO: Fix this screen not being const
 class HomeScreenVO extends StatelessWidget {
   HomeScreenVO({Key? key}) : super(key: key);
-  // static const routeName = '/homescreenvo';
+  static const routeName = '/homeVO';
 
   void _logout() {
     FirebaseAuth.instance.signOut();

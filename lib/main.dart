@@ -1,3 +1,4 @@
+import 'package:find_my_path/screens/query_loading_screen.dart';
 import "package:flutter/material.dart";
 import 'package:firebase_core/firebase_core.dart';
 import "package:firebase_auth/firebase_auth.dart";
@@ -5,6 +6,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import "./theme/custom_theme.dart";
 import "./screens/chat_screen.dart";
 import "./screens/query_screen.dart";
+import "./screens/query_loading_screen.dart";
 import "./screens/splash_screen.dart";
 import "./screens/auth_screen.dart";
 import "./screens/home_screen_vi.dart";
@@ -51,7 +53,7 @@ class _MyAppState extends State<MyApp> {
                       return const SplashScreen();
                     }
                     if (userSnapshot.hasData) {
-                      return HomeScreenVI();
+                      return const HomeScreenVI();
                     }
                     return const AuthScreen();
                   });
@@ -60,10 +62,11 @@ class _MyAppState extends State<MyApp> {
           },
         ),
         routes: {
-          "/homeVI": (context) => const HomeScreenVI(),
-          "/homeVO": (context) => HomeScreenVO(),
-          "/query": (context) => const QueryScreen(),
-          "/chat": (context) => const ChatScreen(),
+          HomeScreenVI.routeName: (context) => const HomeScreenVI(),
+          HomeScreenVO.routeName: (context) => HomeScreenVO(),
+          QueryScreen.routeName: (context) => const QueryScreen(),
+          QueryLoadingScreen.routeName: (context) => const QueryLoadingScreen(),
+          ChatScreen.routeName: (context) => const ChatScreen(),
         });
   }
 }

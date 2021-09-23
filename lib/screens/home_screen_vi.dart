@@ -7,7 +7,7 @@ import '../widgets/home/button_vi.dart';
 
 class HomeScreenVI extends StatelessWidget {
   const HomeScreenVI({Key? key}) : super(key: key);
-  // static const routeName = '/homescreenvi';
+  static const routeName = '/homeVI';
 
   void _logout() {
     FirebaseAuth.instance.signOut();
@@ -23,23 +23,17 @@ class HomeScreenVI extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Align(
-            alignment: Alignment.center,
-            child: ButtonVI(
-              icon: Icons.forum_outlined,
-              tooltip: 'Search For A Volunteer',
-              label: "Ask For Help",
-              onButtonPress: () => Navigator.pushNamed(context, "/query"),
-            ),
+          ButtonVI(
+            icon: Icons.forum_outlined,
+            tooltip: 'Search For A Volunteer',
+            label: "Ask For Help",
+            onButtonPress: () => Navigator.pushNamed(context, "/query"),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: ButtonVI(
-              icon: Icons.logout,
-              tooltip: 'Logout',
-              label: "Logout",
-              onButtonPress: _logout,
-            ),
+          ButtonVI(
+            icon: Icons.logout,
+            tooltip: 'Logout',
+            label: "Logout",
+            onButtonPress: _logout,
           ),
         ],
       ),

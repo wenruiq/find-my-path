@@ -1,9 +1,13 @@
 import "package:flutter/material.dart";
 
 import "../widgets/util/dismiss_keyboard.dart";
+import "../widgets/query/current_location.dart";
 
+//* This screen is the form that VI needs to fill up to get a match
 class QueryScreen extends StatefulWidget {
   const QueryScreen({Key? key}) : super(key: key);
+  static const routeName = '/query';
+
 
   @override
   State<QueryScreen> createState() => _QueryScreenState();
@@ -24,35 +28,8 @@ class _QueryScreenState extends State<QueryScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 3),
-                    child: Icon(Icons.location_pin, size: 35),
-                  ),
-                  Wrap(
-                    alignment: WrapAlignment.start,
-                    direction: Axis.vertical,
-                    children: <Widget>[
-                      const Text(
-                        "Current Location:",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      // Divider(thickness: 5, color: Colors.grey),
-                      //TODO: Change this to current location of user
-                      Text(
-                        "Singapore Management University",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
+              const CurrentLocation(),
+              const SizedBox(height: 25),
               Form(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -69,7 +46,7 @@ class _QueryScreenState extends State<QueryScreen> {
                             hintText: "Enter your destination"),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 20,
                       ),
                       //* Photo Upload Box
                       const Padding(
@@ -105,7 +82,8 @@ class _QueryScreenState extends State<QueryScreen> {
                   width: MediaQuery.of(context).size.width * 0.8,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () => Navigator.pushNamed(context, "/chat"),
+                    onPressed: () =>
+                        Navigator.pushNamed(context, "/queryloading"),
                     child: const Text(
                       "Send Request",
                       style: TextStyle(fontSize: 25),

@@ -17,29 +17,32 @@ class ButtonVI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: SizedBox(
-        width: 300,
-        height: 180,
-        child: OutlinedButton.icon(
-          icon: Icon(
-            icon,
-            size: 60,
-            color: Colors.white,
-          ),
-          label: Text(
-            label,
-            style: const TextStyle(
+    return Align(
+      alignment: Alignment.center,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: SizedBox(
+          width: 300,
+          height: 180,
+          child: OutlinedButton.icon(
+            icon: Icon(
+              icon,
+              size: 60,
               color: Colors.white,
-              fontSize: 30,
             ),
-          ),
-          onPressed: () => onButtonPress(),
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-                //* Remove opacity after development (is currently there just to test that button can be pressed)
-                Theme.of(context).colorScheme.primary.withOpacity(0.85)),
+            label: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 30,
+              ),
+            ),
+            onPressed: () => onButtonPress(),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  //* Remove opacity after development (is currently there just to test that button can be pressed)
+                  Theme.of(context).colorScheme.primary.withOpacity(0.85)),
+            ),
           ),
         ),
       ),

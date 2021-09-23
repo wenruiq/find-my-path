@@ -8,6 +8,7 @@ import "../widgets/util//dismiss_keyboard.dart";
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
+  static const routeName = '/chat';
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
