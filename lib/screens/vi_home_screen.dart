@@ -3,7 +3,7 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:provider/provider.dart';
 
-import '../widgets/home/button_vi.dart';
+import '../widgets/home/vi_button.dart';
 
 class HomeScreenVI extends StatelessWidget {
   const HomeScreenVI({Key? key}) : super(key: key);

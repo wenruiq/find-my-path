@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 
-MaterialColor _chosenMaterialColor = const MaterialColor(
+MaterialColor _customMaterialColor = const MaterialColor(
   0xFF1d4289,
   {
     50: Color(0xFF1D5D89),
@@ -16,10 +16,66 @@ MaterialColor _chosenMaterialColor = const MaterialColor(
   },
 );
 
+TextTheme _customTextTheme = const TextTheme(
+    // headline1: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // headline2: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // headline3: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // headline4: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // headline5: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // headline6: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // bodyText1: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // bodyText2: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // subtitle1: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // subtitle2: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // button: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // caption: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    // overline: TextStyle(
+    //   fontSize: 20,
+    //   fontWeight: FontWeight.normal,
+    // ),
+    );
+
 ThemeData customTheme = ThemeData.from(
   colorScheme: ColorScheme.fromSwatch(
-    primarySwatch: _chosenMaterialColor,
+    primarySwatch: _customMaterialColor,
   ),
+  // textTheme: _customTextTheme,
 ).copyWith(
-  scaffoldBackgroundColor: const Color(0xFFFFFFFF),
+  scaffoldBackgroundColor: const Color(0xFFfafafa),
 );

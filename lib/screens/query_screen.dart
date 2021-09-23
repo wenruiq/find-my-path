@@ -8,7 +8,6 @@ class QueryScreen extends StatefulWidget {
   const QueryScreen({Key? key}) : super(key: key);
   static const routeName = '/query';
 
-
   @override
   State<QueryScreen> createState() => _QueryScreenState();
 }
@@ -37,9 +36,11 @@ class _QueryScreenState extends State<QueryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       //* Destination Input
-                      const Text(
+                      Text(
                         "Where do you want to go?",
-                        style: TextStyle(fontSize: 24),
+                        style: TextStyle(
+                            fontSize: 24,
+                            color: Theme.of(context).primaryColor),
                       ),
                       TextFormField(
                         decoration: const InputDecoration(
@@ -49,11 +50,13 @@ class _QueryScreenState extends State<QueryScreen> {
                         height: 20,
                       ),
                       //* Photo Upload Box
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 20),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
                         child: Text(
                           "Attach A Photo (Optional)",
-                          style: TextStyle(fontSize: 24),
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Theme.of(context).primaryColor),
                         ),
                       ),
                       Center(
@@ -61,7 +64,11 @@ class _QueryScreenState extends State<QueryScreen> {
                           height: MediaQuery.of(context).size.height * 0.35,
                           width: MediaQuery.of(context).size.width * 0.9,
                           child: OutlinedButton.icon(
-                            icon: const Icon(Icons.upload_file, size: 60),
+                            icon: Icon(
+                              Icons.upload_file,
+                              size: 60,
+                              color: Theme.of(context).primaryColor,
+                            ),
                             onPressed: () =>
                                 Navigator.pushNamed(context, "/homeVO"),
                             label: const Text(
@@ -86,7 +93,7 @@ class _QueryScreenState extends State<QueryScreen> {
                         Navigator.pushNamed(context, "/queryloading"),
                     child: const Text(
                       "Send Request",
-                      style: TextStyle(fontSize: 25),
+                      style: TextStyle(fontSize: 24),
                     ),
                   ),
                 ),

@@ -9,8 +9,8 @@ import "./screens/query_screen.dart";
 import "./screens/query_loading_screen.dart";
 import "./screens/splash_screen.dart";
 import "./screens/auth_screen.dart";
-import "./screens/home_screen_vi.dart";
-import "./screens/home_screen_vo.dart";
+import 'screens/vi_home_screen.dart';
+import 'screens/vo_home_screen.dart';
 
 void main() {
   //* Ensures Firebase initialized bef. running app

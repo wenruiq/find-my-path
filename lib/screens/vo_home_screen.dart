@@ -3,6 +3,10 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:provider/provider.dart';
 
+import '../widgets/home/vo_rating.dart';
+import '../widgets/home/vo_availability_button.dart';
+
+//TODO: Figure out how to convert this to constant
 class HomeScreenVO extends StatelessWidget {
   HomeScreenVO({Key? key}) : super(key: key);
   static const routeName = '/homeVO';
@@ -117,6 +121,9 @@ class HomeScreenVO extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                SizedBox(
+                  height: 20,
+                ),
                 //* User's Display Photo
                 ClipOval(
                   child: Image.network(
@@ -135,85 +142,11 @@ class HomeScreenVO extends StatelessWidget {
                     style: TextStyle(fontSize: 28),
                   ),
                 ),
-                //* Status Toggle
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  //TODO: Convert dropdown status to stateful widget
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
-                      Text(
-                        "Status: ",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      Text(
-                        "Available",
-                        style: TextStyle(color: Colors.green),
-                      ),
-                      Icon(
-                        Icons.expand_more,
-                        size: 30,
-                        color: Colors.black,
-                      ),
-                    ],
-                  ),
-                ),
+                const SizedBox(height: 6),
                 //* User's Star Ratings
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 2.5, right: 5),
-                      child: Text(
-                        "4.0",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.star_rate,
-                      size: 18,
-                      color: Colors.amber,
-                    ),
-                    Icon(
-                      Icons.star_rate,
-                      size: 18,
-                      color: Colors.amber,
-                    ),
-                    Icon(
-                      Icons.star_rate,
-                      size: 18,
-                      color: Colors.amber,
-                    ),
-                    Icon(
-                      Icons.star_rate,
-                      size: 18,
-                      color: Colors.amber,
-                    ),
-                    Icon(
-                      Icons.star_rate_outlined,
-                      size: 18,
-                      color: Colors.amber,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 0, left: 4),
-                      child: Text(
-                        "(7)",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      size: 24,
-                      color: Colors.black,
-                    ),
-                  ],
+                const Rating(
+                  rating: 5,
+                  reviewCount: 7,
                 ),
               ],
             ),
@@ -283,9 +216,10 @@ class HomeScreenVO extends StatelessWidget {
                 ),
               ),
             ),
+            const AvailabilityButton(),
             SizedBox(
               child: Column(
-                children: [
+                children: const [
                   Text(
                     "Find My Path",
                     style: TextStyle(fontSize: 12),
