@@ -9,8 +9,10 @@ import "./screens/query_screen.dart";
 import "./screens/query_loading_screen.dart";
 import "./screens/splash_screen.dart";
 import "./screens/auth_screen.dart";
-import 'screens/vi_home_screen.dart';
-import 'screens/vo_home_screen.dart';
+import './screens/vi_home_screen.dart';
+import './screens/vo_home_screen.dart';
+import './screens/assignments_screen.dart';
+import './screens/ratings_screen.dart';
 
 void main() {
   //* Ensures Firebase initialized bef. running app
@@ -63,10 +65,12 @@ class _MyAppState extends State<MyApp> {
         ),
         routes: {
           HomeScreenVI.routeName: (context) => const HomeScreenVI(),
-          HomeScreenVO.routeName: (context) => HomeScreenVO(),
+          HomeScreenVO.routeName: (context) => const HomeScreenVO(),
           QueryScreen.routeName: (context) => const QueryScreen(),
           QueryLoadingScreen.routeName: (context) => const QueryLoadingScreen(),
           ChatScreen.routeName: (context) => const ChatScreen(),
+          AssignmentsScreen.routeName: (context) => const AssignmentsScreen(),
+          RatingScreen.routeName: (context) => const RatingScreen(),
         });
   }
 }
