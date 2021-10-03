@@ -51,6 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Expanded(
               child: Messages(),
             ),
+            const Divider(thickness: 1),
             NewMessage(),
           ],
         ),
