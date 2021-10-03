@@ -4,9 +4,11 @@ import "package:firebase_auth/firebase_auth.dart";
 
 import "../widgets/chat/messages.dart";
 import "../widgets/chat/new_message.dart";
+import "../widgets/util//dismiss_keyboard.dart";
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
+  static const routeName = '/chat';
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -15,45 +17,47 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lifu'),
-        actions: [
-          DropdownButton(
-            underline: Container(),
-            icon: Icon(
-              Icons.more_vert,
-              color: Theme.of(context).primaryIconTheme.color,
-            ),
-            items: [
-              DropdownMenuItem(
-                child: Row(
-                  children: const <Widget>[
-                    Icon(Icons.exit_to_app),
-                    SizedBox(width: 8),
-                    Text('Logout'),
-                  ],
-                ),
-                value: 'logout',
+    return DismissKeyboard(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Lifu'),
+          actions: [
+            DropdownButton(
+              underline: Container(),
+              icon: Icon(
+                Icons.more_vert,
+                color: Theme.of(context).primaryIconTheme.color,
               ),
-            ],
-            onChanged: (itemIdentifier) {
-              if (itemIdentifier == 'logout') {
-                FirebaseAuth.instance.signOut();
-              }
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        child: Column(
-          children: const <Widget>[
-            Expanded(
-              child: Messages(),
+              items: [
+                DropdownMenuItem(
+                  child: Row(
+                    children: const <Widget>[
+                      Icon(Icons.exit_to_app),
+                      SizedBox(width: 8),
+                      Text('Logout'),
+                    ],
+                  ),
+                  value: 'logout',
+                ),
+              ],
+              onChanged: (itemIdentifier) {
+                if (itemIdentifier == 'logout') {
+                  FirebaseAuth.instance.signOut();
+                }
+              },
             ),
-            const Divider(thickness: 1),
-            NewMessage(),
           ],
+        ),
+        body: Container(
+          child: Column(
+            children: const <Widget>[
+              Expanded(
+                child: Messages(),
+              ),
+              const Divider(thickness: 1),
+              NewMessage(),
+            ],
+          ),
         ),
       ),
     );
