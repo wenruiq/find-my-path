@@ -23,7 +23,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
 
   //* PLACEHOLDER CODE TO TEST LOADING / LOADED SCREENS
   final Future<String> _calculation = Future<String>.delayed(
-    const Duration(seconds: 2),
+    const Duration(seconds: 1000),
     () => 'Data Loaded',
   );
 

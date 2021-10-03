@@ -24,9 +24,15 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String title = "Assignments";
+
+    //* Sets NavBar title based on source of routing
+    final arguments = ModalRoute.of(context)?.settings.arguments as Map;
+    title = arguments['title'];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Assignments"),
+        title: Text(title),
         actions: [],
       ),
       body: RefreshIndicator(

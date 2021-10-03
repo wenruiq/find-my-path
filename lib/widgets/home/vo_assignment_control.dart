@@ -12,7 +12,8 @@ class AssignmentControl extends StatelessWidget {
           children: <Widget>[
             //* View All Available Requests
             InkWell(
-              onTap: () => Navigator.pushNamed(context, "/assignments"),
+              onTap: () => Navigator.pushNamed(context, "/assignments",
+                  arguments: {"title": "Available Assignments"}),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -20,7 +21,7 @@ class AssignmentControl extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
                     Text(
-                      'View available assignments',
+                      'Accept an assignment',
                       style: TextStyle(fontSize: 16),
                     ),
                     Icon(Icons.chevron_right, color: Colors.black),
@@ -35,82 +36,71 @@ class AssignmentControl extends StatelessWidget {
             ),
             //* View Accepted Requests
             InkWell(
-              onTap: () {},
+              onTap: () => Navigator.pushNamed(context, "/assignments",
+                  arguments: {"title": "Past Assignments"}),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Ongoing assignments',
+                  children: const [
+                    Text(
+                      'Past assignments',
                       style: TextStyle(fontSize: 16),
                     ),
-                    Row(
-                      children: const [
-                        Text(
-                          "View All",
-                          style: TextStyle(
-                            fontSize: 16,
-                            // color: Theme.of(context).primaryColor),
-                            color: Colors.black,
-                          ),
-                        ),
-                        Icon(Icons.chevron_right,
-                            // color: Theme.of(context).primaryColor),
-                            color: Colors.black),
-                      ],
-                    ),
+                    Icon(Icons.chevron_right, color: Colors.black),
                   ],
                 ),
               ),
             ),
-            const Divider(
-              indent: 10,
-              endIndent: 10,
-              height: 1,
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                //* Ongoing Icon
-                InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 25),
-                    child: Column(
-                      children: const [
-                        Icon(Icons.event_available,
-                            color: Colors.black, size: 42),
-                        Text(
-                          "Ongoing",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                //* History Icon
-                InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 25),
-                    child: Column(
-                      children: const [
-                        Icon(Icons.history, color: Colors.black, size: 42),
-                        Text(
-                          "History",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // const Divider(
+            //   indent: 10,
+            //   endIndent: 10,
+            //   height: 1,
+            // ),
+            // Row(
+            //   mainAxisSize: MainAxisSize.max,
+            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //   children: [
+            //     //* Ongoing Icon
+            //     InkWell(
+            //       onTap: () => Navigator.pushNamed(context, "/assignments",
+            //           arguments: {"title": "My Assignments"}),
+            //       child: Padding(
+            //         padding: const EdgeInsets.symmetric(
+            //             vertical: 12.0, horizontal: 25),
+            //         child: Column(
+            //           children: const [
+            //             Icon(Icons.event_available,
+            //                 color: Colors.black, size: 42),
+            //             Text(
+            //               "Ongoing",
+            //               style: TextStyle(fontSize: 16),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //     //* History Icon
+            //     InkWell(
+            //       onTap: () => Navigator.pushNamed(context, "/assignments",
+            //           arguments: {"title": "Past Assignments"}),
+            //       child: Padding(
+            //         padding: const EdgeInsets.symmetric(
+            //             vertical: 12.0, horizontal: 25),
+            //         child: Column(
+            //           children: const [
+            //             Icon(Icons.history, color: Colors.black, size: 42),
+            //             Text(
+            //               "History",
+            //               style: TextStyle(fontSize: 16),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

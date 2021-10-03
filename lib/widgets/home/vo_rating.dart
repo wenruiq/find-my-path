@@ -43,7 +43,7 @@ class Rating extends StatelessWidget {
             child: Text(
               rating.toString(),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
               ),
             ),
@@ -74,16 +74,16 @@ class Rating extends StatelessWidget {
             color: Colors.amber,
           ),
           Padding(
-            padding: EdgeInsets.only(top: 0, left: 4),
+            padding: const EdgeInsets.only(top: 0, left: 4),
             child: Text(
               '(${reviewCount})',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
               ),
             ),
           ),
-          Icon(
+          const Icon(
             Icons.chevron_right,
             size: 24,
             color: Colors.black,
