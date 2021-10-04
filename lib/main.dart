@@ -3,6 +3,7 @@ import "package:flutter/material.dart";
 import 'package:firebase_core/firebase_core.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import "./theme/custom_theme.dart";
 import "./screens/chat_screen.dart";
@@ -60,7 +61,33 @@ class _MyAppState extends State<MyApp> {
                 return const SplashScreen();
               }
               if (userSnapshot.hasData) {
-                return const HomeScreenVO();
+                String uid = FirebaseAuth.instance.currentUser!.uid;
+                CollectionReference users =
+                    FirebaseFirestore.instance.collection('users');
+                return FutureBuilder<DocumentSnapshot>(
+                  future: users.doc(uid).get(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text("Something went wrong");
+                    }
+
+                    if (snapshot.hasData && !snapshot.data!.exists) {
+                      return const Text("Document does not exist");
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      Map<String, dynamic> data =
+                          snapshot.data!.data() as Map<String, dynamic>;
+                      if (data['isVolunteer'] == true) {
+                        return const HomeScreenVO();
+                      }
+                      return const HomeScreenVI();
+                    }
+
+                    return const SplashScreen();
+                  },
+                );
               }
               return const AuthScreen();
             }),
