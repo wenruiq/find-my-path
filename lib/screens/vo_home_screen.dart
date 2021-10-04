@@ -1,28 +1,65 @@
 import 'package:flutter/material.dart';
-import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:provider/provider.dart';
 
 import '../widgets/home/vo_rating.dart';
 import '../widgets/home/vo_availability_button.dart';
 import '../widgets/home/vo_assignment_control.dart';
+import '../widgets/home/vo_assignment_dialog.dart';
 
-class HomeScreenVO extends StatelessWidget {
+class HomeScreenVO extends StatefulWidget {
   const HomeScreenVO({Key? key}) : super(key: key);
   static const routeName = '/homeVO';
 
+  @override
+  State<HomeScreenVO> createState() => _HomeScreenVOState();
+}
+
+class _HomeScreenVOState extends State<HomeScreenVO> {
   void _logout() {
     FirebaseAuth.instance.signOut();
   }
 
+  String _getDisplayName({required id}) {
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection('users');
+
+    users.doc(id).get().then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        String displayName;
+        print("user detail retrieved");
+        displayName = documentSnapshot.get('displayName');
+        print(displayName);
+        return displayName;
+      }
+
+      //TODO: how to handle failed retrieval?
+    });
+    print("Returning default");
+    return "Harvey";
+  }
+
+  static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
+    return DialogRoute<void>(
+      context: ctx,
+      builder: (BuildContext context) => const AssignmentDialog(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
+    String id = _auth.currentUser!.uid;
+    String displayName = _getDisplayName(id: id);
+
     return Scaffold(
       appBar: AppBar(
         //TODO: Add user's name to title
-        title: const Text(
-          "Welcome back, Harvey!",
-          style: TextStyle(fontSize: 18),
+        title: Text(
+          "Welcome back, $displayName!",
+          style: const TextStyle(fontSize: 18),
         ),
         //* Logout Action in Nav Bar
         //TODO: make logout button appear more normal
@@ -98,7 +135,9 @@ class HomeScreenVO extends StatelessWidget {
             //* This is the assignments box listtile
             const AssignmentControl(),
             //* This is the availability toggle button
-            const AvailabilityButton(),
+            const AvailabilityButton(
+              onClick: _dialogBuilder,
+            ),
             SizedBox(
               child: Column(
                 children: const [

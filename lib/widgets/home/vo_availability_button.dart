@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AvailabilityButton extends StatefulWidget {
-  const AvailabilityButton({Key? key}) : super(key: key);
+  final onClick;
+
+  const AvailabilityButton({required this.onClick, Key? key}) : super(key: key);
 
   @override
   _AvailabilityButtonState createState() => _AvailabilityButtonState();
@@ -24,7 +26,11 @@ class _AvailabilityButtonState extends State<AvailabilityButton> {
       width: MediaQuery.of(context).size.width * 0.78,
       height: 40,
       child: ElevatedButton(
-        onPressed: _toggleAvailability,
+        // onPressed: _toggleAvailability,
+        //* Used to test dialog
+        onPressed: () {
+          Navigator.of(context).restorablePush(widget.onClick);
+        },
         child: Text(
           //TODO: Discuss wording of this
           _available ? "Enabled Notifications" : "Disabled Notifications",
