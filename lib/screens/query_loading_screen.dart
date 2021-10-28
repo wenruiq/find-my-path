@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../widgets/util/loading.dart';
+import '../screens/chat_screen.dart';
 
 //* This screen receives all the form info from query_screen
 //* and perform the logic required to get a match and enter a chat room
@@ -39,7 +40,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
     initPage();
     return Scaffold(
       appBar: AppBar(),
-      body: _loading ? const Loading() : const Text('haha'),
+      body: _loading ? const Loading() : const ChatScreen(),
     );
   }
 

@@ -37,7 +37,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
       //TODO: how to handle failed retrieval?
     });
     print("Returning default");
-    return "Harvey";
+    return "Daniel";
   }
 
   static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
@@ -120,7 +120,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                 const Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Text(
-                    "Harvey Specter",
+                    "Daniel",
                     style: TextStyle(fontSize: 28),
                   ),
                 ),

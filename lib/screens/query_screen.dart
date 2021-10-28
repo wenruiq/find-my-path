@@ -55,6 +55,10 @@ class _QueryScreenState extends State<QueryScreen> {
   }
 
   void _submitQueryForm({required String endLocation}) async {
+    setState(() {
+      _setLoading(true);
+    });
+
     await users.doc(_uid).get().then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         print("user detail retrieved");
@@ -64,8 +68,10 @@ class _QueryScreenState extends State<QueryScreen> {
 
     //* To be updated to be filled with all real info
     var assignmentInfo = {
-      "VO_ID": "123",
       "VI_ID": _uid,
+      "VI_displayName": _displayName,
+      "VO_ID": "123",
+      "VO_displayName": "Harvey",
       "date": DateTime.now(),
       "imageURL":
           "https://images.unsplash.com/photo-1572281158640-30040dd70cbe?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3024&q=80",
@@ -80,14 +86,8 @@ class _QueryScreenState extends State<QueryScreen> {
         "name": endLocation
       },
       "status": "In Progress",
-      "VO_displayName": "Harvey",
-      "VI_displayName": _displayName,
       "timeTaken": null,
     };
-
-    setState(() {
-      _setLoading(true);
-    });
 
     await assignments
         .add(assignmentInfo)
@@ -182,6 +182,7 @@ class _QueryScreenState extends State<QueryScreen> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
+                      FormState().save();
                       _trySubmit();
                       Navigator.pushNamed(context, "/queryloading");
                     },

@@ -17,6 +17,7 @@ import './screens/vi_home_screen.dart';
 import './screens/vo_home_screen.dart';
 import './screens/assignments_screen.dart';
 import './screens/ratings_screen.dart';
+import 'widgets/home/vo_assignment_dialog.dart';
 
 /// Define a top-level named handler which background/terminated messages will
 /// call.
@@ -72,11 +73,26 @@ void main() async {
     );
   }
 
-  runApp(const MyApp());
+  // runApp(
+  //   const MyApp(),
+  // );
+
+  runApp(
+    MaterialApp(
+      title: "MyTitle",
+      home: const MyApp(),
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(
+            builder: (BuildContext context) => const ChatScreen());
+      },
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  static const routeName = '/base';
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -96,10 +112,19 @@ class _MyAppState extends State<MyApp> {
     //     Navigator.pushNamed(context, '/message');
     //   }
     // });
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       print("Received message at onMessage la... Foreground la...");
+
+      Future.delayed(Duration.zero, () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => const AssignmentDialog(),
+        );
+      });
+
       if (notification != null && android != null && !kIsWeb) {
         flutterLocalNotificationsPlugin.show(
             notification.hashCode,
@@ -119,10 +144,27 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  //* show dialog
+  // void showDialog() {
+  //   Navigator.of(context).restorablePush(_dialogBuilder);
+  // }
+
+  static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
+    return DialogRoute<void>(
+      context: ctx,
+      builder: (BuildContext context) => const AssignmentDialog(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: "Find My Path",
+        // //* HOTFIX
+        // onUnknownRoute: (settings) {
+        //   return MaterialPageRoute(
+        //       builder: (BuildContext context) => ChatScreen());
+        // },
         theme: customTheme,
         //* FutureBuilder for Firebase init
         home: StreamBuilder(
@@ -170,6 +212,8 @@ class _MyAppState extends State<MyApp> {
           ChatScreen.routeName: (context) => const ChatScreen(),
           AssignmentsScreen.routeName: (context) => const AssignmentsScreen(),
           RatingScreen.routeName: (context) => const RatingScreen(),
+          //* ALSO HOTFIX
+          '/base/chat': (context) => const ChatScreen(),
         });
   }
 }

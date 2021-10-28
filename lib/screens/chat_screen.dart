@@ -20,7 +20,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return DismissKeyboard(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Lifu'),
+          title: const Text('Craig'),
           actions: [
             DropdownButton(
               underline: Container(),

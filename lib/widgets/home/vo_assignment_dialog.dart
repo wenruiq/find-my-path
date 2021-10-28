@@ -19,7 +19,7 @@ class AssignmentDialog extends StatelessWidget {
 
       //* Assignment Contents
       content: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.7,
+        height: MediaQuery.of(context).size.height * 0.75,
         width: MediaQuery.of(context).size.width * 0.7,
         //* This column splits the main content from the accept & decline buttons
         child: Column(
@@ -48,7 +48,8 @@ class AssignmentDialog extends StatelessWidget {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "Harvey",
+                        //TODO: Change to real assignment VI_displayName
+                        "Craig",
                         textAlign: TextAlign.end,
                       ),
                     ],
@@ -64,6 +65,7 @@ class AssignmentDialog extends StatelessWidget {
                       ),
                       Flexible(
                         child: Text(
+                          //TODO: Change to real assignment currentLocation.name
                           "Singapore Management University",
                           textAlign: TextAlign.end,
                         ),
@@ -81,6 +83,7 @@ class AssignmentDialog extends StatelessWidget {
                       ),
                       Flexible(
                         child: Text(
+                          //TODO: Change to real assignment endLocation.name
                           "Orchard Center",
                           textAlign: TextAlign.end,
                         ),
@@ -97,7 +100,8 @@ class AssignmentDialog extends StatelessWidget {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                      onPressed: () => Navigator.pushNamed(context, "/chat"),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, "/base/chat"),
                       child: const Text('Accept Assignment')),
                 )),
           ],
