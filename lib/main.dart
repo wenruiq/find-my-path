@@ -19,31 +19,27 @@ import './screens/assignments_screen.dart';
 import './screens/ratings_screen.dart';
 import 'widgets/home/vo_assignment_dialog.dart';
 
-/// Define a top-level named handler which background/terminated messages will
-/// call.
-///
-/// To verify things are working, check out the native platform logs.
+//* To be called to handle messages when app is in background/terminated
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
+  //* Initialize Firebase services
   await Firebase.initializeApp();
-  print('Handling a background message ${message.messageId}');
 }
 
-/// Create a [AndroidNotificationChannel] for heads up notifications
+//* Create an [AndroidNotificationChannel] for heads up notifications
 late AndroidNotificationChannel channel;
 
-/// Initialize the [FlutterLocalNotificationsPlugin] package.
+//* Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 void main() async {
-  //* Ensures Firebase initialized bef. running app
+  //* Initialize Firebase services
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Set the background messaging handler early on, as a named top-level function
+  //* Bind the background message handler function defined at the top-level
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  //* If not web (we are on mobile so always true)
   if (!kIsWeb) {
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
@@ -54,17 +50,17 @@ void main() async {
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    /// Create an Android Notification Channel.
+    ///* Create an Android Notification Channel.
     ///
-    /// We use this channel in the `AndroidManifest.xml` file to override the
-    /// default FCM channel to enable heads up notifications.
+    ///* We use this channel in the `AndroidManifest.xml` file to override the
+    ///* default FCM channel to enable heads up notifications.
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
-    /// Update the iOS foreground notification presentation options to allow
-    /// heads up notifications.
+    ///* Update the iOS foreground notification presentation options to allow
+    ///* heads up notifications.
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
       alert: true,
@@ -73,13 +69,9 @@ void main() async {
     );
   }
 
-  // runApp(
-  //   const MyApp(),
-  // );
-
   runApp(
     MaterialApp(
-      title: "MyTitle",
+      title: "FindMyPath",
       home: const MyApp(),
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
@@ -102,22 +94,20 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    
+    //* Initialize FBM Instance to use service
     FirebaseMessaging messaging = FirebaseMessaging.instance;
+    
+    //TODO: Check user role & isNotiEnabled before subscribing
     messaging.subscribeToTopic("assignments");
 
-    // FirebaseMessaging.instance
-    //     .getInitialMessage()
-    //     .then((RemoteMessage? message) {
-    //   if (message != null) {
-    //     Navigator.pushNamed(context, '/message');
-    //   }
-    // });
-
+    //* Listens to foreground notifications & perform actions after
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-      print("Received message at onMessage la... Foreground la...");
 
+      //* Dialog Box for user to accept/deny assignments
+      ///TODO: Dialog should only show when clicked on the notifcation bar 
       Future.delayed(Duration.zero, () {
         showDialog(
           context: context,
@@ -125,6 +115,7 @@ class _MyAppState extends State<MyApp> {
         );
       });
 
+      //* Styling & Text for android noti bar
       if (notification != null && android != null && !kIsWeb) {
         flutterLocalNotificationsPlugin.show(
             notification.hashCode,
@@ -135,25 +126,12 @@ class _MyAppState extends State<MyApp> {
                 channel.id,
                 channel.name,
                 channel.description,
-                // TODO add a proper drawable resource to android, for now using
-                //      one that already exists in example app.
+                //* Using default icon from example app
                 icon: 'launch_background',
               ),
             ));
       }
     });
-  }
-
-  //* show dialog
-  // void showDialog() {
-  //   Navigator.of(context).restorablePush(_dialogBuilder);
-  // }
-
-  static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
-    return DialogRoute<void>(
-      context: ctx,
-      builder: (BuildContext context) => const AssignmentDialog(),
-    );
   }
 
   @override
@@ -166,7 +144,7 @@ class _MyAppState extends State<MyApp> {
         //       builder: (BuildContext context) => ChatScreen());
         // },
         theme: customTheme,
-        //* FutureBuilder for Firebase init
+        //* Listens to authStateChanges to know whether to log the user in/out
         home: StreamBuilder(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (ctx, userSnapshot) {
@@ -181,10 +159,10 @@ class _MyAppState extends State<MyApp> {
                   future: users.doc(uid).get(),
                   builder: (BuildContext context,
                       AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    //TODO: Better error handling
                     if (snapshot.hasError) {
                       return const Text("Something went wrong");
                     }
-
                     if (snapshot.hasData && !snapshot.data!.exists) {
                       return const Text("Document does not exist");
                     }
