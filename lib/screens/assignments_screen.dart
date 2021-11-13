@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import "package:firebase_auth/firebase_auth.dart";
 
 import '../widgets/assignments/assignments_list.dart';
 
 class AssignmentsScreen extends StatefulWidget {
   static const routeName = '/assignments';
+  final String type;
 
   const AssignmentsScreen({
+    required this.type,
     Key? key,
   }) : super(key: key);
 
@@ -13,13 +17,27 @@ class AssignmentsScreen extends StatefulWidget {
   _AssignmentsScreenState createState() => _AssignmentsScreenState();
 }
 
+void initAssignmentStream() {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  CollectionReference assignments =
+      FirebaseFirestore.instance.collection('assignments');
+  assignments.snapshots().listen((data) {
+    print(data);
+  });
+}
+
 class _AssignmentsScreenState extends State<AssignmentsScreen> {
-  late List<String> _demoData;
+  late List<Object> _demoData;
 
   @override
   void initState() {
     super.initState();
-    _demoData = ['en', 'haha'];
+    Future.delayed(Duration.zero, () => initAssignmentStream());
+    _demoData = [
+      {"id": 1, "name": "Harvey", "endLocation": "Orchard"},
+      {"id": 2, "name": "Louis", "endLocation": "Changi"},
+      {"id": 3, "name": "Mike", "endLocation": "Disney Land"},
+    ];
   }
 
   @override
@@ -41,12 +59,12 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         onRefresh: () {
           return Future.delayed(const Duration(seconds: 1), () {
             setState(() {
-              _demoData.addAll(['wow', 'wew']);
+              _demoData.addAll(['1']);
             });
 
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Refreshed LUL'),
+                content: Text('Retrieved Available Assignments'),
               ),
             );
           });

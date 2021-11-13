@@ -68,31 +68,39 @@ class _QueryScreenState extends State<QueryScreen> {
 
     //* To be updated to be filled with all real info
     var assignmentInfo = {
+      //* VI details
       "VI_ID": _uid,
       "VI_displayName": _displayName,
-      "VO_ID": "123",
-      "VO_displayName": "Harvey",
+      //* VO details - to be updated when accepted by a volunteer
+      "VO_ID": null,
+      "VO_displayName": null,
       "date": DateTime.now(),
+      //* Image - to be updated with real upload by VI
       "imageURL":
           "https://images.unsplash.com/photo-1572281158640-30040dd70cbe?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3024&q=80",
+      //* Current Location - to be updated with real current location after adding google locations
       "currentLocation": {
+        //! Hard coded long and lat
         "long": 103.85016229678607,
         "lat": 1.2963557161277992,
         "name": "Singapore Management University"
       },
+      //* End Location - to be updated with real long and lat after integrating google services
       "endLocation": {
+        //! Hard coded long and lat
         "long": 103.85113602626875,
         "lat": 1.3006504987053975,
         "name": endLocation
       },
-      "status": "In Progress",
+      //* Status should be "Pending" / "Ongoing" / "Completed"
+      "status": "Pending",
       "timeTaken": null,
     };
 
-    await assignments
-        .add(assignmentInfo)
-        .then((value) => print("Assignment added to Firestore"))
-        .catchError((error) => print("Failed to add assignment: $error"));
+    // await assignments
+    //     .add(assignmentInfo)
+    //     .then((value) => print("Assignment added to Firestore"))
+    //     .catchError((error) => print("Failed to add assignment: $error"));
 
     setState(() {
       _setLoading(false);

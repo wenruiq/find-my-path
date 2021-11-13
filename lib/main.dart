@@ -17,6 +17,7 @@ import './screens/vi_home_screen.dart';
 import './screens/vo_home_screen.dart';
 import './screens/assignments_screen.dart';
 import './screens/ratings_screen.dart';
+import './screens/video_call_screen.dart';
 import 'widgets/home/vo_assignment_dialog.dart';
 
 //* To be called to handle messages when app is in background/terminated
@@ -94,10 +95,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    
+
     //* Initialize FBM Instance to use service
     FirebaseMessaging messaging = FirebaseMessaging.instance;
-    
+
     //TODO: Check user role & isNotiEnabled before subscribing
     messaging.subscribeToTopic("assignments");
 
@@ -107,7 +108,7 @@ class _MyAppState extends State<MyApp> {
       AndroidNotification? android = message.notification?.android;
 
       //* Dialog Box for user to accept/deny assignments
-      ///TODO: Dialog should only show when clicked on the notifcation bar 
+      ///TODO: Dialog should only show when clicked on the notifcation bar
       Future.delayed(Duration.zero, () {
         showDialog(
           context: context,
@@ -188,7 +189,12 @@ class _MyAppState extends State<MyApp> {
           QueryScreen.routeName: (context) => const QueryScreen(),
           QueryLoadingScreen.routeName: (context) => const QueryLoadingScreen(),
           ChatScreen.routeName: (context) => const ChatScreen(),
-          AssignmentsScreen.routeName: (context) => const AssignmentsScreen(),
+          ChatScreen.routeName: (context) => const ChatScreen(),
+          VideoCallTestScreen.routeName: (context) =>
+              const VideoCallTestScreen(),
+          AssignmentsScreen.routeName: (context) => const AssignmentsScreen(
+                type: "Default",
+              ),
           RatingScreen.routeName: (context) => const RatingScreen(),
           //* ALSO HOTFIX
           '/base/chat': (context) => const ChatScreen(),

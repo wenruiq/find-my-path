@@ -21,31 +21,52 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Craig'),
-          actions: [
-            DropdownButton(
-              underline: Container(),
-              icon: Icon(
-                Icons.more_vert,
-                color: Theme.of(context).primaryIconTheme.color,
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              // child: Stack(
+              //   children: [
+              //     AgoraVideoViewer(client: client),
+              //     AgoraVideoButtons(client: client),
+              //   ],
+              // )
+              child: IconButton(
+                icon: const Icon(Icons.videocam),
+                tooltip: "Start Video Call",
+                onPressed: () => Navigator.pushNamed(context, "/videocall"),
               ),
-              items: [
-                DropdownMenuItem(
-                  child: Row(
-                    children: const <Widget>[
-                      Icon(Icons.exit_to_app),
-                      SizedBox(width: 8),
-                      Text('Logout'),
-                    ],
-                  ),
-                  value: 'logout',
-                ),
-              ],
-              onChanged: (itemIdentifier) {
-                if (itemIdentifier == 'logout') {
-                  FirebaseAuth.instance.signOut();
-                }
-              },
             ),
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.more_vert,
+                    color: Theme.of(context).primaryIconTheme.color)),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: DropdownButton(
+            //     underline: Container(),
+            //     icon: Icon(
+            //       Icons.more_vert,
+            //       color: Theme.of(context).primaryIconTheme.color,
+            //     ),
+            //     items: [
+            //       DropdownMenuItem(
+            //         child: Row(
+            //           children: const <Widget>[
+            //             Icon(Icons.exit_to_app),
+            //             SizedBox(width: 8),
+            //             Text('Logout'),
+            //           ],
+            //         ),
+            //         value: 'logout',
+            //       ),
+            //     ],
+            //     onChanged: (itemIdentifier) {
+            //       if (itemIdentifier == 'logout') {
+            //         FirebaseAuth.instance.signOut();
+            //       }
+            //     },
+            //   ),
+            // ),
           ],
         ),
         body: Container(
