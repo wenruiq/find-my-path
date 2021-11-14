@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- For AGORA -->
-	<key>Privacy - Microphone Usage Description</key>
-	<string>Note</string>
-	<key>Privacy - Camera Usage Description</key>
-	<string>Note</string>
-	<!-- END of For AgORA -->
 	<key>CLIENT_ID</key>
 	<string>666900105933-9hs3qa83v0f56qqcoaled3o5g847cfl0.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>

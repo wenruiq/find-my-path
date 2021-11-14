@@ -24,7 +24,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
 
   //* PLACEHOLDER CODE TO TEST LOADING / LOADED SCREENS
   final Future<String> _calculation = Future<String>.delayed(
-    const Duration(seconds: 1),
+    const Duration(seconds: 1000),
     () => 'Data Loaded',
   );
 
@@ -39,7 +39,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
   Widget build(BuildContext context) {
     initPage();
     return Scaffold(
-      appBar: _loading ? AppBar() : null,
+      appBar: AppBar(),
       body: _loading ? const Loading() : const ChatScreen(),
     );
   }

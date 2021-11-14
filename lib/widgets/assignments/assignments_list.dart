@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'assignment_item.dart';
-
 class AssignmentsList extends StatelessWidget {
-  final List<Object> data;
+  final List<String> data;
 
   const AssignmentsList({
     required this.data,
@@ -18,9 +16,7 @@ class AssignmentsList extends StatelessWidget {
       itemCount: data.length,
       itemBuilder: (ctx, index) {
         return Card(
-          child: AssignmentItem(
-            assignmentDetails: data[index],
-          ),
+          child: Text(data[index]),
         );
       },
       physics: const AlwaysScrollableScrollPhysics(),
