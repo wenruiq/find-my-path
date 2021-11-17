@@ -26,12 +26,12 @@ end
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 flutter_ios_podfile_setup
-platform :ios, "14"
+platform :ios, "10.0"
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '8.7.0'
+  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '8.9.0'
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 

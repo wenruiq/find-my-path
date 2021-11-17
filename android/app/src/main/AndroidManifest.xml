@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
-        android:label="find_my_path"
+        android:label="FindMyPath"
         android:icon="@mipmap/ic_launcher" >
         <activity
             android:name=".MainActivity"
