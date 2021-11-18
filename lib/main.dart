@@ -19,9 +19,8 @@ import './screens/assignments_screen.dart';
 import './screens/ratings_screen.dart';
 import 'widgets/home/vo_assignment_dialog.dart';
 
-//* To be called to handle messages when app is in background/terminated
+//* Handle Background Message
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  //* Initialize Firebase services
   await Firebase.initializeApp();
 }
 
@@ -47,18 +46,14 @@ void main() async {
       'This channel is used for important notifications.', // description
       importance: Importance.high,
     );
-
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    ///* Create an Android Notification Channel.
-    ///
+    ///* Create an Android Notification Channel
     ///* We use this channel in the `AndroidManifest.xml` file to override the
     ///* default FCM channel to enable heads up notifications.
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
-
     ///* Update the iOS foreground notification presentation options to allow
     ///* heads up notifications.
     await FirebaseMessaging.instance
