@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import '../widgets/util/loading.dart';
 import '../screens/chat_screen.dart';
 
+//TODO: connect this properly between query page and chat page
+
 //* This screen receives all the form info from query_screen
 //* and perform the logic required to get a match and enter a chat room
 
@@ -24,7 +26,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
 
   //* PLACEHOLDER CODE TO TEST LOADING / LOADED SCREENS
   final Future<String> _calculation = Future<String>.delayed(
-    const Duration(seconds: 1000),
+    const Duration(seconds: 2),
     () => 'Data Loaded',
   );
 
@@ -33,6 +35,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
     setState(() {
       _loading = false;
     });
+    Navigator.pushNamed(context, '/chat');
   }
 
   @override
@@ -40,7 +43,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
     initPage();
     return Scaffold(
       appBar: AppBar(),
-      body: _loading ? const Loading() : const ChatScreen(),
+      body: const Loading(),
     );
   }
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+//TODO: connect to firebase
+
 class AvailabilityButton extends StatefulWidget {
   final onClick;
 
@@ -12,7 +14,6 @@ class AvailabilityButton extends StatefulWidget {
 class _AvailabilityButtonState extends State<AvailabilityButton> {
   bool _available = false;
 
-  //TODO: Make it change color on toggle
   //TODO: Display spinner while updating whatever status holder (probably firebase)
   void _toggleAvailability() {
     setState(() {

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+//* This file is to change the transition animation
+//TODO: use this if applicable
+
 class SlideRoute extends PageRouteBuilder {
   final Widget page;
-  final String routeName = '/';
+  // final String routeName = '/';
 
   SlideRoute({required this.page, required String routeName})
       : super(

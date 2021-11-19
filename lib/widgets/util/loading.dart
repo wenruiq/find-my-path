@@ -3,9 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 //* This is the transition loading screen for pages that require processing
 
-//TODO: check how loading looks on a real device - currently it covers the phone top UI, looks kinda weird
-
-//TODO: customize to take in a String and display as loading text below loader
+//TODO: Fix this interaction with transition to another page
 
 class Loading extends StatelessWidget {
   const Loading({Key? key}) : super(key: key);

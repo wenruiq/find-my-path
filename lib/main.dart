@@ -47,6 +47,7 @@ void main() async {
       importance: Importance.high,
     );
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
     ///* Create an Android Notification Channel
     ///* We use this channel in the `AndroidManifest.xml` file to override the
     ///* default FCM channel to enable heads up notifications.
@@ -54,6 +55,7 @@ void main() async {
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
+
     ///* Update the iOS foreground notification presentation options to allow
     ///* heads up notifications.
     await FirebaseMessaging.instance
@@ -64,22 +66,11 @@ void main() async {
     );
   }
 
-  runApp(
-    MaterialApp(
-      title: "FindMyPath",
-      home: const MyApp(),
-      onUnknownRoute: (settings) {
-        return MaterialPageRoute(
-            builder: (BuildContext context) => const ChatScreen());
-      },
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  static const routeName = '/base';
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -89,10 +80,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    
+
     //* Initialize FBM Instance to use service
     FirebaseMessaging messaging = FirebaseMessaging.instance;
-    
+
     //TODO: Check user role & isNotiEnabled before subscribing
     messaging.subscribeToTopic("assignments");
 
@@ -102,13 +93,13 @@ class _MyAppState extends State<MyApp> {
       AndroidNotification? android = message.notification?.android;
 
       //* Dialog Box for user to accept/deny assignments
-      ///TODO: Dialog should only show when clicked on the notifcation bar 
-      Future.delayed(Duration.zero, () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => const AssignmentDialog(),
-        );
-      });
+      ///TODO: Connect interaction from notification click to display dialog box
+      // Future.delayed(Duration.zero, () {
+      //   showDialog(
+      //     context: context,
+      //     builder: (BuildContext context) => const AssignmentDialog(),
+      //   );
+      // });
 
       //* Styling & Text for android noti bar
       if (notification != null && android != null && !kIsWeb) {
@@ -133,11 +124,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: "Find My Path",
-        // //* HOTFIX
-        // onUnknownRoute: (settings) {
-        //   return MaterialPageRoute(
-        //       builder: (BuildContext context) => ChatScreen());
-        // },
         theme: customTheme,
         //* Listens to authStateChanges to know whether to log the user in/out
         home: StreamBuilder(
@@ -185,8 +171,6 @@ class _MyAppState extends State<MyApp> {
           ChatScreen.routeName: (context) => const ChatScreen(),
           AssignmentsScreen.routeName: (context) => const AssignmentsScreen(),
           RatingScreen.routeName: (context) => const RatingScreen(),
-          //* ALSO HOTFIX
-          '/base/chat': (context) => const ChatScreen(),
         });
   }
 }

@@ -31,6 +31,8 @@ class _AuthScreenState extends State<AuthScreen> {
       required BuildContext ctx}) async {
     UserCredential userCredential;
 
+    //TODO: add in the assignment notification control thing
+
     try {
       setState(() {
         setLoading(true);

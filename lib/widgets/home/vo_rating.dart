@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../screens/ratings_screen.dart';
 import '../util/slide_route.dart';
 
+//TODO: Change this into badges of some sort instead of star reviews
+
 class Rating extends StatelessWidget {
   final double rating;
   final int reviewCount;

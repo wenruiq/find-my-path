@@ -40,12 +40,12 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     return "Daniel";
   }
 
-  static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
-    return DialogRoute<void>(
-      context: ctx,
-      builder: (BuildContext context) => const AssignmentDialog(),
-    );
-  }
+  // static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
+  //   return DialogRoute<void>(
+  //     context: ctx,
+  //     builder: (BuildContext context) => const AssignmentDialog(),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +136,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
             const AssignmentControl(),
             //* This is the availability toggle button
             const AvailabilityButton(
-              onClick: _dialogBuilder,
+              onClick: null,
             ),
             SizedBox(
               child: Column(
