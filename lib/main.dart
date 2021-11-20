@@ -118,7 +118,6 @@ class _MyAppState extends State<MyApp> {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (ctx, userSnapshot) {
               if (userSnapshot.connectionState == ConnectionState.waiting) {
-                print("waiting");
                 return const LoadingScreen();
               }
               if (userSnapshot.hasData) {
@@ -127,7 +126,7 @@ class _MyAppState extends State<MyApp> {
                 return FutureBuilder<DocumentSnapshot>(
                   future: users.doc(uid).get(),
                   builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    //TODO: Improve error handling UI
+                    //? Use snackbar to handle these small errors?
                     if (snapshot.hasError) {
                       return const AuthScreen();
                     }
@@ -147,7 +146,7 @@ class _MyAppState extends State<MyApp> {
                       return const HomeScreenVI();
                     }
 
-                    return const AuthScreen();
+                    return const LoadingScreen();
                   },
                 );
               }
