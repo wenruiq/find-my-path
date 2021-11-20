@@ -11,7 +11,7 @@ import "./theme/custom_theme.dart";
 import "./screens/chat_screen.dart";
 import "./screens/query_screen.dart";
 import "./screens/query_loading_screen.dart";
-import "./screens/splash_screen.dart";
+import "./screens/loading_screen.dart";
 import "./screens/auth_screen.dart";
 import './screens/vi_home_screen.dart';
 import './screens/vo_home_screen.dart';
@@ -19,47 +19,41 @@ import './screens/assignments_screen.dart';
 import './screens/ratings_screen.dart';
 import 'widgets/home/vo_assignment_dialog.dart';
 
-//* Handle Background Message
+//* Background Notification Handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 }
 
-//* Create an [AndroidNotificationChannel] for heads up notifications
 late AndroidNotificationChannel channel;
-
-//* Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 void main() async {
-  //* Initialize Firebase services
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  //* Bind the background message handler function defined at the top-level
+  //* Bind Background Notification Handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  //* If not web (we are on mobile so always true)
   if (!kIsWeb) {
+    //* Android Notification Channel Config
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
       'This channel is used for important notifications.', // description
       importance: Importance.high,
     );
+    //* Initialize FlutterNotificationsPlugin Package
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    ///* Create an Android Notification Channel
-    ///* We use this channel in the `AndroidManifest.xml` file to override the
-    ///* default FCM channel to enable heads up notifications.
+    //* Create Android Notification Channel based on config above
+    //* Use it to override the default FCM channel to enable heads up notifications
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     ///* Update the iOS foreground notification presentation options to allow
     ///* heads up notifications.
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
@@ -81,13 +75,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    //* Initialize FBM Instance to use service
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    //TODO: Check user role & isNotiEnabled before subscribing
-    messaging.subscribeToTopic("assignments");
-
-    //* Listens to foreground notifications & perform actions after
+    //* Listens to foreground notifications & perform actions here
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -101,7 +89,7 @@ class _MyAppState extends State<MyApp> {
       //   );
       // });
 
-      //* Styling & Text for android noti bar
+      //* Styling & Text for Android notification bar
       if (notification != null && android != null && !kIsWeb) {
         flutterLocalNotificationsPlugin.show(
             notification.hashCode,
@@ -130,34 +118,36 @@ class _MyAppState extends State<MyApp> {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (ctx, userSnapshot) {
               if (userSnapshot.connectionState == ConnectionState.waiting) {
-                return const SplashScreen();
+                print("waiting");
+                return const LoadingScreen();
               }
               if (userSnapshot.hasData) {
                 String uid = FirebaseAuth.instance.currentUser!.uid;
-                CollectionReference users =
-                    FirebaseFirestore.instance.collection('users');
+                CollectionReference users = FirebaseFirestore.instance.collection('users');
                 return FutureBuilder<DocumentSnapshot>(
                   future: users.doc(uid).get(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    //TODO: Better error handling
+                  builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    //TODO: Improve error handling UI
                     if (snapshot.hasError) {
-                      return const Text("Something went wrong");
+                      return const AuthScreen();
                     }
                     if (snapshot.hasData && !snapshot.data!.exists) {
-                      return const Text("Document does not exist");
+                      return const AuthScreen();
                     }
-
+                    //* If everything's good, user logs in
                     if (snapshot.connectionState == ConnectionState.done) {
-                      Map<String, dynamic> data =
-                          snapshot.data!.data() as Map<String, dynamic>;
+                      Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
                       if (data['isVolunteer'] == true) {
+                        //* Initialize FCM Instance
+                        FirebaseMessaging messaging = FirebaseMessaging.instance;
+                        //TODO: Check isNotiEnabled before subscribing
+                        messaging.subscribeToTopic("assignments");
                         return const HomeScreenVO();
                       }
                       return const HomeScreenVI();
                     }
 
-                    return const SplashScreen();
+                    return const AuthScreen();
                   },
                 );
               }

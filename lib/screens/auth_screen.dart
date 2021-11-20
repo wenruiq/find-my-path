@@ -31,45 +31,30 @@ class _AuthScreenState extends State<AuthScreen> {
       required BuildContext ctx}) async {
     UserCredential userCredential;
 
-    //TODO: add in the assignment notification control thing
-
     try {
       setState(() {
         setLoading(true);
       });
       if (isLogin) {
-        userCredential = await _auth.signInWithEmailAndPassword(
-            email: email, password: password);
+        userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       } else {
-        userCredential = await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        CollectionReference users =
-            FirebaseFirestore.instance.collection('users');
-        await users.doc(userCredential.user?.uid).set({
-          'email': email,
-          'displayName': displayName,
-          'isVolunteer': isVolunteer
-        });
+        userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+        CollectionReference users = FirebaseFirestore.instance.collection('users');
+        await users
+            .doc(userCredential.user?.uid)
+            .set({'email': email, 'displayName': displayName, 'isVolunteer': isVolunteer});
       }
     } on FirebaseAuthException catch (err) {
-      //TODO: Clear and focus on password input
-
-      var message = 'Incorrect email or password, please try again.';
-
-      //* Gets the specific error message from firebase
-      //* Not sure how to handle yet
-      //* Use default message for now
-      // if (err.message != null) {
-      //   message = err.message.toString();
-      // }
-
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Theme.of(ctx).errorColor,
-        ),
-      );
-
+      if (err.message == null) return;
+      if (err.code == 'user-not-found') {
+        var message = 'Incorrect email or password, please try again.';
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Theme.of(ctx).errorColor,
+          ),
+        );
+      }
       setState(() {
         setLoading(false);
       });
@@ -85,7 +70,7 @@ class _AuthScreenState extends State<AuthScreen> {
     return DismissKeyboard(
       child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
-          body: AuthForm(submitFn: _submitAuthForm, isLoading: _isLoading)),
+          body: SafeArea(child: AuthForm(submitFn: _submitAuthForm, isLoading: _isLoading))),
     );
   }
 }
