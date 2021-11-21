@@ -17,18 +17,67 @@ class _AvailabilityButtonState extends State<AvailabilityButton> {
     super.initState();
   }
 
-  void onNotificationButtonPress(bool isAvailable) {
-    //TODO: Can show alert dialog for confirmation
-    //* https://medium.com/multiverse-software/alert-dialog-and-confirmation-dialog-in-flutter-8d8c160f4095
+  //* Toggling Notifications (Optimistic Update)
+  void onNotificationButtonPress(bool isAvailable) async {
+    if (isAvailable) {
+      //* Enable notification
+      //* Create a callback to pass to showAlertDialog
+      void enableNotifications() {
+        //* Optimistic update
+        Provider.of<UserModel>(context, listen: false).setIsAvailable = isAvailable;
+        //* Remove dialog
+        Navigator.pop(context);
+      }
 
-    //* If Confirmed through dialog, we will perform optimistic update to provider first
-    Provider.of<UserModel>(context, listen: false).updateAvailability(isAvailable);
+      const title = "Enable Notifications";
+      const content = "Are you sure you want to enable all notifications?";
+      showAlertDialog(context, title, content, enableNotifications);
+    } else if (!isAvailable) {
+      //* Disable notification
+      void disableNotifications() {
+        //* Optimistic update
+        Provider.of<UserModel>(context, listen: false).setIsAvailable = isAvailable;
+        Navigator.pop(context);
+      }
 
-    //TODO: Then we update isAvailable of user on Firestore
+      const title = "Disable Notifications";
+      const content = "Are you sure you want to disable all notifications?";
+      showAlertDialog(context, title, content, disableNotifications);
+    }
+
+    //* Update Firestore
+    String uid = Provider.of<UserModel>(context, listen: false).uid;
+    try {
+      DocumentReference docRef = FirebaseFirestore.instance.collection('users').doc(uid);
+      await docRef.update({'isAvailable': isAvailable});
+    } on FirebaseException catch (err) {
+      if (err.message == null) {
+        throw Exception("Error updating availability of user at onNotificationButtonPress.");
+      } else {
+        throw Exception(err.message);
+      }
+    }
   }
 
-  void showAlertDialog(BuildContext context) {
-    //TODO: Configure show alert dialog
+  void showAlertDialog(BuildContext context, String title, String content, Function callback) {
+    //* Set up buttons
+    Widget cancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel"));
+    Widget confirmButton = TextButton(onPressed: () => callback(), child: const Text("Confirm"));
+
+    //* Set up alert
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(content),
+      actions: [cancelButton, confirmButton],
+      backgroundColor: Colors.white,
+    );
+
+    //* Show dialog
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        });
   }
 
   @override
