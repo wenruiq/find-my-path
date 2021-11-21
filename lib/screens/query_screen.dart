@@ -61,7 +61,6 @@ class _QueryScreenState extends State<QueryScreen> {
 
     await users.doc(_uid).get().then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        print("user detail retrieved");
         _displayName = documentSnapshot.get('displayName');
       }
     });
@@ -136,7 +135,6 @@ class _QueryScreenState extends State<QueryScreen> {
                               hintText: "Enter your destination"),
                           onSaved: (value) {
                             _endLocation = value.toString();
-                            print(_endLocation);
                           }),
                       const SizedBox(
                         height: 20,

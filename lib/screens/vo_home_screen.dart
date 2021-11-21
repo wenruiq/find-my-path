@@ -7,6 +7,7 @@ import '../widgets/home/vo_rating.dart';
 import '../widgets/home/vo_availability_button.dart';
 import '../widgets/home/vo_assignment_control.dart';
 import '../widgets/home/vo_assignment_dialog.dart';
+import '../providers/user_model.dart';
 
 class HomeScreenVO extends StatefulWidget {
   const HomeScreenVO({Key? key}) : super(key: key);
@@ -17,27 +18,23 @@ class HomeScreenVO extends StatefulWidget {
 }
 
 class _HomeScreenVOState extends State<HomeScreenVO> {
-  void _logout() {
-    FirebaseAuth.instance.signOut();
+  @override
+  void initState() {
+    super.initState();
+    //* "Saves" user data to the provider so we can get it anywhere we want
+    _updateUserProvider();
   }
 
-  String _getDisplayName({required id}) {
-    final CollectionReference users =
-        FirebaseFirestore.instance.collection('users');
+  void _updateUserProvider() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    DocumentSnapshot snapshot = await users.doc(uid).get();
+    Map<String, dynamic> userData = snapshot.data() as Map<String, dynamic>;
+    Provider.of<UserModel>(context, listen: false).updateUserData({'uid': uid, ...userData});
+  }
 
-    users.doc(id).get().then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        String displayName;
-        print("user detail retrieved");
-        displayName = documentSnapshot.get('displayName');
-        print(displayName);
-        return displayName;
-      }
-
-      //TODO: how to handle failed retrieval?
-    });
-    print("Returning default");
-    return "Daniel";
+  void _logout() {
+    FirebaseAuth.instance.signOut();
   }
 
   // static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
@@ -49,16 +46,14 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-
-    String id = _auth.currentUser!.uid;
-    String displayName = _getDisplayName(id: id);
+    //* Get user data from provider
+    var userData = Provider.of<UserModel>(context).data;
+    print(userData);
 
     return Scaffold(
       appBar: AppBar(
-        //TODO: Add user's name to title
         title: Text(
-          "Welcome back, $displayName!",
+          "Welcome back, ${userData['displayName']}!",
           style: const TextStyle(fontSize: 18),
         ),
         //* Logout Action in Nav Bar
@@ -103,10 +98,10 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                //* User's Display Photo
+                //* imageURL
                 ClipOval(
                   child: Image.network(
                     'https://i.redd.it/z3xftphdln041.png',
@@ -115,13 +110,12 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                //* User's Name
-                //TODO: Change to user's display name
-                const Padding(
-                  padding: EdgeInsets.only(top: 10),
+                //* displayName
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
                   child: Text(
-                    "Daniel",
-                    style: TextStyle(fontSize: 28),
+                    "${userData['displayName']}",
+                    style: const TextStyle(fontSize: 28),
                   ),
                 ),
                 const SizedBox(height: 5),

@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import "../widgets/auth/auth_form.dart";
 import "../widgets/util//dismiss_keyboard.dart";
 
+//* This is the login screen
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
 
@@ -42,7 +43,7 @@ class _AuthScreenState extends State<AuthScreen> {
         CollectionReference users = FirebaseFirestore.instance.collection('users');
         await users
             .doc(userCredential.user?.uid)
-            .set({'email': email, 'displayName': displayName, 'isVolunteer': isVolunteer});
+            .set({'email': email, 'displayName': displayName, 'isVolunteer': isVolunteer, 'isAvailable': false});
       }
     } on FirebaseAuthException catch (err) {
       if (err.message == null) return;

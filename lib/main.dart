@@ -1,3 +1,4 @@
+import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/screens/query_loading_screen.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 
 import "./theme/custom_theme.dart";
 import "./screens/chat_screen.dart";
@@ -60,7 +62,8 @@ void main() async {
     );
   }
 
-  runApp(const MyApp());
+  //* MultiProvider here
+  runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (context) => UserModel())], child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -118,7 +121,7 @@ class _MyAppState extends State<MyApp> {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (ctx, userSnapshot) {
               if (userSnapshot.connectionState == ConnectionState.waiting) {
-                return const LoadingScreen();
+                return const AuthScreen();
               }
               if (userSnapshot.hasData) {
                 String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -126,7 +129,7 @@ class _MyAppState extends State<MyApp> {
                 return FutureBuilder<DocumentSnapshot>(
                   future: users.doc(uid).get(),
                   builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    //? Use snackbar to handle these small errors?
+                    //? Use snackbar to handle these errors?
                     if (snapshot.hasError) {
                       return const AuthScreen();
                     }
