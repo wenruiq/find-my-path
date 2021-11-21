@@ -6,6 +6,7 @@ import 'package:location/location.dart';
 
 import '../widgets/home/vi_button.dart';
 import '../providers/user_model.dart';
+import '../providers/location_model.dart';
 
 class HomeScreenVI extends StatefulWidget {
   const HomeScreenVI({Key? key}) : super(key: key);
@@ -19,15 +20,18 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
   @override
   void initState() {
     super.initState();
+
     //* "Saves" user data to the provider so we can get it anywhere we want
     _updateUserProvider();
-    //* Request permission & get current location
+
+    //* Initialize flutter location service
     initLocationService();
   }
 
-  //* Flutter location package, request permission & get location
+  //TODO: Only for testing, need to discuss location handling
+  //* Flutter location package, request permission & get cur. location
   void initLocationService() async {
-    Location location = new Location();
+    Location location = Location();
 
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
@@ -50,7 +54,13 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
     }
 
     _locationData = await location.getLocation();
-    print(_locationData);
+
+    //* Update current location to provider
+    //TODO: This is only for testing, we need this to be always up to date
+    Provider.of<LocationModel>(context, listen: false).setCurrentLocation = {
+      'lat': _locationData.longitude as double,
+      'long': _locationData.latitude as double
+    };
   }
 
   void _updateUserProvider() async {
@@ -58,7 +68,7 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     DocumentSnapshot snapshot = await users.doc(uid).get();
     Map<String, dynamic> userData = snapshot.data() as Map<String, dynamic>;
-    Provider.of<UserModel>(context, listen: false).updateUserData({'uid': uid, ...userData});
+    Provider.of<UserModel>(context, listen: false).setUserData = {'uid': uid, ...userData};
   }
 
   void _logout() {
@@ -67,10 +77,15 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Remove this if don't need.
+    //TODO: Remove if not needed
     //* Get user data from provider
     var userData = Provider.of<UserModel>(context).data;
     print(userData);
+
+    //TODO: Remove if not needed
+    //* Get current location {lat: double, long: double}
+    var curlo = Provider.of<LocationModel>(context).curLo;
+    print(curlo);
 
     return Scaffold(
       backgroundColor: Colors.white,

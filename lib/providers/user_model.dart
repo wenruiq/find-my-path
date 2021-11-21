@@ -19,20 +19,20 @@ class UserModel extends ChangeNotifier {
   String get email => _user['email'];
   String get displayName => _user['displayName'];
 
-  //* Specific setters
-  set setIsAvailable(bool isAvailable) {
-    _user['isAvailable'] = isAvailable;
-
-    notifyListeners();
-  }
-
-  //* Update all data
-  void updateUserData(Map<String, dynamic> userData) {
+  //* Set all data
+  set setUserData(Map<String, dynamic> userData) {
     _user['uid'] = userData['uid'];
     _user['email'] = userData['email'];
     _user['displayName'] = userData['displayName'];
     _user['isVolunteer'] = userData['isVolunteer'];
     _user['isAvailable'] = userData['isAvailable'];
+
+    notifyListeners();
+  }
+
+  //* Specific setters
+  set setIsAvailable(bool isAvailable) {
+    _user['isAvailable'] = isAvailable;
 
     notifyListeners();
   }

@@ -31,7 +31,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     DocumentSnapshot snapshot = await users.doc(uid).get();
     Map<String, dynamic> userData = snapshot.data() as Map<String, dynamic>;
-    Provider.of<UserModel>(context, listen: false).updateUserData({'uid': uid, ...userData});
+    Provider.of<UserModel>(context, listen: false).setUserData = {'uid': uid, ...userData};
   }
 
   void _logout() {

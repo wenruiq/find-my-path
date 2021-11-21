@@ -1,4 +1,3 @@
-import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/screens/query_loading_screen.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart';
@@ -20,6 +19,8 @@ import './screens/vo_home_screen.dart';
 import './screens/assignments_screen.dart';
 import './screens/ratings_screen.dart';
 import 'widgets/home/vo_assignment_dialog.dart';
+import 'package:find_my_path/providers/user_model.dart';
+import 'package:find_my_path/providers/location_model.dart';
 
 //* Background Notification Handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -63,7 +64,10 @@ void main() async {
   }
 
   //* MultiProvider here
-  runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (context) => UserModel())], child: const MyApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => UserModel()),
+    ChangeNotifierProvider(create: (context) => LocationModel())
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
