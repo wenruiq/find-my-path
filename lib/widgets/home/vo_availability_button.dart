@@ -1,44 +1,50 @@
 import 'package:flutter/material.dart';
+import "package:cloud_firestore/cloud_firestore.dart";
+import 'package:provider/provider.dart';
 
-//TODO: connect to firebase
+import '../../providers/user_model.dart';
 
 class AvailabilityButton extends StatefulWidget {
-  final onClick;
-
-  const AvailabilityButton({required this.onClick, Key? key}) : super(key: key);
+  const AvailabilityButton({Key? key}) : super(key: key);
 
   @override
   _AvailabilityButtonState createState() => _AvailabilityButtonState();
 }
 
 class _AvailabilityButtonState extends State<AvailabilityButton> {
-  bool _available = false;
+  @override
+  void initState() {
+    super.initState();
+  }
 
-  //TODO: Display spinner while updating whatever status holder (probably firebase)
-  void _toggleAvailability() {
-    setState(() {
-      _available = !_available;
-    });
+  void onNotificationButtonPress(bool isAvailable) {
+    //TODO: Can show alert dialog for confirmation
+    //* https://medium.com/multiverse-software/alert-dialog-and-confirmation-dialog-in-flutter-8d8c160f4095
+
+    //* If Confirmed through dialog, we will perform optimistic update to provider first
+    Provider.of<UserModel>(context, listen: false).updateAvailability(isAvailable);
+
+    //TODO: Then we update isAvailable of user on Firestore
+  }
+
+  void showAlertDialog(BuildContext context) {
+    //TODO: Configure show alert dialog
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.78,
-      height: 40,
-      child: ElevatedButton(
-        onPressed: _toggleAvailability,
-        //* Used to test dialog
-        // onPressed: () {
-        //   Navigator.of(context).restorablePush(widget.onClick);
-        // },
-        child: Text(
-          //TODO: Discuss wording of this
-          _available ? "Enabled Notifications" : "Disabled Notifications",
+    return Consumer<UserModel>(builder: (context, user, child) {
+      return SizedBox(
+        width: MediaQuery.of(context).size.width * 0.78,
+        height: 40,
+        child: ElevatedButton(
+          onPressed: () => onNotificationButtonPress(!user.isAvailable),
+          child: Text(
+            user.isAvailable ? "Enabled Notifications" : "Disabled Notifications",
+          ),
+          style: ElevatedButton.styleFrom(primary: user.isAvailable ? Colors.green : Theme.of(context).errorColor),
         ),
-        style: ElevatedButton.styleFrom(
-            primary: _available ? Colors.green : Theme.of(context).errorColor),
-      ),
-    );
+      );
+    });
   }
 }

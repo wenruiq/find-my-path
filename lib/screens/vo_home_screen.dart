@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:provider/provider.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../widgets/home/vo_rating.dart';
 import '../widgets/home/vo_availability_button.dart';
@@ -25,10 +24,10 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     //* "Saves" user data to the provider so we can get it anywhere we want
     _updateUserProvider();
 
-    //* Initialize FCM Instance
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    //TODO: Check isNotiEnabled before subscribing
-    messaging.subscribeToTopic("assignments");
+    // //* FCM Handling
+    // //TODO: Check isNotiEnabled
+    // FirebaseMessaging messaging = FirebaseMessaging.instance;
+    // messaging.subscribeToTopic("assignments");
   }
 
   void _updateUserProvider() async {
@@ -41,10 +40,6 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
 
   void _logout() {
     FirebaseAuth.instance.signOut();
-  }
-
-  void updateAvailability() {
-    var isAvailable = Provider.of<UserModel>(context).isAvailable;
   }
 
   // static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
@@ -113,19 +108,19 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                   ),
                 ),
                 const SizedBox(height: 5),
-                //* User's Star Ratings
+                //* Star Rating
                 const Rating(
                   rating: 5,
                   reviewCount: 7,
                 ),
               ],
             ),
-            //* This is the assignments box listtile
+            //* Assignments ListTiles
             const AssignmentControl(),
-            //* This is the availability toggle button
-            AvailabilityButton(
-              onClick: () => Provider.of<UserModel>(context, listen: false).updateAvailability(true),
-            ),
+            //* Availability Toggle
+            AvailabilityButton(),
+
+            //* App Version Display
             SizedBox(
               child: Column(
                 children: const [
