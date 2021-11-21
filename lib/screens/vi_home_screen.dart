@@ -36,7 +36,6 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
 
   @override
   Widget build(BuildContext context) {
-    
     //TODO: Remove this if don't need.
     //* Get user data from provider
     var userData = Provider.of<UserModel>(context).data;
@@ -46,7 +45,12 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Menu"),
+        title: const Text("FindMyPath",
+            style: TextStyle(
+              fontFamily: "OleoScript",
+              color: Colors.white,
+              fontSize: 25,
+            )),
       ),
       body: LayoutBuilder(builder: (BuildContext context, BoxConstraints viewportConstraint) {
         return SingleChildScrollView(

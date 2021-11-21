@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:provider/provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../widgets/home/vo_rating.dart';
 import '../widgets/home/vo_availability_button.dart';
@@ -23,6 +24,11 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     super.initState();
     //* "Saves" user data to the provider so we can get it anywhere we want
     _updateUserProvider();
+
+    //* Initialize FCM Instance
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    //TODO: Check isNotiEnabled before subscribing
+    messaging.subscribeToTopic("assignments");
   }
 
   void _updateUserProvider() async {
@@ -37,6 +43,10 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     FirebaseAuth.instance.signOut();
   }
 
+  void updateAvailability() {
+    var isAvailable = Provider.of<UserModel>(context).isAvailable;
+  }
+
   // static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
   //   return DialogRoute<void>(
   //     context: ctx,
@@ -48,7 +58,6 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
   Widget build(BuildContext context) {
     //* Get user data from provider
     var userData = Provider.of<UserModel>(context).data;
-    print(userData);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,37 +65,22 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
           "Welcome back, ${userData['displayName']}!",
           style: const TextStyle(fontSize: 18),
         ),
-        //* Logout Action in Nav Bar
-        //TODO: make logout button appear more normal
         actions: [
-          DropdownButton(
-            underline: Container(),
-            icon: Icon(
-              Icons.more_vert,
-              color: Theme.of(context).primaryIconTheme.color,
-            ),
-            //* Sets the background color of the dropdown item
-            dropdownColor: Colors.white,
-            items: [
-              DropdownMenuItem(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: const <Widget>[
-                    Icon(Icons.exit_to_app, color: Colors.black),
-                    SizedBox(width: 15),
-                    Text('Logout'),
-                  ],
-                ),
-                value: 'logout',
-              ),
-            ],
-            onChanged: (itemIdentifier) {
-              if (itemIdentifier == 'logout') {
-                _logout();
-              }
-            },
-          ),
+          PopupMenuButton<String>(
+              onSelected: (item) => onSelected(context, item),
+              itemBuilder: (context) => [
+                    PopupMenuItem<String>(
+                      value: 'logout',
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: const <Widget>[
+                          Icon(Icons.exit_to_app, color: Colors.black),
+                          SizedBox(width: 10),
+                          Text('Logout'),
+                        ],
+                      ),
+                    )
+                  ]),
         ],
       ),
       body: Center(
@@ -129,8 +123,8 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
             //* This is the assignments box listtile
             const AssignmentControl(),
             //* This is the availability toggle button
-            const AvailabilityButton(
-              onClick: null,
+            AvailabilityButton(
+              onClick: () => Provider.of<UserModel>(context, listen: false).updateAvailability(true),
             ),
             SizedBox(
               child: Column(
@@ -150,5 +144,14 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
         ),
       ),
     );
+  }
+
+  //* Handles appBar actions, can have more cases, now only logout
+  void onSelected(BuildContext context, String item) {
+    switch (item) {
+      case 'logout':
+        _logout();
+        break;
+    }
   }
 }

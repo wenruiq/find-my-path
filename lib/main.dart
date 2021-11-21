@@ -140,10 +140,6 @@ class _MyAppState extends State<MyApp> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
                       if (data['isVolunteer'] == true) {
-                        //* Initialize FCM Instance
-                        FirebaseMessaging messaging = FirebaseMessaging.instance;
-                        //TODO: Check isNotiEnabled before subscribing
-                        messaging.subscribeToTopic("assignments");
                         return const HomeScreenVO();
                       }
                       return const HomeScreenVI();
