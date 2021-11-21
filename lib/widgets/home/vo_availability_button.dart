@@ -19,6 +19,8 @@ class _AvailabilityButtonState extends State<AvailabilityButton> {
 
   //* Toggling Notifications (Optimistic Update)
   void onNotificationButtonPress(bool isAvailable) async {
+    String uid = Provider.of<UserModel>(context, listen: false).uid;
+
     if (isAvailable) {
       //* Enable notification
       //* Create a callback to pass to showAlertDialog
@@ -27,41 +29,37 @@ class _AvailabilityButtonState extends State<AvailabilityButton> {
         Provider.of<UserModel>(context, listen: false).setIsAvailable = isAvailable;
         //* Remove dialog
         Navigator.pop(context);
+        //* Update Firestore & show Snackbar
+        updateFirestore(context, uid, isAvailable);
       }
 
       const title = "Enable Notifications";
       const content = "Are you sure you want to enable all notifications?";
+      //* This is the main function executed
       showAlertDialog(context, title, content, enableNotifications);
     } else if (!isAvailable) {
       //* Disable notification
+      //* Create a callback to pass to showAlertDialog
       void disableNotifications() {
         //* Optimistic update
         Provider.of<UserModel>(context, listen: false).setIsAvailable = isAvailable;
         Navigator.pop(context);
+        //* Update Firestore & show Snackbar
+        updateFirestore(context, uid, isAvailable);
       }
 
       const title = "Disable Notifications";
       const content = "Are you sure you want to disable all notifications?";
+      //* This is the main function executed
       showAlertDialog(context, title, content, disableNotifications);
-    }
-
-    //* Update Firestore
-    String uid = Provider.of<UserModel>(context, listen: false).uid;
-    try {
-      DocumentReference docRef = FirebaseFirestore.instance.collection('users').doc(uid);
-      await docRef.update({'isAvailable': isAvailable});
-    } on FirebaseException catch (err) {
-      if (err.message == null) {
-        throw Exception("Error updating availability of user at onNotificationButtonPress.");
-      } else {
-        throw Exception(err.message);
-      }
     }
   }
 
+  //* Shows Alert Dialog to confirm actions
   void showAlertDialog(BuildContext context, String title, String content, Function callback) {
     //* Set up buttons
     Widget cancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel"));
+    //* Executes callback if confirm
     Widget confirmButton = TextButton(onPressed: () => callback(), child: const Text("Confirm"));
 
     //* Set up alert
@@ -78,6 +76,27 @@ class _AvailabilityButtonState extends State<AvailabilityButton> {
         builder: (BuildContext context) {
           return alert;
         });
+  }
+
+  //* Written as a function to not repeat code in onNotificationButtonPress
+  void updateFirestore(BuildContext context, String uid, bool isAvailable) async {
+    //* Update Firestore
+    try {
+      DocumentReference docRef = FirebaseFirestore.instance.collection('users').doc(uid);
+      await docRef.update({'isAvailable': isAvailable});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isAvailable ? "Notifications Enabled" : "Notifications Disabled"),
+          backgroundColor: isAvailable ? Colors.green : Theme.of(context).errorColor,
+        ),
+      );
+    } on FirebaseException catch (err) {
+      if (err.message == null) {
+        throw Exception("Error updating availability of user at onNotificationButtonPress.");
+      } else {
+        throw Exception(err.message);
+      }
+    }
   }
 
   @override
