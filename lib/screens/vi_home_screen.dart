@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:provider/provider.dart';
+import 'package:location/location.dart';
 
 import '../widgets/home/vi_button.dart';
 import '../providers/user_model.dart';
@@ -20,6 +21,36 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
     super.initState();
     //* "Saves" user data to the provider so we can get it anywhere we want
     _updateUserProvider();
+    //* Request permission & get current location
+    initLocationService();
+  }
+
+  //* Flutter location package, request permission & get location
+  void initLocationService() async {
+    Location location = new Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    print(_locationData);
   }
 
   void _updateUserProvider() async {
