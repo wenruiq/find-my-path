@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_messaging/firebase_messaging.dart";
 import 'package:provider/provider.dart';
 
 import '../widgets/home/vo_rating.dart';
@@ -23,11 +24,6 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     super.initState();
     //* "Saves" user data to the provider so we can get it anywhere we want
     _updateUserProvider();
-
-    // //* FCM Handling
-    // //TODO: Check isNotiEnabled
-    // FirebaseMessaging messaging = FirebaseMessaging.instance;
-    // messaging.subscribeToTopic("assignments");
   }
 
   void _updateUserProvider() async {
@@ -51,13 +47,22 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
 
   @override
   Widget build(BuildContext context) {
-    //* Get user data from provider
-    var userData = Provider.of<UserModel>(context).data;
+    //* Listen to displayName from notifier
+    //* There are other getters, check out /providers/user_model.dart
+    var displayName = Provider.of<UserModel>(context).displayName;
 
+    //* Listen to isAvailable to handle notification subscription
+    var isAvailable = Provider.of<UserModel>(context).isAvailable;
+    FirebaseMessaging firebaseMessagingInstance = FirebaseMessaging.instance;
+    if (isAvailable) {
+      firebaseMessagingInstance.subscribeToTopic('assignments');
+    } else {
+      firebaseMessagingInstance.unsubscribeFromTopic('assignments');
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Welcome back, ${userData['displayName']}!",
+          "Welcome back, $displayName!",
           style: const TextStyle(fontSize: 18),
         ),
         actions: [
@@ -103,7 +108,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Text(
-                    "${userData['displayName']}",
+                    displayName,
                     style: const TextStyle(fontSize: 28),
                   ),
                 ),
@@ -117,8 +122,9 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
             ),
             //* Assignments ListTiles
             const AssignmentControl(),
+
             //* Availability Toggle
-            AvailabilityButton(),
+            const AvailabilityButton(),
 
             //* App Version Display
             SizedBox(
