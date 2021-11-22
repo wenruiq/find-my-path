@@ -1,4 +1,6 @@
+import 'dart:io';
 import "package:flutter/material.dart";
+import "package:image_picker/image_picker.dart";
 
 import "../../widgets/query/current_location.dart";
 
@@ -24,6 +26,59 @@ class QueryForm extends StatefulWidget {
 }
 
 class _QueryFormState extends State<QueryForm> {
+  XFile? imageFile;
+
+  void _openCamera(BuildContext context) async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+    );
+    setState(() {
+      imageFile = pickedFile!;
+    });
+  }
+
+  Widget _previewImage() {
+    if (imageFile != null) {
+      return Semantics(
+        label: 'Photo currently attached',
+        child: Column(children: <Widget>[
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.45,
+            child: Image.file(File(imageFile!.path)),
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () => _openCamera(context),
+              child: const Text(
+                "Retake Photo",
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+          ),
+        ]),
+      );
+    }
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.35,
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: OutlinedButton.icon(
+        icon: Icon(
+          Icons.upload_file,
+          size: 60,
+          color: Theme.of(context).primaryColor,
+        ),
+        onPressed: () => _openCamera(context),
+        label: const Text(
+          "Take A Photo",
+          style: TextStyle(fontSize: 30),
+        ),
+      ),
+    );
+  }
+
   //* Create global key to uniquely identify the Form widget and allows validation
   //* Standard practice for Flutter forms
   final _formKey = GlobalKey<FormState>();
@@ -31,7 +86,6 @@ class _QueryFormState extends State<QueryForm> {
   late FocusNode myFocusNode;
 
   //* Initialize form input vairables
-  String _currentLocationText = "Singapore Management University";
   String _endLocationText = "";
 
   //* Input Controllers
@@ -99,44 +153,26 @@ class _QueryFormState extends State<QueryForm> {
                     ),
                   ),
                   Center(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.35,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: OutlinedButton.icon(
-                        icon: Icon(
-                          Icons.upload_file,
-                          size: 60,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        onPressed: () => Navigator.pushNamed(context, "/homeVO"),
-                        label: const Text(
-                          "Take A Photo",
-                          style: TextStyle(fontSize: 30),
-                        ),
-                      ),
-                    ),
+                    child: _previewImage(),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 30),
           //* Submit button
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30.0),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () {
-                  FormState().save();
-                  _trySubmit();
-                  Navigator.pushNamed(context, "/queryloading");
-                },
-                child: const Text(
-                  "Send Request",
-                  style: TextStyle(fontSize: 24),
-                ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                FormState().save();
+                _trySubmit();
+                Navigator.pushNamed(context, "/queryloading");
+              },
+              child: const Text(
+                "Send Request",
+                style: TextStyle(fontSize: 24),
               ),
             ),
           ),

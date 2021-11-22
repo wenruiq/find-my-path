@@ -26,16 +26,23 @@ class _CurrentLocationState extends State<CurrentLocation> {
     });
   }
 
- //* Returns a Future which allow us to use FutureBuilder to handle loading state
+  //* Returns a Future which allow us to use FutureBuilder to handle loading state
   Future<String> getCurrentLocationText() async {
+    //* Get current Lat/Lng from provider
     double lat = Provider.of<LocationModel>(context).lat;
     double long = Provider.of<LocationModel>(context).long;
+
+    //* Use the google_place package to perform API queries
     String apiKey = dotenv.env['GOOGLE_API_KEY'] as String;
     googlePlace = GooglePlace(apiKey);
     //* Radius set to 50m for precision (might need changes)
     var result = await googlePlace.search.getNearBySearch(Location(lat: lat, lng: long), 50);
-    //* First result always "Singapore", so return second result
-    return result!.results![1].name as String;
+
+    //* First result always "Singapore", so get second result
+    var currentLocationText = result!.results![1].name as String;
+    //* Update provider with location text
+    Provider.of<LocationModel>(context, listen: false).setCurrentLocationText = currentLocationText;
+    return currentLocationText;
   }
 
   @override

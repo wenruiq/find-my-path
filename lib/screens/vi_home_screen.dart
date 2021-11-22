@@ -57,7 +57,7 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
 
     //* Update current location to provider
     //TODO: This is only for testing, we need this to be always up to date
-    Provider.of<LocationModel>(context, listen: false).setCurrentLocation = {
+    Provider.of<LocationModel>(context, listen: false).setCurrentLocationLT = {
       'lat': _locationData.latitude as double,
       'long': _locationData.longitude as double
     };
