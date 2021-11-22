@@ -6,6 +6,8 @@ class LocationModel extends ChangeNotifier {
   final Map<String, double> _currentLocation = {'lat': 0, 'long': 0};
 
   get curLo => _currentLocation;
+  get lat => _currentLocation['lat'];
+  get long => _currentLocation['long'];
 
   set setCurrentLocation(Map<String, double> latLong) {
     _currentLocation['lat'] = latLong['lat'] as double;

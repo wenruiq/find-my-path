@@ -26,6 +26,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     _updateUserProvider();
   }
 
+  //* Need to fire this once to save user data to provider
   void _updateUserProvider() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference users = FirebaseFirestore.instance.collection('users');

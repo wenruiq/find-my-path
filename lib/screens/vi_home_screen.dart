@@ -58,11 +58,12 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
     //* Update current location to provider
     //TODO: This is only for testing, we need this to be always up to date
     Provider.of<LocationModel>(context, listen: false).setCurrentLocation = {
-      'lat': _locationData.longitude as double,
-      'long': _locationData.latitude as double
+      'lat': _locationData.latitude as double,
+      'long': _locationData.longitude as double
     };
   }
 
+  //* Need to fire this once to save user data to provider
   void _updateUserProvider() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference users = FirebaseFirestore.instance.collection('users');
@@ -77,15 +78,13 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Remove if not needed
-    //* Get user data from provider
-    var userData = Provider.of<UserModel>(context).data;
-    print(userData);
+    // //* Get user data from provider
+    // var userData = Provider.of<UserModel>(context).data;
+    // print(userData);
 
-    //TODO: Remove if not needed
-    //* Get current location {lat: double, long: double}
-    var curlo = Provider.of<LocationModel>(context).curLo;
-    print(curlo);
+    // //* Get current location {lat: double, long: double}
+    // var curlo = Provider.of<LocationModel>(context).curLo;
+    // print(curlo);
 
     return Scaffold(
       backgroundColor: Colors.white,

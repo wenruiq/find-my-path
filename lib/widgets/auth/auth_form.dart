@@ -34,7 +34,7 @@ class _AuthFormState extends State<AuthForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  //* Performs validation
+  //* Need this to perform validations before submit
   void _trySubmit() {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
@@ -62,7 +62,7 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   void dispose() {
-    // Clean up the focus node when the Form is disposed.
+    //* Clean up the focus node when the Form is disposed.
     myFocusNode.dispose();
 
     super.dispose();
