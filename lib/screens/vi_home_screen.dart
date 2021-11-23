@@ -125,32 +125,34 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
               fontSize: 25,
             )),
       ),
-      body: LayoutBuilder(builder: (BuildContext context, BoxConstraints viewportConstraint) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: viewportConstraint.maxHeight,
+      body: SafeArea(
+        child: LayoutBuilder(builder: (BuildContext context, BoxConstraints viewportConstraint) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: viewportConstraint.maxHeight,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  ButtonVI(
+                    icon: Icons.forum_outlined,
+                    tooltip: 'Search For A Volunteer',
+                    label: "Ask For Help",
+                    onButtonPress: () => Navigator.pushNamed(context, "/query"),
+                  ),
+                  ButtonVI(
+                    icon: Icons.logout,
+                    tooltip: 'Logout',
+                    label: "Logout",
+                    onButtonPress: _logoutConfirmation,
+                  ),
+                ],
+              ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                ButtonVI(
-                  icon: Icons.forum_outlined,
-                  tooltip: 'Search For A Volunteer',
-                  label: "Ask For Help",
-                  onButtonPress: () => Navigator.pushNamed(context, "/query"),
-                ),
-                ButtonVI(
-                  icon: Icons.logout,
-                  tooltip: 'Logout',
-                  label: "Logout",
-                  onButtonPress: _logoutConfirmation,
-                ),
-              ],
-            ),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 }

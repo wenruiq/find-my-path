@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../widgets/assignments/assignment_icon.dart';
+
+//TODO: Update this to show badges - refer to tele saved msgs
+//! currently used for testing widgets only
 
 class RatingScreen extends StatelessWidget {
   static const routeName = '/rating';

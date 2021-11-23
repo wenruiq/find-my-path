@@ -105,65 +105,67 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                   ]),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            //* This is the profile info column
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                const SizedBox(
-                  height: 20,
-                ),
-                //* imageURL
-                ClipOval(
-                  child: Image.network(
-                    'https://i.redd.it/z3xftphdln041.png',
-                    height: 190,
-                    width: 190,
-                    fit: BoxFit.cover,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              //* This is the profile info column
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  const SizedBox(
+                    height: 20,
                   ),
-                ),
-                //* displayName
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    displayName,
-                    style: const TextStyle(fontSize: 28),
+                  //* imageURL
+                  ClipOval(
+                    child: Image.network(
+                      'https://i.redd.it/z3xftphdln041.png',
+                      height: 190,
+                      width: 190,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 5),
-                //* Star Rating
-                const Rating(
-                  rating: 5,
-                  reviewCount: 7,
-                ),
-              ],
-            ),
-            //* Assignments ListTiles
-            const AssignmentControl(),
-
-            //* Availability Toggle
-            const AvailabilityButton(),
-
-            //* App Version Display
-            SizedBox(
-              child: Column(
-                children: const [
-                  Text(
-                    "Find My Path",
-                    style: TextStyle(fontSize: 12),
+                  //* displayName
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      displayName,
+                      style: const TextStyle(fontSize: 28),
+                    ),
                   ),
-                  Text(
-                    "v1.0.0",
-                    style: TextStyle(fontSize: 12),
+                  const SizedBox(height: 5),
+                  //* Star Rating
+                  const Rating(
+                    rating: 5,
+                    reviewCount: 7,
                   ),
                 ],
               ),
-            ),
-          ],
+              //* Assignments ListTiles
+              const AssignmentControl(),
+      
+              //* Availability Toggle
+              const AvailabilityButton(),
+      
+              //* App Version Display
+              SizedBox(
+                child: Column(
+                  children: const [
+                    Text(
+                      "Find My Path",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      "v1.0.0",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
