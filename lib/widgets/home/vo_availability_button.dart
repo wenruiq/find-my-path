@@ -92,10 +92,12 @@ class _AvailabilityButtonState extends State<AvailabilityButton> {
       );
     } on FirebaseException catch (err) {
       if (err.message == null) {
-        throw Exception("Error updating availability of user at onNotificationButtonPress.");
+        throw Exception("Firebase Error updating availability of user at onNotificationButtonPress.");
       } else {
         throw Exception(err.message);
       }
+    } catch (err) {
+      throw Exception("Error updating availability of user at onNotificationButtonPress.");
     }
   }
 

@@ -1,6 +1,9 @@
+import "dart:io";
 import "package:flutter/material.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:image_picker/image_picker.dart";
+import "package:firebase_storage/firebase_storage.dart";
 
 import "../widgets/util/dismiss_keyboard.dart";
 import "../widgets/query/query_form.dart";
@@ -22,20 +25,52 @@ class _QueryScreenState extends State<QueryScreen> {
   }
 
   //* Callback to be passed to query_form.dart
-  void _submitQueryForm(
-      {required String voID,
-      required String viID,
-      required String voDisplayName,
-      required String viDisplayName,
-      required DateTime date,
-      required String imageURL,
-      required Map<String, double> currenLocationLT,
-      required Map<String, double> endLocationLT,
-      required String currentLocationText,
-      required String endLocationText,
-      required String status}) async {
-    //TODO: Submit form
-    return;
+  void _submitQueryForm({
+    required String viID,
+    required String viDisplayName,
+    required DateTime date,
+    required Map<String, double> currentLocationLT,
+    required Map<String, double> endLocationLT,
+    required String currentLocationText,
+    required String endLocationText,
+    required String status,
+    required BuildContext context,
+    XFile? imageFile,
+  }) async {
+    try {
+      Navigator.pushNamed(context, '/queryloading');
+      //* Create Firestore entry
+      DocumentReference docRef = FirebaseFirestore.instance.collection("assignments").doc();
+      await docRef.set({
+        'VI_ID': viID,
+        'VI_displayName': viDisplayName,
+        'date': date,
+        'currentLocationLT': currentLocationLT,
+        'endLocationLT': endLocationLT,
+        'currentLocationText': currentLocationText,
+        'endLocationText': endLocationText,
+        'status': status
+      });
+
+      if (imageFile != null) {
+        //* Upload to FirebaseStorage
+        File file = File(imageFile.path);
+        FirebaseStorage storageInstance = FirebaseStorage.instance;
+        Reference ref = storageInstance.ref().child('query_photos').child(date.toIso8601String() + '.png');
+        await ref.putFile(file);
+        final url = await ref.getDownloadURL();
+        //* Add imageURL to assignment document
+        await docRef.update({'imageURL': url});
+      }
+    } on FirebaseException catch (err) {
+      if (err.message == null) {
+        throw Exception("Firebase Error submitting query form.");
+      } else {
+        throw Exception(err.message);
+      }
+    } catch (err) {
+      throw Exception("Error submitting query form.");
+    }
   }
 
   @override
@@ -46,7 +81,10 @@ class _QueryScreenState extends State<QueryScreen> {
             centerTitle: true,
             title: const Text("Enter Details"),
           ),
-          body: SafeArea(child: QueryForm(submitFn: _submitQueryForm, isLoading: _isLoading))),
+          body: SafeArea(
+              child: QueryForm(
+            submitFn: _submitQueryForm,
+          ))),
     );
   }
 }

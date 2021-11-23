@@ -30,37 +30,20 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
     () => 'Data Loaded',
   );
 
-  void initPage() async {
-    await _calculation;
-    setState(() {
-      _loading = false;
-    });
-    Navigator.pushNamed(context, '/chat');
-  }
+  // void initPage() async {
+  //   await _calculation;
+  //   setState(() {
+  //     _loading = false;
+  //   });
+  //   Navigator.pushNamed(context, '/chat');
+  // }
 
   @override
   Widget build(BuildContext context) {
-    initPage();
+    // initPage();
     return Scaffold(
       appBar: AppBar(),
       body: const Loading(),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return FutureBuilder(
-  //       future: http.get(
-  //         Uri.parse('http://google.com.sg'),
-  //       ),
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.done) {
-  //           if (snapshot.hasError) {
-  //             //return something to handle error
-  //           }
-  //           return Text('yay');
-  //         } else {
-  //           return Text('loading..');
-  //         }
-  //       });
 }

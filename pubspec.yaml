@@ -50,6 +50,7 @@ dependencies:
     flutter_google_places: ^0.3.0
     google_place: ^0.4.3
     flutter_dotenv: ^5.0.2
+    firebase_storage: ^10.1.0
 
 dev_dependencies:
     flutter_test:

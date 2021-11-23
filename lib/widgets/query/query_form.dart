@@ -1,56 +1,69 @@
-import 'dart:io';
+import "dart:io";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
+import "package:provider/provider.dart";
 
 import "../../widgets/query/current_location.dart";
+import "package:find_my_path/providers/location_model.dart";
+import "package:find_my_path/providers/user_model.dart";
 
 class QueryForm extends StatefulWidget {
-  const QueryForm({Key? key, required this.isLoading, required this.submitFn}) : super(key: key);
+  const QueryForm({Key? key, required this.submitFn}) : super(key: key);
 
-  final bool isLoading;
   final void Function(
-      {required String voID,
-      required String viID,
-      required String voDisplayName,
+      {required String viID,
       required String viDisplayName,
       required DateTime date,
-      required String imageURL,
-      required Map<String, double> currenLocationLT,
+      required Map<String, double> currentLocationLT,
       required Map<String, double> endLocationLT,
       required String currentLocationText,
       required String endLocationText,
-      required String status}) submitFn;
+      required String status,
+      required BuildContext context,
+      XFile? imageFile}) submitFn;
 
   @override
   _QueryFormState createState() => _QueryFormState();
 }
 
 class _QueryFormState extends State<QueryForm> {
-  XFile? imageFile;
+  XFile? _imageFile;
 
   void _openCamera(BuildContext context) async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.camera,
     );
-    setState(() {
-      imageFile = pickedFile!;
-    });
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = pickedFile;
+      });
+    }
   }
 
   Widget _previewImage() {
-    if (imageFile != null) {
+    if (_imageFile != null) {
       return Semantics(
         label: 'Photo currently attached',
         child: Column(children: <Widget>[
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.45,
-            child: Image.file(File(imageFile!.path)),
+          //* Photo Preview Dimensions
+          Container(
+            height: MediaQuery.of(context).size.height * 0.35,
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Image.file(File(_imageFile!.path)),
+            decoration: const BoxDecoration(
+              color: Colors.black,
+              // border: Border.all(color: Theme.of(context).primaryColor, width: 2.0),
+            ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 25),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            height: 50,
-            child: ElevatedButton(
+            height: MediaQuery.of(context).size.width * 0.13,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                  primary: Theme.of(context).primaryColor,
+                  onSurface: Theme.of(context).primaryColor,
+                  side: BorderSide(color: Theme.of(context).primaryColor)),
               onPressed: () => _openCamera(context),
               child: const Text(
                 "Retake Photo",
@@ -62,7 +75,7 @@ class _QueryFormState extends State<QueryForm> {
       );
     }
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.35,
+      height: MediaQuery.of(context).size.height * 0.45,
       width: MediaQuery.of(context).size.width * 0.9,
       child: OutlinedButton.icon(
         icon: Icon(
@@ -86,13 +99,48 @@ class _QueryFormState extends State<QueryForm> {
   late FocusNode myFocusNode;
 
   //* Initialize form input vairables
-  String _endLocationText = "";
+  String _viID = '';
+  String _viDisplayName = '';
+  late DateTime _date;
+  Map<String, double> _currentLocationLT = {'lat': 0, 'long': 0};
+  late Map<String, double> _endLocationLT;
+  String _currentLocationText = '';
+  String _endLocationText = '';
+  String _status = '';
 
   //* Input Controllers
   final TextEditingController _endLocationController = TextEditingController();
 
   //* Need this to perform validations before submit
   void _trySubmit() {
+    final isValid = _formKey.currentState!.validate();
+    FocusScope.of(context).unfocus();
+
+    if (isValid) {
+      print("valid lol");
+      //* save() fires the onSave() method attached to each TextFormField
+      _formKey.currentState!.save();
+      var userData = Provider.of<UserModel>(context, listen: false).data;
+      _viID = userData['uid'];
+      _viDisplayName = userData['displayName'];
+      _date = DateTime.now();
+      _currentLocationLT = Provider.of<LocationModel>(context, listen: false).currenLocationLT;
+      //TODO: Handle endLocationLT;
+      _endLocationLT = {'lat': 0, 'long': 0};
+      _currentLocationText = Provider.of<LocationModel>(context, listen: false).currentLocationText;
+      _status = 'Pending';
+      widget.submitFn(
+          viID: _viID,
+          viDisplayName: _viDisplayName,
+          date: _date,
+          currentLocationLT: _currentLocationLT,
+          endLocationLT: _endLocationLT,
+          currentLocationText: _currentLocationText,
+          endLocationText: _endLocationText,
+          status: _status,
+          context: context,
+          imageFile: _imageFile);
+    }
     return;
   }
 
@@ -140,6 +188,11 @@ class _QueryFormState extends State<QueryForm> {
                       decoration: const InputDecoration(hintText: "Enter your destination"),
                       onSaved: (value) {
                         _endLocationText = value.toString();
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter a destination.";
+                        }
                       }),
                   const SizedBox(
                     height: 20,
@@ -160,15 +213,15 @@ class _QueryFormState extends State<QueryForm> {
             ),
           ),
           //* Submit button
-          const SizedBox(height: 20),
+          const SizedBox(height: 25),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            height: 50,
+            height: MediaQuery.of(context).size.width * 0.13,
             child: ElevatedButton(
               onPressed: () {
                 FormState().save();
                 _trySubmit();
-                Navigator.pushNamed(context, "/queryloading");
+                // Navigator.pushNamed(context, "/queryloading");
               },
               child: const Text(
                 "Send Request",
