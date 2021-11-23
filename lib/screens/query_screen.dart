@@ -41,6 +41,7 @@ class _QueryScreenState extends State<QueryScreen> {
     try {
       //* Create Firestore entry
       DocumentReference docRef = FirebaseFirestore.instance.collection("assignments").doc();
+      print("Creating assignment with ID: " + docRef.id);
       //* Navigate to query loading
       Navigator.pushNamed(context, '/queryloading', arguments: QueryLoadingScreenArgs(docRef.id));
       await docRef.set({
