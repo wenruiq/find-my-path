@@ -41,24 +41,27 @@ class _QueryFormState extends State<QueryForm> {
     }
   }
 
+  //* Preview Image & Enable Hero Animation
   Widget _previewImage() {
     if (_imageFile != null) {
       String filePath = _imageFile!.path;
       FileImage fileImage = FileImage(File(filePath));
       String heroTag = 'queryImage';
+      //* Hero Image
       return Semantics(
         label: 'Photo currently attached',
         child: Column(children: <Widget>[
-          //* Photo Preview Dimensions
           GestureDetector(
             child: Hero(
               tag: heroTag,
               child: Container(
+                //* Photo Preview Dimensions
                 height: MediaQuery.of(context).size.height * 0.35,
                 width: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(
                   color: Colors.black,
-                  image: DecorationImage(image: fileImage, fit: BoxFit.fitHeight),
+                  image: DecorationImage(image: fileImage, alignment: Alignment.topCenter, fit: BoxFit.fitWidth),
+                  border: Border.all(color: Theme.of(context).primaryColor, width: 2.0),
                 ),
               ),
             ),
@@ -241,28 +244,6 @@ class _QueryFormState extends State<QueryForm> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class DetailScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        child: Center(
-          child: Hero(
-            tag: 'imageHero',
-            //http://www.naturerights.com/blog/wp-content/uploads/2017/12/Taranaki-NR-post-1170x550.png
-            child: Image.network(
-              'http://www.naturerights.com/blog/wp-content/uploads/2017/12/Taranaki-NR-post-1170x550.png',
-            ),
-          ),
-        ),
-        onTap: () {
-          Navigator.pop(context);
-        },
       ),
     );
   }
