@@ -117,7 +117,6 @@ class _QueryFormState extends State<QueryForm> {
     FocusScope.of(context).unfocus();
 
     if (isValid) {
-      print("valid lol");
       //* save() fires the onSave() method attached to each TextFormField
       _formKey.currentState!.save();
       var userData = Provider.of<UserModel>(context, listen: false).data;
@@ -185,6 +184,8 @@ class _QueryFormState extends State<QueryForm> {
                   TextFormField(
                       key: const ValueKey('endLocation'),
                       controller: _endLocationController,
+                      autocorrect: true,
+                      textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(hintText: "Enter your destination"),
                       onSaved: (value) {
                         _endLocationText = value.toString();

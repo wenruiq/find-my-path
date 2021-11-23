@@ -7,6 +7,7 @@ import "package:firebase_storage/firebase_storage.dart";
 
 import "../widgets/util/dismiss_keyboard.dart";
 import "../widgets/query/query_form.dart";
+import "../args/query_loading_screen_args.dart";
 
 //* This screen is the form that VI needs to fill up to get a match
 class QueryScreen extends StatefulWidget {
@@ -38,9 +39,10 @@ class _QueryScreenState extends State<QueryScreen> {
     XFile? imageFile,
   }) async {
     try {
-      Navigator.pushNamed(context, '/queryloading');
       //* Create Firestore entry
       DocumentReference docRef = FirebaseFirestore.instance.collection("assignments").doc();
+      //* Navigate to query loading
+      Navigator.pushNamed(context, '/queryloading', arguments: QueryLoadingScreenArgs(docRef.id));
       await docRef.set({
         'VI_ID': viID,
         'VI_displayName': viDisplayName,
