@@ -35,16 +35,37 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     Provider.of<UserModel>(context, listen: false).setUserData = {'uid': uid, ...userData};
   }
 
-  void _logout() {
-    FirebaseAuth.instance.signOut();
+  void _logoutConfirmation() {
+    void logout() {
+      Navigator.pop(context);
+      FirebaseAuth.instance.signOut();
+    }
+
+    showAlertDialog(context, "Logout", "Are you sure you want to logout?", logout);
   }
 
-  // static Route<Object?> _dialogBuilder(BuildContext ctx, Object? arguments) {
-  //   return DialogRoute<void>(
-  //     context: ctx,
-  //     builder: (BuildContext context) => const AssignmentDialog(),
-  //   );
-  // }
+  //* Shows Alert Dialog to confirm actions
+  void showAlertDialog(BuildContext context, String title, String content, Function callback) {
+    //* Set up buttons
+    Widget cancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel"));
+    //* Executes callback if confirm
+    Widget confirmButton = TextButton(onPressed: () => callback(), child: const Text("Confirm"));
+
+    //* Set up alert
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(content),
+      actions: [cancelButton, confirmButton],
+      backgroundColor: Colors.white,
+    );
+
+    //* Show dialog
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +173,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
   void onSelected(BuildContext context, String item) {
     switch (item) {
       case 'logout':
-        _logout();
+        _logoutConfirmation();
         break;
     }
   }
