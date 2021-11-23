@@ -1,70 +1,76 @@
-import 'dart:convert';
-import 'dart:async';
-
-import 'package:find_my_path/widgets/query/current_location.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 
-class Assignment with ChangeNotifier {
-  final String aid;
-  final String vi_id;
-  final String vi_displayName;
-  String vo_id;
-  String vo_displayName;
-  final DateTime date;
-  final String imageURL;
-  final Object currentLocation;
-  final Object endLocation;
-  String status;
-  String timeTaken;
+//* Pass data of ongoing assignment
+class AssignmentModel with ChangeNotifier {
+  final Map<String, dynamic> _assignment = {
+    'aid': '',
+    'viID': '',
+    'viDisplayName': '',
+    'voID': '',
+    'voDisplayName': '',
+    'currentLocationLT': {'lat': 0, 'long': 0},
+    'currentLocationText': '',
+    'endLocationLT': {'lat': 0, 'long': 0},
+    'endLocationText': '',
+    'date': DateTime.now(),
+    'status': '',
+  };
 
-  Assignment({
-    required this.aid,
-    required this.vi_id,
-    required this.vi_displayName,
-    required this.vo_id,
-    required this.vo_displayName,
-    required this.date,
-    required this.imageURL,
-    required this.currentLocation,
-    required this.endLocation,
-    required this.status,
-    required this.timeTaken,
-  });
+  //* Get all
+  Map<String, dynamic> get data => _assignment;
 
-  String get assignmentID {
-    return aid;
-  }
+  //* Specific getters
+  String get aid => _assignment['aid'];
+  String get viID => _assignment['viID'];
+  String get viDisplayName => _assignment['viDisplayName'];
+  String get voID => _assignment['voID'];
+  String get voDisplayName => _assignment['voDisplayName'];
+  Map<String, double> get currentLocationLT => _assignment['currentLocationLT'];
+  String get currentLocationText => _assignment['currentLocationText'];
+  Map<String, double> get endLocationLT => _assignment['endLocationLT'];
+  String get endLocationText => _assignment['endLocationText'];
+  DateTime get date => _assignment['date'];
+  String get status => _assignment['status'];
 
-  void set assignmentStatus(String status) {
-    this.status = status;
-    //* Add in firebase link to update assignment status
+  //* Set all data
+  set setAssignmentData(Map<String, dynamic> assignmentData) {
+    if (assignmentData.containsKey('aid')) {
+      _assignment['aid'] = assignmentData['aid'];
+    }
+    if (assignmentData.containsKey('viID')) {
+      _assignment['viID'] = assignmentData['viID'];
+    }
+    if (assignmentData.containsKey('viDisplayName')) {
+      _assignment['viDisplayName'] = assignmentData['viDisplayName'];
+    }
+    if (assignmentData.containsKey('voID')) {
+      _assignment['voID'] = assignmentData['voID'];
+    }
+    if (assignmentData.containsKey('voDisplayName')) {
+      _assignment['voDisplayName'] = assignmentData['voDisplayName'];
+    }
+    if (assignmentData.containsKey('currentLocationLT')) {
+      _assignment['currentLocationLT'] = assignmentData['currentLocationLT'];
+    }
+    if (assignmentData.containsKey('currentLocationText')) {
+      _assignment['currentLocationText'] = assignmentData['currentLocationText'];
+    }
+    if (assignmentData.containsKey('endLocationLT')) {
+      _assignment['endLocationLT'] = assignmentData['endLocationLT'];
+    }
+    if (assignmentData.containsKey('endLocationText')) {
+      _assignment['endLocationText'] = assignmentData['endLocationText'];
+    }
+    if (assignmentData.containsKey('date')) {
+      _assignment['date'] = assignmentData['date'];
+    }
+    if (assignmentData.containsKey('status')) {
+      _assignment['status'] = assignmentData['status'];
+    }
+
     notifyListeners();
   }
 
-  void _setAssignmentStatusAfterAcceptance(String status) {
-    this.status = status;
-    notifyListeners();
-  }
+  //* Specific setters
 
-  void set assignmentVolunteer(Map<String, String> volunteerDetails) {
-    vo_id = volunteerDetails["voID"].toString();
-    vo_displayName = volunteerDetails["voName"].toString();
-    _setAssignmentStatusAfterAcceptance("Ongoing");
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'VI_ID': vi_id,
-      "VI_displayName": vi_displayName,
-      "VO_ID": vo_id,
-      "VO_displayName": vo_displayName,
-      "date": date,
-      "imageURL": imageURL,
-      "currentLocation": currentLocation,
-      "endLocation": endLocation,
-      "status": status,
-      "timeTaken": timeTaken,
-    };
-  }
 }
