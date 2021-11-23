@@ -5,6 +5,9 @@ class AssignmentIcon extends StatelessWidget {
 
   const AssignmentIcon({required this.name, Key? key}) : super(key: key);
 
+  String getInitials(String name) =>
+      name.isNotEmpty ? name.trim().split(RegExp(' +')).map((s) => s[0]).take(2).join().toUpperCase() : "";
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -18,7 +21,7 @@ class AssignmentIcon extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(name,
+          child: Text(getInitials(name),
               maxLines: 2,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
