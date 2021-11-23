@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/assignments/assignment_icon.dart';
+
 class RatingScreen extends StatelessWidget {
   static const routeName = '/rating';
 
@@ -12,7 +14,7 @@ class RatingScreen extends StatelessWidget {
         title: Text("My Ratings"),
       ),
       body: const Center(
-        child: Text("lol"),
+        child: AssignmentIcon(name: "Alex"),
       ),
     );
   }
