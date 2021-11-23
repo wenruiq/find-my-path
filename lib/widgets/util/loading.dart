@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-//* This is the transition loading screen for pages that require processing
-
-//TODO: Fix this interaction with transition to another page
-
 class Loading extends StatelessWidget {
-  const Loading({Key? key}) : super(key: key);
+  const Loading({Key? key, required this.description}) : super(key: key);
+
+  final String description;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +18,8 @@ class Loading extends StatelessWidget {
             const SizedBox(
               height: 80,
             ),
-            const Text("Finding A Volunteer ...",
-                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 25)),
+            Text(description,
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26, color: Theme.of(context).primaryColor)),
           ],
         ),
       ),

@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import "package:cloud_firestore/cloud_firestore.dart";
 
 import '../widgets/util/loading.dart';
-import '../screens/chat_screen.dart';
-
-//TODO: connect this properly between query page and chat page
-
-//* This screen receives all the form info from query_screen
-//* and perform the logic required to get a match and enter a chat room
-
-//* REF:
-//* api.flutter.dev/flutter/widgets/FutureBuilder-class.html
-//* pub.dev/packages/http
+import "../args/query_loading_screen_args.dart";
 
 class QueryLoadingScreen extends StatefulWidget {
   const QueryLoadingScreen({Key? key}) : super(key: key);
@@ -22,28 +13,51 @@ class QueryLoadingScreen extends StatefulWidget {
 }
 
 class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
-  bool _loading = true;
-
-  //* PLACEHOLDER CODE TO TEST LOADING / LOADED SCREENS
-  final Future<String> _calculation = Future<String>.delayed(
-    const Duration(seconds: 2),
-    () => 'Data Loaded',
-  );
-
-  // void initPage() async {
-  //   await _calculation;
-  //   setState(() {
-  //     _loading = false;
-  //   });
-  //   Navigator.pushNamed(context, '/chat');
-  // }
+  void cancelRequest(String aid) async {
+    Navigator.pop(context);
+    DocumentReference assignmentRef = FirebaseFirestore.instance.collection("assignments").doc(aid);
+    await assignmentRef.delete();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // initPage();
+    final args = ModalRoute.of(context)!.settings.arguments as QueryLoadingScreenArgs;
+    String assignmentID = args.assignmentID;
     return Scaffold(
-      appBar: AppBar(),
-      body: const Loading(),
+      appBar: AppBar(automaticallyImplyLeading: false, centerTitle: true, title: const Text("Finding...")),
+      body: StreamBuilder(
+          stream: FirebaseFirestore.instance.collection('assignments').doc(assignmentID).snapshots(),
+          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!.exists) {
+                String status = snapshot.data!['status'];
+                print("Assignment status: " + status);
+              }
+            }
+            //* Show loader no matter what
+            return Stack(children: <Widget>[
+              const Loading(description: "Finding A Volunteer..."),
+              Positioned.fill(
+                bottom: MediaQuery.of(context).size.height * 0.13,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      primary: Theme.of(context).primaryColor,
+                      onSurface: Theme.of(context).primaryColor,
+                      side: BorderSide(color: Theme.of(context).primaryColor),
+                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                    ),
+                    onPressed: () => cancelRequest(assignmentID),
+                    child: const Text(
+                      "Cancel Request",
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                ),
+              ),
+            ]);
+          }),
     );
   }
 }

@@ -72,8 +72,36 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
     Provider.of<UserModel>(context, listen: false).setUserData = {'uid': uid, ...userData};
   }
 
-  void _logout() {
-    FirebaseAuth.instance.signOut();
+  void _logoutConfirmation() {
+    void logout() {
+      Navigator.pop(context);
+      FirebaseAuth.instance.signOut();
+    }
+
+    showAlertDialog(context, "Logout", "Are you sure you want to logout?", logout);
+  }
+
+  //* Shows Alert Dialog to confirm actions
+  void showAlertDialog(BuildContext context, String title, String content, Function callback) {
+    //* Set up buttons
+    Widget cancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel"));
+    //* Executes callback if confirm
+    Widget confirmButton = TextButton(onPressed: () => callback(), child: const Text("Confirm"));
+
+    //* Set up alert
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(content),
+      actions: [cancelButton, confirmButton],
+      backgroundColor: Colors.white,
+    );
+
+    //* Show dialog
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        });
   }
 
   @override
@@ -116,7 +144,7 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
                   icon: Icons.logout,
                   tooltip: 'Logout',
                   label: "Logout",
-                  onButtonPress: _logout,
+                  onButtonPress: _logoutConfirmation,
                 ),
               ],
             ),
