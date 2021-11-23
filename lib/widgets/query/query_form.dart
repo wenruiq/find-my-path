@@ -49,9 +49,10 @@ class _QueryFormState extends State<QueryForm> {
           Container(
             height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.8,
-            child: Image.file(File(_imageFile!.path)),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: Colors.black,
+              image: DecorationImage(image: FileImage(File(_imageFile!.path)), fit: BoxFit.fitHeight),
+
               // border: Border.all(color: Theme.of(context).primaryColor, width: 2.0),
             ),
           ),
