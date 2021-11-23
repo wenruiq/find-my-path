@@ -5,6 +5,8 @@ import "package:firebase_auth/firebase_auth.dart";
 
 import '../widgets/assignments/assignments_list.dart';
 
+//* Screen shown when user clicks a Call-To-Action from AssignmentControl from HomeScreenVO
+//* Handles data streaming from the volunteer's assignments history or the overall assignments collection
 class AssignmentsScreen extends StatefulWidget {
   static const routeName = '/assignments';
 
@@ -17,9 +19,6 @@ class AssignmentsScreen extends StatefulWidget {
 }
 
 class _AssignmentsScreenState extends State<AssignmentsScreen> {
-  //* Create FirebaseAuth instance
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   @override
   void initState() {
     super.initState();
@@ -28,16 +27,20 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _feed;
-    List<Map<String, dynamic>> _assignmentsData = [];
+    late List<Map<String, dynamic>> _assignmentsData;
     final arguments = ModalRoute.of(context)?.settings.arguments as Map;
 
-    //* Sets NavBar title based on source of routing
+    //* Sets NavBar title based on source of routing from AssignmentControl buttons
     String title = arguments['title'];
     String type = arguments['type'];
 
+    //* Type can be assignment_stream or assignment_history
     if (type == "assignment_stream") {
+      //* Set _feed to stream of assignments that have status = "Pending"
       _feed = FirebaseFirestore.instance.collection('assignments').where("status", isEqualTo: "Pending").snapshots();
     } else {
+      //TODO: configure this to subscribe to the correct VO_ID
+      //* Set _feed to stream of assignments from volunteer's assignments collection
       _feed = FirebaseFirestore.instance
           .collection('assignments')
           .where("VO_ID", isEqualTo: "MyUID")
@@ -50,68 +53,50 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         title: Text(title),
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _feed,
-                builder: (_, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text("Error connecting to database, please try again later"),
-                    );
-                  }
+        child: StreamBuilder<QuerySnapshot>(
+          stream: _feed,
+          builder: (_, snapshot) {
+            //* Handles if stream snapshot errors out, displays meaningful message in center of screen
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text("Error connecting to database, please try again later."),
+              );
+            }
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+            //* Handles if stream snapshot is loading, displays spinner in center of screen
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    _assignmentsData = snapshot.data!.docs.map((DocumentSnapshot document) {
-                      dynamic data = document.data()!;
-                      final Map<String, dynamic> toReturn = data;
-                      toReturn["aid"] = document.id;
-                      return toReturn;
-                    }).toList();
-                  }
+            //* active connectionState when stream is established
+            if (snapshot.connectionState == ConnectionState.active) {
+              //* Converts streamed snapshot into list of Map<String, dynamic> containing assignment details
+              _assignmentsData = snapshot.data!.docs.map((DocumentSnapshot document) {
+                dynamic data = document.data()!;
+                final Map<String, dynamic> toReturn = data;
+                //* stores assignmentID into the newly generated list
+                toReturn["aid"] = document.id;
+                return toReturn;
+              }).toList();
+            }
 
-                  if (_assignmentsData.isEmpty) {
-                    return const Center(
-                      child: Text("No Assignments Found"),
-                    );
-                  }
+            //* Intercept if data is empty and render a text message instead of building assignmentsList
+            if (_assignmentsData.isEmpty) {
+              return const Center(
+                child: Text("No Assignments Found"),
+              );
+            }
 
-                  return AssignmentsList(
-                    data: _assignmentsData,
-                    type: type,
-                  );
-                },
-              ),
-            ),
-          ],
+            //* Pass data to assignmentsList to render if there's data, type is either assignment_history or assignment_stream
+            return AssignmentsList(
+              data: _assignmentsData,
+              type: type,
+            );
+          },
         ),
       ),
-
-      // RefreshIndicator(
-      //   triggerMode: RefreshIndicatorTriggerMode.anywhere,
-      //   onRefresh: () {
-      //     return Future.delayed(const Duration(seconds: 1), () {
-      //       setState(() {
-      //         _demoData.addAll(['wow', 'wew']);
-      //       });
-
-      //       ScaffoldMessenger.of(context).showSnackBar(
-      //         const SnackBar(
-      //           content: Text('Refreshed LUL'),
-      //         ),
-      //       );
-      //     });
-      //   },
-      //   child: AssignmentsList(data: _demoData),
-      // ),
     );
   }
 }

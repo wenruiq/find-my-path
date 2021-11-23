@@ -7,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../stream_indicator/pulsing_indicator.dart';
 import './assignment.dart';
 
+//* This widget renders the full scrollable list of assignments after clicking an option from AssignmentControl
+//* Loads PulsingIndicator at the top if option selected is Accept An Assignment
 class AssignmentsList extends StatelessWidget {
   final List<Map<String, dynamic>> data;
   final String type;
@@ -19,8 +21,8 @@ class AssignmentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //* Text styling for PulsingIndicator depending on length of data
     String dataLength = data.isEmpty ? "No Assignment" : '${data.length} Assignments';
-
     if (data.length == 1) {
       dataLength = "1 Assignment";
     }
