@@ -15,7 +15,7 @@ class AssignmentControl extends StatelessWidget {
             //* View All Available Requests
             InkWell(
               onTap: () => Navigator.pushNamed(context, "/assignments",
-                  arguments: {"title": "Available Assignments"}),
+                  arguments: {"type": "assignment_stream", "title": "Available Assignments"}),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -39,7 +39,7 @@ class AssignmentControl extends StatelessWidget {
             //* View Accepted Requests
             InkWell(
               onTap: () => Navigator.pushNamed(context, "/assignments",
-                  arguments: {"title": "Past Assignments"}),
+                  arguments: {"type": "assignment_history", "title": "Past Assignments"}),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
