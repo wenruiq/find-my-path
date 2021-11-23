@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
 import 'package:provider/provider.dart';
+import 'package:location/location.dart' as flutter_location;
 
 import 'package:find_my_path/providers/location_model.dart';
 
@@ -24,14 +25,47 @@ class _CurrentLocationState extends State<CurrentLocation> {
     Future.delayed(Duration.zero, () async {
       await dotenv.load(fileName: ".env");
     });
+
+    initLocationService();
+  }
+
+  //TODO: Only for testing, need to discuss location handling
+  //* Flutter location package, request permission & get cur. location
+  void initLocationService() async {
+    flutter_location.Location location = flutter_location.Location();
+
+    bool _serviceEnabled;
+    flutter_location.PermissionStatus _permissionGranted;
+    flutter_location.LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == flutter_location.PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != flutter_location.PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+    //* Update current location to provider
+    //TODO: This is only for testing, we need this to be always up to date
+    Provider.of<LocationModel>(context, listen: false).setCurrentLocationLT = {
+      'lat': _locationData.latitude as double,
+      'long': _locationData.longitude as double
+    };
   }
 
   //* Returns a Future which allow us to use FutureBuilder to handle loading state
-  Future<String> getCurrentLocationText() async {
-    //* Get current Lat/Lng from provider
-    double lat = Provider.of<LocationModel>(context).lat;
-    double long = Provider.of<LocationModel>(context).long;
-
+  Future<String> getCurrentLocationText({required double lat, required double long}) async {
     //* Use the google_place package to perform API queries
     String apiKey = dotenv.env['GOOGLE_API_KEY'] as String;
     googlePlace = GooglePlace(apiKey);
@@ -47,6 +81,9 @@ class _CurrentLocationState extends State<CurrentLocation> {
 
   @override
   Widget build(BuildContext context) {
+    //* Get current Lat/Lng from provider
+    double lat = Provider.of<LocationModel>(context).lat;
+    double long = Provider.of<LocationModel>(context).long;
     return Row(
       children: [
         Column(
@@ -73,7 +110,7 @@ class _CurrentLocationState extends State<CurrentLocation> {
               ),
               const SizedBox(height: 5),
               FutureBuilder<String>(
-                  future: getCurrentLocationText(),
+                  future: getCurrentLocationText(lat: lat, long: long),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return Text(

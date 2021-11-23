@@ -19,7 +19,5 @@ class LocationModel extends ChangeNotifier {
 
   set setCurrentLocationText(String text) {
     currentLocationText = text;
-
-    notifyListeners();
   }
 }
