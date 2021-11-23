@@ -7,7 +7,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import "./theme/custom_theme.dart";
 import "./screens/chat_screen.dart";
@@ -20,7 +19,6 @@ import './screens/vo_home_screen.dart';
 import './screens/assignments_screen.dart';
 import './screens/ratings_screen.dart';
 import './screens/hero_image_screen.dart';
-import 'widgets/home/vo_assignment_dialog.dart';
 import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/providers/location_model.dart';
 
