@@ -36,7 +36,6 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     String type = arguments['type'];
 
     if (type == "assignment_stream") {
-      print("Feed is assignments");
       _feed = FirebaseFirestore.instance.collection('assignments').where("status", isEqualTo: "Pending").snapshots();
     } else {
       _feed = FirebaseFirestore.instance
@@ -50,46 +49,50 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _feed,
-              builder: (_, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text("Error connecting to database, please try again later"),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _feed,
+                builder: (_, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text("Error connecting to database, please try again later"),
+                    );
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    _assignmentsData = snapshot.data!.docs.map((DocumentSnapshot document) {
+                      dynamic data = document.data()!;
+                      final Map<String, dynamic> toReturn = data;
+                      toReturn["aid"] = document.id;
+                      return toReturn;
+                    }).toList();
+                  }
+
+                  if (_assignmentsData.isEmpty) {
+                    return const Center(
+                      child: Text("No Assignments Found"),
+                    );
+                  }
+
+                  return AssignmentsList(
+                    data: _assignmentsData,
+                    type: type,
                   );
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (snapshot.connectionState == ConnectionState.active) {
-
-                  _assignmentsData = snapshot.data!.docs.map((DocumentSnapshot document) {
-                    return document.data()! as Map<String, dynamic>;
-                  }).toList();
-                }
-
-                if (_assignmentsData.isEmpty) {
-                  return Center(
-                    child: Text("No Assignments Found"),
-                  );
-                }
-
-                return AssignmentsList(
-                  data: _assignmentsData,
-                  type: type,
-                );
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
 
       // RefreshIndicator(

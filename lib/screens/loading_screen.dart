@@ -8,9 +8,11 @@ class LoadingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      body: const Center(
-        child: CircularProgressIndicator(
-          color: Colors.white,
+      body: const SafeArea(
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+          ),
         ),
       ),
     );
