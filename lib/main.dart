@@ -143,6 +143,7 @@ class _MyAppState extends State<MyApp> {
                     }
                     //* If everything's good, user logs in
                     if (snapshot.connectionState == ConnectionState.done) {
+
                       Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
                       if (data['isVolunteer'] == true) {
                         return const HomeScreenVO();
@@ -154,6 +155,7 @@ class _MyAppState extends State<MyApp> {
                   },
                 );
               }
+
               return const AuthScreen();
             }),
         routes: {

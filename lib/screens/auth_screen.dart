@@ -46,16 +46,16 @@ class _AuthScreenState extends State<AuthScreen> {
             .set({'email': email, 'displayName': displayName, 'isVolunteer': isVolunteer, 'isAvailable': false});
       }
     } on FirebaseAuthException catch (err) {
-      if (err.message == null) return;
-      if (err.code == 'user-not-found') {
-        var message = 'Incorrect email or password, please try again.';
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: Theme.of(ctx).errorColor,
-          ),
-        );
+      String message = 'An network error occurred, please try again later.';
+      if (err.code == 'wrong-password' || err.code == 'user-not-found') {
+        message = 'Incorrect email or password, please try again.';
       }
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Theme.of(ctx).errorColor,
+        ),
+      );
       setState(() {
         setLoading(false);
       });
