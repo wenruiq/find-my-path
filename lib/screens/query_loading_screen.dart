@@ -18,6 +18,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
   void cancelRequest(String aid) async {
     Navigator.pop(context);
     DocumentReference assignmentRef = FirebaseFirestore.instance.collection("assignments").doc(aid);
+    //* Comment out this line if you want to cancel without deleting
     await assignmentRef.delete();
   }
 

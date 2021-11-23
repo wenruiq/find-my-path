@@ -6,6 +6,7 @@ import "package:provider/provider.dart";
 import "../../widgets/query/current_location.dart";
 import "package:find_my_path/providers/location_model.dart";
 import "package:find_my_path/providers/user_model.dart";
+import "../../args/hero_image_screen_args.dart";
 
 class QueryForm extends StatefulWidget {
   const QueryForm({Key? key, required this.submitFn}) : super(key: key);
@@ -42,19 +43,28 @@ class _QueryFormState extends State<QueryForm> {
 
   Widget _previewImage() {
     if (_imageFile != null) {
+      String filePath = _imageFile!.path;
+      FileImage fileImage = FileImage(File(filePath));
+      String heroTag = 'queryImage';
       return Semantics(
         label: 'Photo currently attached',
         child: Column(children: <Widget>[
           //* Photo Preview Dimensions
-          Container(
-            height: MediaQuery.of(context).size.height * 0.35,
-            width: MediaQuery.of(context).size.width * 0.8,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              image: DecorationImage(image: FileImage(File(_imageFile!.path)), fit: BoxFit.fitHeight),
-
-              // border: Border.all(color: Theme.of(context).primaryColor, width: 2.0),
+          GestureDetector(
+            child: Hero(
+              tag: heroTag,
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.35,
+                width: MediaQuery.of(context).size.width * 0.8,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  image: DecorationImage(image: fileImage, fit: BoxFit.fitHeight),
+                ),
+              ),
             ),
+            onTap: () {
+              Navigator.pushNamed(context, '/heroImage', arguments: HeroImageScreenArgs(heroTag, filePath, ''));
+            },
           ),
           const SizedBox(height: 25),
           SizedBox(
@@ -223,7 +233,6 @@ class _QueryFormState extends State<QueryForm> {
               onPressed: () {
                 FormState().save();
                 _trySubmit();
-                // Navigator.pushNamed(context, "/queryloading");
               },
               child: const Text(
                 "Send Request",
@@ -232,6 +241,28 @@ class _QueryFormState extends State<QueryForm> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+            tag: 'imageHero',
+            //http://www.naturerights.com/blog/wp-content/uploads/2017/12/Taranaki-NR-post-1170x550.png
+            child: Image.network(
+              'http://www.naturerights.com/blog/wp-content/uploads/2017/12/Taranaki-NR-post-1170x550.png',
+            ),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
     );
   }

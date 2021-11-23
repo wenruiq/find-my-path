@@ -19,6 +19,7 @@ import './screens/vi_home_screen.dart';
 import './screens/vo_home_screen.dart';
 import './screens/assignments_screen.dart';
 import './screens/ratings_screen.dart';
+import './screens/hero_image_screen.dart';
 import 'widgets/home/vo_assignment_dialog.dart';
 import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/providers/location_model.dart';
@@ -166,6 +167,7 @@ class _MyAppState extends State<MyApp> {
           ChatScreen.routeName: (context) => const ChatScreen(),
           AssignmentsScreen.routeName: (context) => const AssignmentsScreen(),
           RatingScreen.routeName: (context) => const RatingScreen(),
+          HeroImageScreen.routeName: (context) => const HeroImageScreen(),
         });
   }
 }
