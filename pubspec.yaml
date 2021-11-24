@@ -53,6 +53,8 @@ dependencies:
   firebase_storage: ^10.1.0
   ionicons: ^0.1.2
   cached_network_image: ^3.1.0+1
+  flutter_chat_types: ^3.2.0
+  flutter_chat_ui: ^1.5.2
 
 dev_dependencies:
   flutter_test:

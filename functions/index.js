@@ -4,11 +4,11 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 exports.myFunction = functions.firestore
-  .document('assignments/{aid}')
+  .document('requests/{aid}')
   .onCreate((snapshot, context) => {
-    return admin.messaging().sendToTopic('assignments', {
+    return admin.messaging().sendToTopic('requests', {
       notification: {
-        title: "New Navigation Assistance Request",
+        title: "New FindMyPath Request",
         body: `${snapshot.data().VI_displayName} needs your help!`,
         clickAction: 'FLUTTER_NOTIFICATION_CLICK',
       },

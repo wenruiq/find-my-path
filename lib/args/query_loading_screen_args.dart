@@ -1,5 +1,5 @@
 class QueryLoadingScreenArgs {
-  final String assignmentID;
+  final String requestID;
 
-  QueryLoadingScreenArgs(this.assignmentID);
+  QueryLoadingScreenArgs(this.requestID);
 }
