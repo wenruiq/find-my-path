@@ -50,19 +50,22 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(_messages);
     return Scaffold(
-      appBar: AppBar(),
-      body: SafeArea(
-        bottom: false,
-        child: Chat(
-          messages: _messages,
-          onSendPressed: _handleSendPressed,
-          user: _user,
-          showUserNames: true,
-          theme: DefaultChatTheme(inputBackgroundColor: Theme.of(context).primaryColor),
-        ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
       ),
+      body: StreamBuilder(builder: (context, snapshot) {
+        return SafeArea(
+          bottom: false,
+          child: Chat(
+            messages: _messages,
+            onSendPressed: _handleSendPressed,
+            user: _user,
+            showUserNames: true,
+            theme: DefaultChatTheme(inputBackgroundColor: Theme.of(context).primaryColor),
+          ),
+        );
+      }),
     );
     // return DismissKeyboard(
     //   child: SafeArea(

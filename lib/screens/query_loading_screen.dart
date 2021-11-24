@@ -21,9 +21,12 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
     //* Comment out this line if you want to cancel without deleting
     await requestRef.delete();
   }
-
-  //* Ensures navigation only happens after build is complete
-  void navigateToChatRoom() {
+  
+  //* Navigate user to chat room when status = "Ongoing"
+  void navigateToChatRoom(Map<String, dynamic> requestData, String requestID) {
+    //* Update provider
+    
+    //* Ensure this runs after build completes
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       Navigator.pushNamedAndRemoveUntil(context, '/chat', ModalRoute.withName('/'));
     });
@@ -42,9 +45,8 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
               if (snapshot.hasData) {
                 if (snapshot.data!.exists) {
                   String status = snapshot.data!['status'];
-                  print("Request status: " + status);
                   if (status == "Ongoing") {
-                    navigateToChatRoom();
+                    navigateToChatRoom(snapshot.data as Map<String, dynamic>, requestID);
                   }
                 }
               }
