@@ -19,6 +19,7 @@ import './screens/vo_home_screen.dart';
 import './screens/requests_screen.dart';
 import './screens/ratings_screen.dart';
 import './screens/hero_image_screen.dart';
+import './screens/review_screen.dart';
 import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/providers/location_model.dart';
 import 'package:find_my_path/providers/request_model.dart';
@@ -162,6 +163,7 @@ class _MyAppState extends State<MyApp> {
           RequestsScreen.routeName: (context) => const RequestsScreen(),
           RatingScreen.routeName: (context) => const RatingScreen(),
           HeroImageScreen.routeName: (context) => const HeroImageScreen(),
+          ReviewScreen.routeName: (context) => const ReviewScreen(),
         });
   }
 }

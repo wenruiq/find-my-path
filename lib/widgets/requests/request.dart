@@ -45,7 +45,7 @@ class _RequestState extends State<Request> {
       "VO_displayName": volunteerName,
       'status': 'Ongoing',
     };
-    Navigator.pushNamed(context, "/chat");
+    Navigator.pushNamedAndRemoveUntil(context, '/chat', ModalRoute.withName('/'));
 
     try {
       DocumentReference docRef = FirebaseFirestore.instance.collection('requests').doc(rid);
