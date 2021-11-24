@@ -19,12 +19,6 @@ class QueryScreen extends StatefulWidget {
 }
 
 class _QueryScreenState extends State<QueryScreen> {
-  //* Submit form loading state;
-  var _isLoading = false;
-  void setLoading(bool isLoading) {
-    _isLoading = isLoading;
-  }
-
   //* Callback to be passed to query_form.dart
   void _submitQueryForm({
     required String viID,
@@ -40,8 +34,8 @@ class _QueryScreenState extends State<QueryScreen> {
   }) async {
     try {
       //* Create Firestore entry
-      DocumentReference docRef = FirebaseFirestore.instance.collection("assignments").doc();
-      print("Creating assignment with ID: " + docRef.id);
+      DocumentReference docRef = FirebaseFirestore.instance.collection("requests").doc();
+      print("Creating request with ID: " + docRef.id);
       //* Navigate to query loading
       Navigator.pushNamed(context, '/queryloading', arguments: QueryLoadingScreenArgs(docRef.id));
       await docRef.set({
@@ -62,7 +56,7 @@ class _QueryScreenState extends State<QueryScreen> {
         Reference ref = storageInstance.ref().child('query_photos').child(date.toIso8601String() + '.png');
         await ref.putFile(file);
         final url = await ref.getDownloadURL();
-        //* Add imageURL to assignment document
+        //* Add imageURL to request document
         await docRef.update({'imageURL': url});
       }
     } on FirebaseException catch (err) {

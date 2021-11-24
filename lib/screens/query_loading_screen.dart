@@ -17,9 +17,9 @@ class QueryLoadingScreen extends StatefulWidget {
 class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
   void cancelRequest(String aid) async {
     Navigator.pop(context);
-    DocumentReference assignmentRef = FirebaseFirestore.instance.collection("assignments").doc(aid);
+    DocumentReference requestRef = FirebaseFirestore.instance.collection("requests").doc(aid);
     //* Comment out this line if you want to cancel without deleting
-    await assignmentRef.delete();
+    await requestRef.delete();
   }
 
   //* Ensures navigation only happens after build is complete
@@ -32,17 +32,17 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as QueryLoadingScreenArgs;
-    String assignmentID = args.assignmentID;
+    String requestID = args.requestID;
     return Scaffold(
       appBar: AppBar(automaticallyImplyLeading: false, centerTitle: true, title: const Text("Finding...")),
       body: SafeArea(
         child: StreamBuilder(
-            stream: FirebaseFirestore.instance.collection('assignments').doc(assignmentID).snapshots(),
+            stream: FirebaseFirestore.instance.collection('requests').doc(requestID).snapshots(),
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.exists) {
                   String status = snapshot.data!['status'];
-                  print("Assignment status: " + status);
+                  print("Request status: " + status);
                   if (status == "Ongoing") {
                     navigateToChatRoom();
                   }
@@ -62,7 +62,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
                         side: BorderSide(color: Theme.of(context).primaryColor),
                         padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
                       ),
-                      onPressed: () => cancelRequest(assignmentID),
+                      onPressed: () => cancelRequest(requestID),
                       child: const Text(
                         "Cancel Request",
                         style: TextStyle(fontSize: 24),
