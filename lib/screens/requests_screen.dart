@@ -45,7 +45,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
           .collection('users/$volunteerID/requests')
           .where("VO_ID", isEqualTo: volunteerID)
           .where("status", isEqualTo: "Completed")
-          .snapshots();
+          .snapshots(); 
     }
 
     return Scaffold(

@@ -78,7 +78,7 @@ class Rating extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 0, left: 4),
             child: Text(
-              '(${reviewCount})',
+              '($reviewCount)',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.black,
