@@ -27,14 +27,53 @@ import './screens/test_call_pickup_screen.dart';
 import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/providers/location_model.dart';
 import 'package:find_my_path/providers/request_model.dart';
+import 'package:find_my_path/constants/nav_key.dart';
+
+late AndroidNotificationChannel channel;
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 //* Background Notification Handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-}
+  //* Android Notification Channel Config
+  channel = const AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    'This channel is used for important notifications.', // description
+    importance: Importance.high,
+  );
+  //* Initialize FlutterNotificationsPlugin Package
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-late AndroidNotificationChannel channel;
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  //* Create Android Notification Channel based on config above
+  //* Use it to override the default FCM channel to enable heads up notifications
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  RemoteNotification? notification = message.notification;
+  AndroidNotification? android = message.notification?.android;
+
+  //* Styling & Text for Android notification bar
+  if (notification != null && android != null && !kIsWeb) {
+    flutterLocalNotificationsPlugin.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channel.description,
+          icon: 'notification_icon',
+        ),
+      ),
+    );
+  }
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    NavKey.key.currentState!.pushNamed("/requests");
+  });
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +92,10 @@ void main() async {
     );
     //* Initialize FlutterNotificationsPlugin Package
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    // const AndroidInitializationSettings initializationSettingsAndroid =
+    //     AndroidInitializationSettings('notification_icon');
+    // var settings = const InitializationSettings(android: initializationSettingsAndroid);
+    // flutterLocalNotificationsPlugin.initialize(settings);
 
     //* Create Android Notification Channel based on config above
     //* Use it to override the default FCM channel to enable heads up notifications
@@ -93,84 +136,87 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-
-      //* Dialog Box for user to accept/deny requests
-      ///TODO: Connect interaction from notification click to display dialog box
-
-      //* Styling & Text for Android notification bar
       if (notification != null && android != null && !kIsWeb) {
         flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                channel.description,
-                //* Using default icon from example app
-                icon: 'launch_background',
-              ),
-            ));
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channel.description,
+              icon: 'notification_icon',
+            ),
+          ),
+        );
       }
+    });
+    //? Doesn't work here
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // NavKey.key.currentState!.pushNamed("/requests");
+       Navigator.pushNamed(context, "/requests");
     });
   }
 
+  final navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: "Find My Path",
-        theme: customTheme,
-        //* Listens to authStateChanges to know whether to log the user in/out
-        home: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (ctx, userSnapshot) {
-              if (userSnapshot.connectionState == ConnectionState.waiting) {
-                return const AuthScreen();
-              }
-              if (userSnapshot.hasData) {
-                String uid = FirebaseAuth.instance.currentUser!.uid;
-                CollectionReference users = FirebaseFirestore.instance.collection('users');
-                return FutureBuilder<DocumentSnapshot>(
-                  future: users.doc(uid).get(),
-                  builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    //? Use snackbar to handle these errors?
-                    if (snapshot.hasError) {
-                      return const AuthScreen();
-                    }
-                    if (snapshot.hasData && !snapshot.data!.exists) {
-                      return const AuthScreen();
-                    }
-                    //* If everything's good, user logs in
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                      if (data['isVolunteer'] == true) {
-                        return const HomeScreenVO();
-                      }
-                      return const HomeScreenVI();
-                    }
-
-                    return const LoadingScreen();
-                  },
-                );
-              }
-              FirebaseMessaging firebaseMessagingInstance = FirebaseMessaging.instance;
-              firebaseMessagingInstance.unsubscribeFromTopic('requests');
+      title: "Find My Path",
+      navigatorKey: navigatorKey,
+      theme: customTheme,
+      //* Listens to authStateChanges to know whether to log the user in/out
+      home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (ctx, userSnapshot) {
+            if (userSnapshot.connectionState == ConnectionState.waiting) {
               return const AuthScreen();
-            }),
-        routes: {
-          HomeScreenVI.routeName: (context) => const HomeScreenVI(),
-          HomeScreenVO.routeName: (context) => const HomeScreenVO(),
-          QueryScreen.routeName: (context) => const QueryScreen(),
-          QueryLoadingScreen.routeName: (context) => const QueryLoadingScreen(),
-          ChatScreen.routeName: (context) => const ChatScreen(),
-          RequestsScreen.routeName: (context) => const RequestsScreen(),
-          RatingScreen.routeName: (context) => const RatingScreen(),
-          HeroImageScreen.routeName: (context) => const HeroImageScreen(),
-          ReviewScreen.routeName: (context) => const ReviewScreen(),
-          //TODO: delete after enabling video call
-          TestVideoCallScreen.routeName: (context) => const TestVideoCallScreen(),
-          TestCallPickupScreen.routeName: (context) => const TestCallPickupScreen(callerName: "Bob"),
-        });
+            }
+            if (userSnapshot.hasData) {
+              String uid = FirebaseAuth.instance.currentUser!.uid;
+              CollectionReference users = FirebaseFirestore.instance.collection('users');
+              return FutureBuilder<DocumentSnapshot>(
+                future: users.doc(uid).get(),
+                builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  //? Use snackbar to handle these errors?
+                  if (snapshot.hasError) {
+                    return const AuthScreen();
+                  }
+                  if (snapshot.hasData && !snapshot.data!.exists) {
+                    return const AuthScreen();
+                  }
+                  //* If everything's good, user logs in
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+                    if (data['isVolunteer'] == true) {
+                      return const HomeScreenVO();
+                    }
+                    return const HomeScreenVI();
+                  }
+
+                  return const LoadingScreen();
+                },
+              );
+            }
+            FirebaseMessaging firebaseMessagingInstance = FirebaseMessaging.instance;
+            firebaseMessagingInstance.unsubscribeFromTopic('requests');
+            return const AuthScreen();
+          }),
+      routes: {
+        HomeScreenVI.routeName: (context) => const HomeScreenVI(),
+        HomeScreenVO.routeName: (context) => const HomeScreenVO(),
+        QueryScreen.routeName: (context) => const QueryScreen(),
+        QueryLoadingScreen.routeName: (context) => const QueryLoadingScreen(),
+        ChatScreen.routeName: (context) => const ChatScreen(),
+        RequestsScreen.routeName: (context) => const RequestsScreen(),
+        RatingScreen.routeName: (context) => const RatingScreen(),
+        HeroImageScreen.routeName: (context) => const HeroImageScreen(),
+        ReviewScreen.routeName: (context) => const ReviewScreen(),
+        //TODO: delete after enabling video call
+        TestVideoCallScreen.routeName: (context) => const TestVideoCallScreen(),
+        TestCallPickupScreen.routeName: (context) => const TestCallPickupScreen(callerName: "Bob"),
+      },
+    );
   }
 }

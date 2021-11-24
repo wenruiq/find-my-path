@@ -9,11 +9,11 @@ import '../widgets/requests/requests_list.dart';
 //* Screen shown when user clicks a Call-To-Action from RequestControl from HomeScreenVO
 //* Handles data streaming from the volunteer's requests history or the overall requests collection
 class RequestsScreen extends StatefulWidget {
-  static const routeName = '/requests';
-
   const RequestsScreen({
     Key? key,
   }) : super(key: key);
+
+  static const routeName = '/requests';
 
   @override
   _RequestsScreenState createState() => _RequestsScreenState();
