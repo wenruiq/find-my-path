@@ -40,6 +40,7 @@ class AssignmentsList extends StatelessWidget {
             itemBuilder: (ctx, index) {
               return Assignment(
                 assignmentDetails: data[index],
+                type: type,
               );
             },
             // physics: const AlwaysScrollableScrollPhysics(),

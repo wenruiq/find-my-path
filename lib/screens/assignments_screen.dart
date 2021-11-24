@@ -1,8 +1,9 @@
-import 'package:find_my_path/widgets/stream_indicator/pulsing_indicator.dart';
+import 'package:find_my_path/providers/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import "package:firebase_auth/firebase_auth.dart";
+import 'package:provider/provider.dart';
 
+import '../providers/user_model.dart';
 import '../widgets/assignments/assignments_list.dart';
 
 //* Screen shown when user clicks a Call-To-Action from AssignmentControl from HomeScreenVO
@@ -39,11 +40,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
       //* Set _feed to stream of assignments that have status = "Pending"
       _feed = FirebaseFirestore.instance.collection('assignments').where("status", isEqualTo: "Pending").snapshots();
     } else {
-      //TODO: configure this to subscribe to the correct VO_ID
-      //* Set _feed to stream of assignments from volunteer's assignments collection
+      var volunteerID = Provider.of<UserModel>(context).uid;
       _feed = FirebaseFirestore.instance
-          .collection('assignments')
-          .where("VO_ID", isEqualTo: "MyUID")
+          .collection('users/${volunteerID}/assignments')
+          .where("VO_ID", isEqualTo: volunteerID)
           .where("status", isEqualTo: "Completed")
           .snapshots();
     }
