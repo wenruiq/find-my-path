@@ -3,14 +3,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/parser.dart';
 
 class RequestDialog extends StatelessWidget {
-  final String aid;
+  final String rid;
   final String viName;
   final String currentLoc;
   final String endLoc;
   final Function updateFirestore;
 
   const RequestDialog({
-    required this.aid,
+    required this.rid,
     required this.viName,
     required this.currentLoc,
     required this.endLoc,
@@ -20,8 +20,8 @@ class RequestDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imageLoc1 = 'assets/images/assignment_dialog_direction.svg';
-    // String imageLoc2 = 'assets/images/assignment_dialog_travel.svg';
+    String imageLoc1 = 'assets/images/request_dialog_direction.svg';
+    // String imageLoc2 = 'assets/images/request_dialog_travel.svg';
 
     //* Set up buttons
     Widget oldCancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel"));
@@ -33,7 +33,7 @@ class RequestDialog extends StatelessWidget {
 
     //* Executes callback if confirm
     Widget confirmButton = ElevatedButton(
-      onPressed: () => updateFirestore(aid),
+      onPressed: () => updateFirestore(rid),
       child: const Text("Accept"),
     );
 

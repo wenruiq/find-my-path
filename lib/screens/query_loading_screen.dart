@@ -15,9 +15,9 @@ class QueryLoadingScreen extends StatefulWidget {
 }
 
 class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
-  void cancelRequest(String aid) async {
+  void cancelRequest(String rid) async {
     Navigator.pop(context);
-    DocumentReference requestRef = FirebaseFirestore.instance.collection("requests").doc(aid);
+    DocumentReference requestRef = FirebaseFirestore.instance.collection("requests").doc(rid);
     //* Comment out this line if you want to cancel without deleting
     await requestRef.delete();
   }

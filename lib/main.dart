@@ -87,14 +87,9 @@ class _MyAppState extends State<MyApp> {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
 
-      //* Dialog Box for user to accept/deny assignments
+      //* Dialog Box for user to accept/deny requests
       ///TODO: Connect interaction from notification click to display dialog box
-      // Future.delayed(Duration.zero, () {
-      //   showDialog(
-      //     context: context,
-      //     builder: (BuildContext context) => const AssignmentDialog(),
-      //   );
-      // });
+
 
       //* Styling & Text for Android notification bar
       if (notification != null && android != null && !kIsWeb) {
@@ -154,7 +149,7 @@ class _MyAppState extends State<MyApp> {
                 );
               }
               FirebaseMessaging firebaseMessagingInstance = FirebaseMessaging.instance;
-              firebaseMessagingInstance.unsubscribeFromTopic('assignments');
+              firebaseMessagingInstance.unsubscribeFromTopic('requests');
               return const AuthScreen();
             }),
         routes: {
