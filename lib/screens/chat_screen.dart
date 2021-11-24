@@ -29,7 +29,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   //TODO: Handle Exit Room
-  void _handleExitPressed(bool imVolunteer) async {
+  Future<bool> _handleExit(bool imVolunteer) async {
+    //* Show dialog and get true/false
     var isExit = await showExitPopup();
     if (isExit) {
       //* If role is VI, go to review screen
@@ -44,7 +45,9 @@ class _ChatScreenState extends State<ChatScreen> {
       //* Add to past assignments for VO
 
       //* Indicate in stream for the other party to auto exit
+      return true;
     }
+    return false;
   }
 
   //* Exit Confirm Dialog (returns true/false based on selection)
@@ -130,7 +133,7 @@ class _ChatScreenState extends State<ChatScreen> {
           String hisDisplayName =
               imVolunteer ? latestRequestData['VI_displayName'] : latestRequestData['VO_displayName'];
           return WillPopScope(
-            onWillPop: showExitPopup,
+            onWillPop: () => _handleExit(imVolunteer),
             child: Scaffold(
               appBar: AppBar(
                 automaticallyImplyLeading: false,
@@ -155,7 +158,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       size: 26,
                       semanticLabel: "Button to end session and exit the room permanently",
                     ),
-                    onPressed: () => _handleExitPressed(imVolunteer),
+                    onPressed: () => _handleExit(imVolunteer),
                   ),
                 ],
               ),
