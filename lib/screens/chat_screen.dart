@@ -23,6 +23,55 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
   }
 
+  //TODO: Handle Video Call
+  void _handleVideoPressed() {
+    return null;
+  }
+
+  //TODO: Handle Exit Room
+  void _handleExitPressed(bool imVolunteer) async {
+    var isExit = await showExitPopup();
+    if (isExit) {
+      //* If role is VI, go to review screen
+      if (!imVolunteer) {
+        Navigator.pushNamedAndRemoveUntil(context, '/review', ModalRoute.withName('/'));
+      }
+
+      //* For VO, push to homescreen
+
+      //* Update Firestore status "Completed"
+
+      //* Add to past assignments for VO
+
+      //* Indicate in stream for the other party to auto exit
+    }
+  }
+
+  //* Exit Confirm Dialog (returns true/false based on selection)
+  Future<bool> showExitPopup() async {
+    return await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Exit Chat'),
+            content: const Text('End this session and exit the chat room?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                //return false when click on "NO"
+                child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                //return true when click on "Yes"
+                child: const Text('Confirm', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+            backgroundColor: Colors.white,
+          ),
+        ) ??
+        false; //if showDialouge had returned null, then return false
+  }
+
   //* Need this to handle messages sent by myself
   void _handleSendPressed(types.PartialText message) async {
     Map<String, dynamic> userData = Provider.of<UserModel>(context, listen: false).data;
@@ -70,58 +119,81 @@ class _ChatScreenState extends State<ChatScreen> {
     Map<String, dynamic> requestData = Provider.of<RequestModel>(context, listen: false).data;
     String requestID = requestData['rid'];
     DocumentReference requestRef = FirebaseFirestore.instance.collection("requests").doc(requestID);
-    //* FutureBuilder to get latest assignment data before page loads
+    //* FutureBuilder to get latest request data before page loads
     return FutureBuilder(
       future: requestRef.get(),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-          //* Latest data obtained
+          //* Latest request data
           dynamic snapshotData = snapshot.data;
           Map<String, dynamic> latestRequestData = snapshotData.data();
-          print("Latest Request Data:");
-          print(latestRequestData);
           String hisDisplayName =
               imVolunteer ? latestRequestData['VI_displayName'] : latestRequestData['VO_displayName'];
-          return Scaffold(
-            appBar: AppBar(
+          return WillPopScope(
+            onWillPop: showExitPopup,
+            child: Scaffold(
+              appBar: AppBar(
                 automaticallyImplyLeading: false,
                 title: Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text(hisDisplayName),
-                )),
-            //* StreamBuilder to listen to new messages
-            body: StreamBuilder(
-              stream: requestRef.collection("messages").orderBy("createdAt", descending: true).snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  //* Process data from Firebase
-                  QuerySnapshot messagesQuerySnapshot = snapshot.data as QuerySnapshot;
-                  List<DocumentSnapshot> messagesList = messagesQuerySnapshot.docs;
-                  //* Convert data to List<types.Message>
-                  //* Chat() Widget uses this List<types.Message> to build messages for display
-                  List<types.Message> messagesListProcessed = processFirebaseMessages(messagesList);
-                  return SafeArea(
-                    bottom: false,
-                    child: Chat(
-                      messages: messagesListProcessed,
-                      onSendPressed: _handleSendPressed,
-                      user: _user,
-                      showUserNames: true,
-                      theme: DefaultChatTheme(
-                        inputBackgroundColor: Colors.grey.shade100,
-                        inputTextColor: Colors.black,
-                        inputTextCursorColor: Colors.black,
-                        primaryColor: const Color(0xff4a67a0),
-                        userAvatarNameColors: [Theme.of(context).primaryColor],
-                      ),
+                ),
+                actions: <Widget>[
+                  IconButton(
+                    icon: const Icon(
+                      Icons.videocam_rounded,
+                      color: Colors.white,
+                      size: 30,
+                      semanticLabel: "Button to start video call",
                     ),
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
+                    onPressed: () => _handleVideoPressed(),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.exit_to_app_rounded,
+                      color: Colors.white,
+                      size: 26,
+                      semanticLabel: "Button to end session and exit the room permanently",
+                    ),
+                    onPressed: () => _handleExitPressed(imVolunteer),
+                  ),
+                ],
+              ),
+              //* StreamBuilder to listen to new messages
+              body: StreamBuilder(
+                stream: requestRef.collection("messages").orderBy("createdAt", descending: true).snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    //* Process data from Firebase
+                    QuerySnapshot messagesQuerySnapshot = snapshot.data as QuerySnapshot;
+                    List<DocumentSnapshot> messagesList = messagesQuerySnapshot.docs;
+                    //* Convert data to List<types.Message>
+                    //* Chat() Widget uses this List<types.Message> to build messages for display
+                    List<types.Message> messagesListProcessed = processFirebaseMessages(messagesList);
+                    //TODO: If the other party exits, you exit too, if VI, go review screen
+                    return SafeArea(
+                      bottom: false,
+                      child: Chat(
+                        messages: messagesListProcessed,
+                        onSendPressed: _handleSendPressed,
+                        user: _user,
+                        showUserNames: true,
+                        theme: DefaultChatTheme(
+                          inputBackgroundColor: Colors.grey.shade100,
+                          inputTextColor: Colors.black,
+                          inputTextCursorColor: Colors.black,
+                          primaryColor: const Color(0xff4a67a0),
+                          userAvatarNameColors: [Theme.of(context).primaryColor],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ),
             ),
           );
         } else {
