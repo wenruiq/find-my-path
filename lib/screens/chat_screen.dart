@@ -1,15 +1,16 @@
 import 'dart:async';
-
+import "dart:io";
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import "package:provider/provider.dart";
+import "package:image_picker/image_picker.dart";
+import "package:firebase_storage/firebase_storage.dart";
 
 import "../providers/request_model.dart";
 import "../providers/user_model.dart";
 import "../screens/loading_screen.dart";
-import "../widgets/util/loading.dart";
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -26,6 +27,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
+    //* Handles navigation when the other party exits the room
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       String requestID = Provider.of<RequestModel>(context, listen: false).rid;
       bool imVolunteer = Provider.of<UserModel>(context, listen: false).isVolunteer;
@@ -43,13 +45,21 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  //* Dispose subscription
+  @override
+  void dispose() {
+    _statusSubscription.cancel();
+    super.dispose();
+  }
+
   //TODO: Handle Video Call
   void _handleVideoPressed() {
     return null;
   }
 
-  //TODO: Handle Exit Room
-  Future<bool> _handleExit(bool imVolunteer) async {
+  //* Handle Exit Chat Room
+  Future<bool> _handleExit(
+      String myID, bool imVolunteer, String requestID, Map<String, dynamic> latestRequestData) async {
     //* Show dialog and get true/false
     var isExit = await showExitPopup();
     if (isExit) {
@@ -60,8 +70,18 @@ class _ChatScreenState extends State<ChatScreen> {
         Navigator.of(context).pop();
       }
       //* Update Firestore status "Completed"
+      DocumentReference requestRef = FirebaseFirestore.instance.collection('requests').doc(requestID);
+      await requestRef.update({'status': 'Completed'});
 
       //* Update Firestore history
+      DocumentReference historyRef =
+          FirebaseFirestore.instance.collection('users').doc(latestRequestData['VO_ID']).collection('requests').doc();
+      await historyRef.set({
+        'VI_displayName': latestRequestData['VI_displayName'],
+        'currentLocationText': latestRequestData['currentLocationText'],
+        'endLocationText': latestRequestData['endLocationText'],
+        'VO_ID': latestRequestData['VO_ID']
+      });
 
       return true;
     }
@@ -91,7 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
         false;
   }
 
-  //* Need this to handle messages sent by myself
+  //* Handle sending text messages
   void _handleSendPressed(types.PartialText message) async {
     Map<String, dynamic> userData = Provider.of<UserModel>(context, listen: false).data;
     Map<String, dynamic> requestData = Provider.of<RequestModel>(context, listen: false).data;
@@ -109,18 +129,79 @@ class _ChatScreenState extends State<ChatScreen> {
     await docRef.set(messageData);
   }
 
+  //* Handle sending image messages
+  void _handleSendImage(String requestID, Map<String, dynamic> latestRequestData) async {
+    final XFile? _imageFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+    );
+
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection("requests").doc(requestID).collection("messages").doc();
+    String docID = docRef.id;
+
+    if (_imageFile != null) {
+      try {
+        //* Upload to FirebaseStorage
+        File file = File(_imageFile.path);
+        FirebaseStorage storageInstance = FirebaseStorage.instance;
+        Reference ref = storageInstance.ref().child('message_photos').child(DateTime.now().toIso8601String() + '.png');
+        await ref.putFile(file);
+        //* Add Image Message to Request document
+        final url = await ref.getDownloadURL();
+        final bytes = await _imageFile.readAsBytes();
+        final image = await decodeImageFromList(bytes);
+        Map<String, dynamic> userData = Provider.of<UserModel>(context, listen: false).data;
+
+        await docRef.set({
+          'author': {'id': userData['uid'], 'firstName': userData['displayName']},
+          'createdAt': DateTime.now(),
+          'height': image.height.toDouble(),
+          'id': docID,
+          'name': _imageFile.name,
+          'size': bytes.length,
+          'uri': url,
+          'width': image.width.toDouble(),
+          'type': 'image'
+        });
+      } on FirebaseException catch (err) {
+        if (err.message == null) {
+          throw Exception("Firebase error uploading image message at chat_screen.dart.");
+        } else {
+          throw Exception(err.message);
+        }
+      } catch (err) {
+        throw Exception("Error uploading image message at chat_screen.dart.");
+      }
+    }
+  }
+
   //* Convert Firebase List<DocumentSnapshot> to List<types.Message> for display
   List<types.Message> processFirebaseMessages(List<DocumentSnapshot> messagesList) {
     List<types.Message> messagesListProcessed = messagesList.map((DocumentSnapshot messageDoc) {
       Map<String, dynamic> dataMap = messageDoc.data() as Map<String, dynamic>;
       final author = types.User(id: dataMap['author']['id'], firstName: dataMap['author']['firstName']);
+      int createdAt = dataMap['createdAt'].toDate().millisecondsSinceEpoch;
+      String id = dataMap['id'];
       if (dataMap['type'] == 'text') {
-        int createdAt = dataMap['createdAt'].toDate().millisecondsSinceEpoch;
-        String id = dataMap['id'];
         String text = dataMap['text'];
         return types.TextMessage(author: author, createdAt: createdAt, id: id, text: text);
       }
-      //TODO: Handle other types of messages
+      if (dataMap['type'] == 'image') {
+        double height = dataMap['height'];
+        String name = dataMap['name'];
+        int size = dataMap['size'];
+        String uri = dataMap['uri'];
+        double width = dataMap['height'];
+        return types.ImageMessage(
+            author: author,
+            createdAt: createdAt,
+            height: height,
+            id: id,
+            name: name,
+            size: size,
+            uri: uri,
+            width: width);
+      }
       return types.TextMessage(
           author: author,
           createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -133,6 +214,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> myUserData = Provider.of<UserModel>(context, listen: false).data;
+    String myID = myUserData['uid'];
     bool imVolunteer = myUserData['isVolunteer'];
     final _user = types.User(id: myUserData['uid'], firstName: myUserData['displayName']);
     Map<String, dynamic> requestData = Provider.of<RequestModel>(context, listen: false).data;
@@ -149,7 +231,9 @@ class _ChatScreenState extends State<ChatScreen> {
           String hisDisplayName =
               imVolunteer ? latestRequestData['VI_displayName'] : latestRequestData['VO_displayName'];
           return WillPopScope(
-            onWillPop: () => _handleExit(imVolunteer),
+            onWillPop: () async {
+              return false;
+            },
             child: Scaffold(
               appBar: AppBar(
                 automaticallyImplyLeading: false,
@@ -174,7 +258,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       size: 26,
                       semanticLabel: "Button to end session and exit the room permanently",
                     ),
-                    onPressed: () => _handleExit(imVolunteer),
+                    onPressed: () => _handleExit(myID, imVolunteer, requestID, latestRequestData),
                   ),
                 ],
               ),
@@ -187,7 +271,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     QuerySnapshot messagesQuerySnapshot = snapshot.data as QuerySnapshot;
                     List<DocumentSnapshot> messagesList = messagesQuerySnapshot.docs;
                     //* Convert data to List<types.Message>
-                    //* Chat() Widget uses this List<types.Message> to build messages for display
+                    //* messagesListProcessed is used to build messages
                     List<types.Message> messagesListProcessed = processFirebaseMessages(messagesList);
                     return SafeArea(
                       bottom: false,
@@ -196,6 +280,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         onSendPressed: _handleSendPressed,
                         user: _user,
                         showUserNames: true,
+                        onAttachmentPressed: () => _handleSendImage(requestID, latestRequestData),
                         theme: DefaultChatTheme(
                           inputBackgroundColor: Colors.grey.shade100,
                           inputTextColor: Colors.black,
