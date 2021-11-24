@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -18,9 +20,27 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  late StreamSubscription _statusSubscription;
+
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      String requestID = Provider.of<RequestModel>(context, listen: false).rid;
+      bool imVolunteer = Provider.of<UserModel>(context, listen: false).isVolunteer;
+      _statusSubscription =
+          FirebaseFirestore.instance.collection('requests').doc(requestID).snapshots().listen((snapshot) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        if (data['status'] == "Completed") {
+          if (!imVolunteer) {
+            Navigator.pushNamedAndRemoveUntil(context, '/review', ModalRoute.withName('/'));
+          } else if (imVolunteer) {
+            Navigator.of(context).pop();
+          }
+        }
+      });
+    });
   }
 
   //TODO: Handle Video Call
@@ -36,15 +56,13 @@ class _ChatScreenState extends State<ChatScreen> {
       //* If role is VI, go to review screen
       if (!imVolunteer) {
         Navigator.pushNamedAndRemoveUntil(context, '/review', ModalRoute.withName('/'));
+      } else if (imVolunteer) {
+        Navigator.of(context).pop();
       }
-
-      //* For VO, push to homescreen
-
       //* Update Firestore status "Completed"
 
-      //* Add to past assignments for VO
+      //* Update Firestore history
 
-      //* Indicate in stream for the other party to auto exit
       return true;
     }
     return false;
@@ -60,19 +78,17 @@ class _ChatScreenState extends State<ChatScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                //return false when click on "NO"
                 child: const Text('Cancel', style: TextStyle(color: Colors.black)),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                //return true when click on "Yes"
                 child: const Text('Confirm', style: TextStyle(color: Colors.red)),
               ),
             ],
             backgroundColor: Colors.white,
           ),
         ) ??
-        false; //if showDialouge had returned null, then return false
+        false;
   }
 
   //* Need this to handle messages sent by myself
@@ -173,7 +189,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     //* Convert data to List<types.Message>
                     //* Chat() Widget uses this List<types.Message> to build messages for display
                     List<types.Message> messagesListProcessed = processFirebaseMessages(messagesList);
-                    //TODO: If the other party exits, you exit too, if VI, go review screen
                     return SafeArea(
                       bottom: false,
                       child: Chat(
