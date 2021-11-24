@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/parser.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:marquee/marquee.dart';
 
 class RequestDialog extends StatelessWidget {
   final String rid;
@@ -54,6 +56,9 @@ class RequestDialog extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 16),
           ),
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).primaryColor,
+          ),
         ),
       ),
     );
@@ -71,7 +76,8 @@ class RequestDialog extends StatelessWidget {
         ),
       ),
       content: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.6,
+        height: MediaQuery.of(context).size.height * 0.5,
+        width: MediaQuery.of(context).size.height * 0.4,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -81,7 +87,7 @@ class RequestDialog extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.24,
+                    height: MediaQuery.of(context).size.height * 0.2,
                     child: SvgPicture.asset(
                       imageLoc1,
                       fit: BoxFit.contain,
@@ -90,59 +96,146 @@ class RequestDialog extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.28,
-                    width: MediaQuery.of(context).size.height * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    width: MediaQuery.of(context).size.height * 0.36,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0, bottom: 5.0),
-                          child: Text(
-                            "Request Details",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).primaryColor,
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 5.0, bottom: 15.0),
+                            child: Text(
+                              "Request Details",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).primaryColor,
+                              ),
                             ),
                           ),
                         ),
-                        //* Design 2 - Locations same row as label, align center
-                        Text(
-                          "From",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context).primaryColor,
+                        //* Start Location Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5),
+                              child: Icon(
+                                Ionicons.location_outline,
+                                color: Theme.of(context).primaryColorDark,
+                                size: 28,
+                              ),
+                            ),
+                            Expanded(
+                              child: AutoSizeText(
+                                currentLoc,
+                                maxLines: 1,
+                                textAlign: TextAlign.start,
+                                minFontSize: 18,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
+                                overflowReplacement: SizedBox(
+                                  height: 22,
+                                  child: Marquee(
+                                    text: currentLoc,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                    scrollAxis: Axis.horizontal,
+                                    velocity: 25,
+                                    blankSpace: 10,
+                                    startAfter: const Duration(
+                                      milliseconds: 200,
+                                    ),
+                                    pauseAfterRound: const Duration(
+                                      seconds: 1,
+                                      milliseconds: 500,
+                                    ),
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    fadingEdgeEndFraction: 0.03,
+                                    fadingEdgeStartFraction: 0.03,
+                                    showFadingOnlyWhenScrolling: true,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        //* Divider Row
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3, bottom: 1),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.more_vert,
+                                color: Colors.grey[300],
+                                size: 28,
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(2, 0, 3, 0),
+                                  child: Divider(
+                                    height: 5,
+                                    thickness: 0.2,
+                                    color: Colors.grey[400],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Text(
-                          currentLoc,
-                          softWrap: true,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          "To",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                        Text(
-                          endLoc,
-                          softWrap: true,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
+
+                        //* End Location Row
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5, top: 2),
+                              child: Icon(
+                                Ionicons.navigate_circle_outline,
+                                color: Theme.of(context).primaryColorDark,
+                                size: 28,
+                              ),
+                            ),
+                            Expanded(
+                              child: AutoSizeText(
+                                endLoc,
+                                maxLines: 1,
+                                textAlign: TextAlign.start,
+                                minFontSize: 18,
+                                style: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontSize: 18,
+                                ),
+                                overflowReplacement: SizedBox(
+                                  height: 22,
+                                  child: Marquee(
+                                    text: endLoc,
+                                    style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontSize: 18,
+                                    ),
+                                    scrollAxis: Axis.horizontal,
+                                    velocity: 25,
+                                    blankSpace: 10,
+                                    startAfter: const Duration(
+                                      milliseconds: 200,
+                                    ),
+                                    pauseAfterRound: const Duration(
+                                      seconds: 1,
+                                      milliseconds: 500,
+                                    ),
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    fadingEdgeEndFraction: 0.03,
+                                    fadingEdgeStartFraction: 0.03,
+                                    showFadingOnlyWhenScrolling: true,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
