@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'request_dialog.dart';
 
 import '../../providers/user_model.dart';
+import '../../providers/request_model.dart';
 import 'request_icon.dart';
 
 //* This widget renders a ListTile for an request from requestsList
@@ -25,14 +26,33 @@ class Request extends StatefulWidget {
 
 class _RequestState extends State<Request> {
   //* Displays alert dialog when user clicks accept
-  void _onAccept() {
+  void onView() {
     showAlertDialog(context);
   }
 
-  void updateFirestore(String rid) async {
+  void updateFirestoreAndProvider(String rid) async {
+    //* Close Dialog Box
     Navigator.pop(context);
+
+    //* Retrieve volunteer ID and Name for use, set Start Time
     String volunteerId = Provider.of<UserModel>(context, listen: false).uid;
     String volunteerName = Provider.of<UserModel>(context, listen: false).displayName;
+    DateTime acceptTime = DateTime.now();
+
+    print("This is req details");
+    print(widget.requestDetails);
+
+    //* Update Provider
+    Provider.of<RequestModel>(context, listen: false).setRequestData = {
+      ...widget.requestDetails,
+      'VO_ID': volunteerId,
+      "VO_displayName": volunteerName,
+      'status': 'Ongoing',
+    };
+
+    print("This is updated request model data");
+    print(Provider.of<RequestModel>(context, listen: false).data);
+    // Provider.of<UserModel>(context, listen: false).setUserData = {'uid': uid, ...userData};
 
     try {
       DocumentReference docRef = FirebaseFirestore.instance.collection('requests').doc(rid);
@@ -41,7 +61,7 @@ class _RequestState extends State<Request> {
         'VO_ID': volunteerId,
         'VO_displayName': volunteerName,
         //* Record Start Time so can calculate timeTaken
-        'acceptTime': DateTime.now(),
+        'acceptTime': acceptTime,
       });
       //TODO: update snackbar into transition screen then to chat screen
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,14 +96,13 @@ class _RequestState extends State<Request> {
               viName: viName,
               currentLoc: currentLocation,
               endLoc: endLocation,
-              updateFirestore: updateFirestore);
+              updateFirestoreAndProvider: updateFirestoreAndProvider);
         });
   }
 
   @override
   Widget build(BuildContext context) {
     //* requestID for firebase interaction, other variables for display, ?? checks for null
-    String rid = widget.requestDetails["rid"];
     String viName = widget.requestDetails['VI_displayName'] ?? "";
     String currentLocation = widget.requestDetails['currentLocationText'] ?? "";
     String endLocation = widget.requestDetails['endLocationText'] ?? "";
@@ -120,12 +139,19 @@ class _RequestState extends State<Request> {
                   ],
                 ),
               ),
-              //TODO: styling can be improved (e.g. button long press effect, the slight misalignment from center)
               trailing: widget.type == "request_stream"
-                  ? OutlinedButton(
-                      //TODO: interact with firebase with this function, probably should have the id of the request passed here
-                      onPressed: () => _onAccept(),
-                      child: const Text("Accept"),
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: OutlinedButton(
+                        onPressed: () => onView(),
+                        child: const Text("View"),
+                        style: OutlinedButton.styleFrom(
+                          // primary: Theme.of(context).primaryColor,
+                          side: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
                     )
                   : null,
               isThreeLine: true,
