@@ -84,7 +84,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
 
             //* Intercept if data is empty and render a text message instead of building requestsList
             if (_requestsData.isEmpty && type != "request_stream") {
-              String text = "No Requests Found";
+              String text = "No Requests History Available";
 
               return Center(
                 child: Text(text),
