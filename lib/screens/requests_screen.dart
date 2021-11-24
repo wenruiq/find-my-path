@@ -45,7 +45,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
           .collection('users/$volunteerID/requests')
           .where("VO_ID", isEqualTo: volunteerID)
           .where("status", isEqualTo: "Completed")
-          .snapshots(); 
+          .snapshots();
     }
 
     return Scaffold(
@@ -58,8 +58,14 @@ class _RequestsScreenState extends State<RequestsScreen> {
           builder: (_, snapshot) {
             //* Handles if stream snapshot errors out, displays meaningful message in center of screen
             if (snapshot.hasError) {
-              return const Center(
-                child: Text("Error connecting to database, please try again later."),
+              return Center(
+                child: Text(
+                  "Error connecting to database, please try again later.",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey[600],
+                  ),
+                ),
               );
             }
 
@@ -84,10 +90,16 @@ class _RequestsScreenState extends State<RequestsScreen> {
 
             //* Intercept if data is empty and render a text message instead of building requestsList
             if (_requestsData.isEmpty && type != "request_stream") {
-              String text = "No Requests History Available";
+              String text = "No History Available";
 
               return Center(
-                child: Text(text),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey[600],
+                  ),
+                ),
               );
             }
 

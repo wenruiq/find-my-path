@@ -65,7 +65,7 @@ class RequestDialog extends StatelessWidget {
 
     return AlertDialog(
       actionsAlignment: MainAxisAlignment.spaceEvenly,
-      contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+      contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       title: FittedBox(
         fit: BoxFit.scaleDown,
         child: Text(
@@ -107,7 +107,7 @@ class RequestDialog extends StatelessWidget {
                           child: Text(
                             "Request Details",
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 22,
                               fontWeight: FontWeight.w600,
                               color: Theme.of(context).primaryColor,
                             ),
@@ -191,7 +191,7 @@ class RequestDialog extends StatelessWidget {
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(right: 5, top: 2),
+                            padding: const EdgeInsets.only(right: 6, top: 2),
                             child: Icon(
                               Ionicons.navigate_circle_outline,
                               color: Theme.of(context).primaryColorDark,
