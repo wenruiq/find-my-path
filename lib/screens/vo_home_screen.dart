@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../widgets/home/vo_rating.dart';
 import '../widgets/home/vo_availability_button.dart';
-import '../widgets/home/vo_assignment_control.dart';
+import '../widgets/requests/vo_requests_control.dart';
 import '../providers/user_model.dart';
 
 class HomeScreenVO extends StatefulWidget {
@@ -76,9 +76,9 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     var isAvailable = Provider.of<UserModel>(context).isAvailable;
     FirebaseMessaging firebaseMessagingInstance = FirebaseMessaging.instance;
     if (isAvailable) {
-      firebaseMessagingInstance.subscribeToTopic('assignments');
+      firebaseMessagingInstance.subscribeToTopic('requests');
     } else {
-      firebaseMessagingInstance.unsubscribeFromTopic('assignments');
+      firebaseMessagingInstance.unsubscribeFromTopic('requests');
     }
     return Scaffold(
       appBar: AppBar(
@@ -142,8 +142,8 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                   ),
                 ],
               ),
-              //* Assignments ListTiles
-              const AssignmentControl(),
+              //* requests ListTiles
+              const RequestsControl(),
 
               //* Availability Toggle
               const AvailabilityButton(),

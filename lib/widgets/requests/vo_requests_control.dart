@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 //TODO: Change this UI
 
-class AssignmentControl extends StatelessWidget {
-  const AssignmentControl({Key? key}) : super(key: key);
+class RequestsControl extends StatelessWidget {
+  const RequestsControl({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +14,8 @@ class AssignmentControl extends StatelessWidget {
           children: <Widget>[
             //* View All Available Requests
             InkWell(
-              onTap: () => Navigator.pushNamed(context, "/assignments",
-                  arguments: {"type": "request_stream", "title": "Available Assignments"}),
+              onTap: () => Navigator.pushNamed(context, "/requests",
+                  arguments: {"type": "request_stream", "title": "Pending Requests"}),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -23,7 +23,7 @@ class AssignmentControl extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
                     Text(
-                      'Accept an assignment',
+                      'View Pending Requests',
                       style: TextStyle(fontSize: 16),
                     ),
                     Icon(Icons.chevron_right, color: Colors.black),
@@ -38,8 +38,8 @@ class AssignmentControl extends StatelessWidget {
             ),
             //* View Accepted Requests
             InkWell(
-              onTap: () => Navigator.pushNamed(context, "/assignments",
-                  arguments: {"type": "request_history", "title": "Past Assignments"}),
+              onTap: () =>
+                  Navigator.pushNamed(context, "/requests", arguments: {"type": "request_history", "title": "History"}),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -47,7 +47,7 @@ class AssignmentControl extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
                     Text(
-                      'Past assignments',
+                      'View History',
                       style: TextStyle(fontSize: 16),
                     ),
                     Icon(Icons.chevron_right, color: Colors.black),

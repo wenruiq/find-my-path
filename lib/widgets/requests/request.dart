@@ -6,13 +6,13 @@ import 'request_dialog.dart';
 import '../../providers/user_model.dart';
 import 'request_icon.dart';
 
-//* This widget renders a ListTile for an assignment from AssignmentsList
+//* This widget renders a ListTile for an request from requestsList
 //* Contains interactions with firebase (& provider?) when volunteer clicks accept
 class Request extends StatefulWidget {
   final Map<String, dynamic> requestDetails;
   final String type;
 
-  //* Assignment Detail passed from AssignmentsList
+  //* Request Detail passed from requestsList
   const Request({
     required this.requestDetails,
     required this.type,
@@ -29,13 +29,13 @@ class _RequestState extends State<Request> {
     showAlertDialog(context);
   }
 
-  void updateFirestore(String aid) async {
+  void updateFirestore(String rid) async {
     Navigator.pop(context);
     String volunteerId = Provider.of<UserModel>(context, listen: false).uid;
     String volunteerName = Provider.of<UserModel>(context, listen: false).displayName;
 
     try {
-      DocumentReference docRef = FirebaseFirestore.instance.collection('assignments').doc(aid);
+      DocumentReference docRef = FirebaseFirestore.instance.collection('requests').doc(rid);
       await docRef.update({
         'status': 'Ongoing',
         'VO_ID': volunteerId,
@@ -46,24 +46,24 @@ class _RequestState extends State<Request> {
       //TODO: update snackbar into transition screen then to chat screen
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Assignment Accepted"),
+          content: Text("Request Accepted"),
           backgroundColor: Colors.green,
         ),
       );
     } on FirebaseException catch (err) {
       if (err.message == null) {
-        throw Exception("Firebase Error updating assignment after accepting.");
+        throw Exception("Firebase Error updating request after accepting.");
       } else {
         throw Exception(err.message);
       }
     } catch (err) {
-      throw Exception("Error updating assignment after accepting.");
+      throw Exception("Error updating request after accepting.");
     }
   }
 
   //* Shows alert dialog when user clicks accept, fires firebase call when user confirms action
   void showAlertDialog(BuildContext context) {
-    String aid = widget.requestDetails["aid"];
+    String rid = widget.requestDetails["rid"];
     String viName = widget.requestDetails['VI_displayName'] ?? "";
     String currentLocation = widget.requestDetails['currentLocationText'] ?? "";
     String endLocation = widget.requestDetails['endLocationText'] ?? "";
@@ -72,7 +72,7 @@ class _RequestState extends State<Request> {
         context: context,
         builder: (BuildContext context) {
           return RequestDialog(
-              aid: aid,
+              rid: rid,
               viName: viName,
               currentLoc: currentLocation,
               endLoc: endLocation,
@@ -82,8 +82,8 @@ class _RequestState extends State<Request> {
 
   @override
   Widget build(BuildContext context) {
-    //* assignmentID for firebase interaction, other variables for display, ?? checks for null
-    String aid = widget.requestDetails["aid"];
+    //* requestID for firebase interaction, other variables for display, ?? checks for null
+    String rid = widget.requestDetails["rid"];
     String viName = widget.requestDetails['VI_displayName'] ?? "";
     String currentLocation = widget.requestDetails['currentLocationText'] ?? "";
     String endLocation = widget.requestDetails['endLocationText'] ?? "";
@@ -123,7 +123,7 @@ class _RequestState extends State<Request> {
               //TODO: styling can be improved (e.g. button long press effect, the slight misalignment from center)
               trailing: widget.type == "request_stream"
                   ? OutlinedButton(
-                      //TODO: interact with firebase with this function, probably should have the id of the assignment passed here
+                      //TODO: interact with firebase with this function, probably should have the id of the request passed here
                       onPressed: () => _onAccept(),
                       child: const Text("Accept"),
                     )

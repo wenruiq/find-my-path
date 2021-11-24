@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-//* Pass data of ongoing assignment
+//* Pass data of ongoing request
 class RequestModel with ChangeNotifier {
   final Map<String, dynamic> _request = {
     'rid': '',
@@ -34,8 +34,8 @@ class RequestModel with ChangeNotifier {
 
   //* Set all data
   set setRequestData(Map<String, dynamic> requestData) {
-    if (requestData.containsKey('aid')) {
-      _request['aid'] = requestData['aid'];
+    if (requestData.containsKey('rid')) {
+      _request['rid'] = requestData['rid'];
     }
     if (requestData.containsKey('viID')) {
       _request['viID'] = requestData['viID'];

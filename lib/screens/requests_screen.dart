@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import '../providers/user_model.dart';
 import '../widgets/requests/requests_list.dart';
 
-//* Screen shown when user clicks a Call-To-Action from AssignmentControl from HomeScreenVO
-//* Handles data streaming from the volunteer's assignments history or the overall assignments collection
+//* Screen shown when user clicks a Call-To-Action from RequestControl from HomeScreenVO
+//* Handles data streaming from the volunteer's requests history or the overall requests collection
 class RequestsScreen extends StatefulWidget {
   static const routeName = '/requests';
 
@@ -31,18 +31,18 @@ class _RequestsScreenState extends State<RequestsScreen> {
     late List<Map<String, dynamic>> _requestsData;
     final arguments = ModalRoute.of(context)?.settings.arguments as Map;
 
-    //* Sets NavBar title based on source of routing from AssignmentControl buttons
+    //* Sets NavBar title based on source of routing from RequestsControl buttons
     String title = arguments['title'];
     String type = arguments['type'];
 
     //* Type can be request_stream or request_history
     if (type == "request_stream") {
-      //* Set _feed to stream of assignments that have status = "Pending"
-      _feed = FirebaseFirestore.instance.collection('assignments').where("status", isEqualTo: "Pending").snapshots();
+      //* Set _feed to stream of requests that have status = "Pending"
+      _feed = FirebaseFirestore.instance.collection('requests').where("status", isEqualTo: "Pending").snapshots();
     } else {
       var volunteerID = Provider.of<UserModel>(context).uid;
       _feed = FirebaseFirestore.instance
-          .collection('users/${volunteerID}/assignments')
+          .collection('users/$volunteerID/requests')
           .where("VO_ID", isEqualTo: volunteerID)
           .where("status", isEqualTo: "Completed")
           .snapshots();
@@ -72,26 +72,26 @@ class _RequestsScreenState extends State<RequestsScreen> {
 
             //* active connectionState when stream is established
             if (snapshot.connectionState == ConnectionState.active) {
-              //* Converts streamed snapshot into list of Map<String, dynamic> containing assignment details
+              //* Converts streamed snapshot into list of Map<String, dynamic> containing request details
               _requestsData = snapshot.data!.docs.map((DocumentSnapshot document) {
                 dynamic data = document.data()!;
                 final Map<String, dynamic> toReturn = data;
-                //* stores assignmentID into the newly generated list
-                toReturn["aid"] = document.id;
+                //* stores requestID into the newly generated list
+                toReturn["rid"] = document.id;
                 return toReturn;
               }).toList();
             }
 
-            //* Intercept if data is empty and render a text message instead of building assignmentsList
+            //* Intercept if data is empty and render a text message instead of building requestsList
             if (_requestsData.isEmpty && type != "request_stream") {
-              String text = "No Assignments Found";
+              String text = "No Requests Found";
 
               return Center(
                 child: Text(text),
               );
             }
 
-            //* Pass data to assignmentsList to render if there's data, type is either request_history or request_stream
+            //* Pass data to requestsList to render if there's data, type is either request_history or request_stream
             return RequestsList(
               data: _requestsData,
               type: type,

@@ -7,8 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../stream_indicator/pulsing_indicator.dart';
 import 'request.dart';
 
-//* This widget renders the full scrollable list of assignments after clicking an option from AssignmentControl
-//* Loads PulsingIndicator at the top if option selected is Accept An Assignment
+//* This widget renders the full scrollable list of requests after clicking an option from RequestsControl
+//* Loads PulsingIndicator at the top if option selected is Accept An Request
 class RequestsList extends StatelessWidget {
   final List<Map<String, dynamic>> data;
   final String type;
@@ -22,9 +22,9 @@ class RequestsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //* Text styling for PulsingIndicator depending on length of data
-    String listenerMessage = data.isEmpty ? "Waiting For Requests" : '${data.length} Active Requests';
+    String listenerMessage = data.isEmpty ? "Waiting For Requests" : '${data.length} Pending Requests';
     if (data.length == 1) {
-      listenerMessage = "1 Active Request";
+      listenerMessage = "1 Pending Request";
     }
 
     return Column(
@@ -37,7 +37,7 @@ class RequestsList extends StatelessWidget {
         Expanded(
           child: data.isEmpty
               ? const Center(
-                  child: Text("No Active Assignments"),
+                  child: Text("No Pending Requests"),
                 )
               : ListView.builder(
                   itemCount: data.length,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-//* This widget is the circle containing the VI's initials on the left of items in AssignmentsList / Assignment
+//* This widget is the circle containing the VI's initials on the left of items in requestsList / Request
 class RequestIcon extends StatelessWidget {
   final String name;
 
-  //* Requires VI's name from Assignment
+  //* Requires VI's name from Request
   const RequestIcon({required this.name, Key? key}) : super(key: key);
 
   //* Converts any names into 0-2 capitalized initial alphabets e.g. Robert Zane -> RZ
@@ -14,7 +14,7 @@ class RequestIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      //* 60 looks the most normal when placed in Assignment
+      //* 60 looks the most normal when placed in Request
       width: 60,
       height: 60,
       child: Container(
