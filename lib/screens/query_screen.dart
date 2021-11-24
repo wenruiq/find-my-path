@@ -46,7 +46,10 @@ class _QueryScreenState extends State<QueryScreen> {
         'endLocationLT': endLocationLT,
         'currentLocationText': currentLocationText,
         'endLocationText': endLocationText,
-        'status': status
+        'status': status,
+        //TODO: remove this after accept works
+        'VO_ID': '12345',
+        'VO_displayName': 'Harvey Specter',
       });
 
       if (imageFile != null) {

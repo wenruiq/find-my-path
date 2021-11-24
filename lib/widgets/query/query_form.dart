@@ -138,8 +138,8 @@ class _QueryFormState extends State<QueryForm> {
       _viDisplayName = userData['displayName'];
       _date = DateTime.now();
       _currentLocationLT = Provider.of<LocationModel>(context, listen: false).currenLocationLT;
-      //TODO: Handle endLocationLT;
-      _endLocationLT = {'lat': 0, 'long': 0};
+      //TODO: Handle endLocationLT, using Safra Punggol For Now;
+      _endLocationLT = {'lat': 1.409978, 'long': 103.905683};
       _currentLocationText = Provider.of<LocationModel>(context, listen: false).currentLocationText;
       _status = 'Pending';
       widget.submitFn(

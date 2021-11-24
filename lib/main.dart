@@ -21,6 +21,7 @@ import './screens/ratings_screen.dart';
 import './screens/hero_image_screen.dart';
 import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/providers/location_model.dart';
+import 'package:find_my_path/providers/request_model.dart';
 
 //* Background Notification Handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -66,7 +67,8 @@ void main() async {
   //* MultiProvider here
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => UserModel()),
-    ChangeNotifierProvider(create: (context) => LocationModel())
+    ChangeNotifierProvider(create: (context) => LocationModel()),
+    ChangeNotifierProvider(create: (context) => RequestModel()),
   ], child: const MyApp()));
 }
 
@@ -89,7 +91,6 @@ class _MyAppState extends State<MyApp> {
 
       //* Dialog Box for user to accept/deny requests
       ///TODO: Connect interaction from notification click to display dialog box
-
 
       //* Styling & Text for Android notification bar
       if (notification != null && android != null && !kIsWeb) {

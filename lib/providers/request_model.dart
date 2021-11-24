@@ -37,17 +37,17 @@ class RequestModel with ChangeNotifier {
     if (requestData.containsKey('rid')) {
       _request['rid'] = requestData['rid'];
     }
-    if (requestData.containsKey('viID')) {
-      _request['viID'] = requestData['viID'];
+    if (requestData.containsKey('VI_ID')) {
+      _request['viID'] = requestData['VI_ID'];
     }
-    if (requestData.containsKey('viDisplayName')) {
-      _request['viDisplayName'] = requestData['viDisplayName'];
+    if (requestData.containsKey('VI_displayName')) {
+      _request['viDisplayName'] = requestData['VI_displayName'];
     }
-    if (requestData.containsKey('voID')) {
-      _request['voID'] = requestData['voID'];
+    if (requestData.containsKey('VO_ID')) {
+      _request['voID'] = requestData['VO_ID'];
     }
-    if (requestData.containsKey('voDisplayName')) {
-      _request['voDisplayName'] = requestData['voDisplayName'];
+    if (requestData.containsKey('VO_displayName')) {
+      _request['voDisplayName'] = requestData['VO_displayName'];
     }
     if (requestData.containsKey('currentLocationLT')) {
       _request['currentLocationLT'] = requestData['currentLocationLT'];
@@ -66,6 +66,9 @@ class RequestModel with ChangeNotifier {
     }
     if (requestData.containsKey('status')) {
       _request['status'] = requestData['status'];
+    }
+    if (requestData.containsKey('imageURL')) {
+      _request['imageURL'] = requestData['imageURL'];
     }
 
     notifyListeners();

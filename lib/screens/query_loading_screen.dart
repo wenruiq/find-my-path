@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter/scheduler.dart';
+import "package:provider/provider.dart";
 
 import '../widgets/util/loading.dart';
 import "../args/query_loading_screen_args.dart";
+import "../providers/request_model.dart";
 
 //* This screen handles navigation to chatroom if status -> "Ongoing";
 class QueryLoadingScreen extends StatefulWidget {
@@ -21,13 +23,13 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
     //* Comment out this line if you want to cancel without deleting
     await requestRef.delete();
   }
-  
+
   //* Navigate user to chat room when status = "Ongoing"
   void navigateToChatRoom(Map<String, dynamic> requestData, String requestID) {
-    //* Update provider
-    
     //* Ensure this runs after build completes
     SchedulerBinding.instance!.addPostFrameCallback((_) {
+      //* Update provider
+      Provider.of<RequestModel>(context, listen: false).setRequestData = {'rid': requestID, ...requestData};
       Navigator.pushNamedAndRemoveUntil(context, '/chat', ModalRoute.withName('/'));
     });
   }
@@ -46,7 +48,7 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
                 if (snapshot.data!.exists) {
                   String status = snapshot.data!['status'];
                   if (status == "Ongoing") {
-                    navigateToChatRoom(snapshot.data as Map<String, dynamic>, requestID);
+                    navigateToChatRoom(snapshot.data!.data() as Map<String, dynamic>, requestID);
                   }
                 }
               }
