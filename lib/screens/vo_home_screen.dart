@@ -118,12 +118,16 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                     height: 20,
                   ),
                   //* imageURL
-                  ClipOval(
-                    child: Image.network(
-                      'https://i.redd.it/z3xftphdln041.png',
-                      height: 190,
-                      width: 190,
-                      fit: BoxFit.cover,
+                  //TODO: Replace this with upload profile pic after implementing video call properly
+                  InkResponse(
+                    onTap: () => Navigator.pushNamed(context, '/testpickupscreen'),
+                    child: ClipOval(
+                      child: Image.network(
+                        'https://i.redd.it/z3xftphdln041.png',
+                        height: 190,
+                        width: 190,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   //* displayName

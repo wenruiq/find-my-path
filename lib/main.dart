@@ -20,6 +20,10 @@ import './screens/requests_screen.dart';
 import './screens/ratings_screen.dart';
 import './screens/hero_image_screen.dart';
 import './screens/review_screen.dart';
+//TODO: Delete after making video call work
+import './screens/test_video_call_screen.dart';
+import './screens/test_call_pickup_screen.dart';
+
 import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/providers/location_model.dart';
 import 'package:find_my_path/providers/request_model.dart';
@@ -164,6 +168,9 @@ class _MyAppState extends State<MyApp> {
           RatingScreen.routeName: (context) => const RatingScreen(),
           HeroImageScreen.routeName: (context) => const HeroImageScreen(),
           ReviewScreen.routeName: (context) => const ReviewScreen(),
+          //TODO: delete after enabling video call
+          TestVideoCallScreen.routeName: (context) => const TestVideoCallScreen(),
+          TestCallPickupScreen.routeName: (context) => const TestCallPickupScreen(callerName: "Bob"),
         });
   }
 }

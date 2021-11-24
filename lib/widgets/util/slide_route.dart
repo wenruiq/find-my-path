@@ -23,6 +23,6 @@ class SlideRoute extends PageRouteBuilder {
             Widget child,
           ) =>
               FadeTransition(opacity: animation, child: child),
-          transitionDuration: Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 500),
         );
 }
