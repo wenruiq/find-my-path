@@ -106,13 +106,7 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
 
   @override
   Widget build(BuildContext context) {
-    // //* Get user data from provider
-    // var userData = Provider.of<UserModel>(context).data;
-    // print(userData);
 
-    // //* Get current location {lat: double, long: double}
-    // var curlo = Provider.of<LocationModel>(context).curLo;
-    // print(curlo);
 
     return Scaffold(
       backgroundColor: Colors.white,

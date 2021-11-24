@@ -112,6 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         inputTextColor: Colors.black,
                         inputTextCursorColor: Colors.black,
                         primaryColor: const Color(0xff4a67a0),
+                        userAvatarNameColors: [Theme.of(context).primaryColor],
                       ),
                     ),
                   );

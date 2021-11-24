@@ -31,16 +31,12 @@ class _RequestState extends State<Request> {
   }
 
   void updateFirestoreAndProvider(String rid) async {
-    //* Close Dialog Box
-    Navigator.pop(context);
+    // //* Close Dialog Box
+    // Navigator.pop(context);
 
     //* Retrieve volunteer ID and Name for use, set Start Time
     String volunteerId = Provider.of<UserModel>(context, listen: false).uid;
     String volunteerName = Provider.of<UserModel>(context, listen: false).displayName;
-    DateTime acceptTime = DateTime.now();
-
-    print("This is req details");
-    print(widget.requestDetails);
 
     //* Update Provider
     Provider.of<RequestModel>(context, listen: false).setRequestData = {
@@ -49,10 +45,7 @@ class _RequestState extends State<Request> {
       "VO_displayName": volunteerName,
       'status': 'Ongoing',
     };
-
-    print("This is updated request model data");
-    print(Provider.of<RequestModel>(context, listen: false).data);
-    // Provider.of<UserModel>(context, listen: false).setUserData = {'uid': uid, ...userData};
+    Navigator.pushNamed(context, "/chat");
 
     try {
       DocumentReference docRef = FirebaseFirestore.instance.collection('requests').doc(rid);
@@ -60,16 +53,7 @@ class _RequestState extends State<Request> {
         'status': 'Ongoing',
         'VO_ID': volunteerId,
         'VO_displayName': volunteerName,
-        //* Record Start Time so can calculate timeTaken
-        'acceptTime': acceptTime,
       });
-      //TODO: update snackbar into transition screen then to chat screen
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Request Accepted"),
-          backgroundColor: Colors.green,
-        ),
-      );
     } on FirebaseException catch (err) {
       if (err.message == null) {
         throw Exception("Firebase Error updating request after accepting.");
@@ -103,9 +87,9 @@ class _RequestState extends State<Request> {
   @override
   Widget build(BuildContext context) {
     //* requestID for firebase interaction, other variables for display, ?? checks for null
-    String viName = widget.requestDetails['VI_displayName'] ?? "";
-    String currentLocation = widget.requestDetails['currentLocationText'] ?? "";
-    String endLocation = widget.requestDetails['endLocationText'] ?? "";
+    String viName = widget.requestDetails['VI_displayName'] ?? "N/A";
+    String currentLocation = widget.requestDetails['currentLocationText'] ?? "N/A";
+    String endLocation = widget.requestDetails['endLocationText'] ?? "N/A";
 
     return Center(
       child: Card(
@@ -146,7 +130,6 @@ class _RequestState extends State<Request> {
                         onPressed: () => onView(),
                         child: const Text("View"),
                         style: OutlinedButton.styleFrom(
-                          // primary: Theme.of(context).primaryColor,
                           side: BorderSide(
                             color: Theme.of(context).primaryColor,
                           ),
