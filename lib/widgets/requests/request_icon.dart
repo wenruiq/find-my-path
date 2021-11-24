@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 //* This widget is the circle containing the VI's initials on the left of items in AssignmentsList / Assignment
-class AssignmentIcon extends StatelessWidget {
+class RequestIcon extends StatelessWidget {
   final String name;
 
   //* Requires VI's name from Assignment
-  const AssignmentIcon({required this.name, Key? key}) : super(key: key);
+  const RequestIcon({required this.name, Key? key}) : super(key: key);
 
   //* Converts any names into 0-2 capitalized initial alphabets e.g. Robert Zane -> RZ
   String getInitials(String name) =>

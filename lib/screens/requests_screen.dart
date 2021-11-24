@@ -4,22 +4,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/user_model.dart';
-import '../widgets/assignments/assignments_list.dart';
+import '../widgets/requests/requests_list.dart';
 
 //* Screen shown when user clicks a Call-To-Action from AssignmentControl from HomeScreenVO
 //* Handles data streaming from the volunteer's assignments history or the overall assignments collection
-class AssignmentsScreen extends StatefulWidget {
-  static const routeName = '/assignments';
+class RequestsScreen extends StatefulWidget {
+  static const routeName = '/requests';
 
-  const AssignmentsScreen({
+  const RequestsScreen({
     Key? key,
   }) : super(key: key);
 
   @override
-  _AssignmentsScreenState createState() => _AssignmentsScreenState();
+  _RequestsScreenState createState() => _RequestsScreenState();
 }
 
-class _AssignmentsScreenState extends State<AssignmentsScreen> {
+class _RequestsScreenState extends State<RequestsScreen> {
   @override
   void initState() {
     super.initState();
@@ -28,15 +28,15 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _feed;
-    late List<Map<String, dynamic>> _assignmentsData;
+    late List<Map<String, dynamic>> _requestsData;
     final arguments = ModalRoute.of(context)?.settings.arguments as Map;
 
     //* Sets NavBar title based on source of routing from AssignmentControl buttons
     String title = arguments['title'];
     String type = arguments['type'];
 
-    //* Type can be assignment_stream or assignment_history
-    if (type == "assignment_stream") {
+    //* Type can be request_stream or request_history
+    if (type == "request_stream") {
       //* Set _feed to stream of assignments that have status = "Pending"
       _feed = FirebaseFirestore.instance.collection('assignments').where("status", isEqualTo: "Pending").snapshots();
     } else {
@@ -73,7 +73,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
             //* active connectionState when stream is established
             if (snapshot.connectionState == ConnectionState.active) {
               //* Converts streamed snapshot into list of Map<String, dynamic> containing assignment details
-              _assignmentsData = snapshot.data!.docs.map((DocumentSnapshot document) {
+              _requestsData = snapshot.data!.docs.map((DocumentSnapshot document) {
                 dynamic data = document.data()!;
                 final Map<String, dynamic> toReturn = data;
                 //* stores assignmentID into the newly generated list
@@ -83,15 +83,17 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
             }
 
             //* Intercept if data is empty and render a text message instead of building assignmentsList
-            if (_assignmentsData.isEmpty) {
-              return const Center(
-                child: Text("No Assignments Found"),
+            if (_requestsData.isEmpty && type != "request_stream") {
+              String text = "No Assignments Found";
+
+              return Center(
+                child: Text(text),
               );
             }
 
-            //* Pass data to assignmentsList to render if there's data, type is either assignment_history or assignment_stream
-            return AssignmentsList(
-              data: _assignmentsData,
+            //* Pass data to assignmentsList to render if there's data, type is either request_history or request_stream
+            return RequestsList(
+              data: _requestsData,
               type: type,
             );
           },

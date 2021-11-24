@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../widgets/home/vo_rating.dart';
 import '../widgets/home/vo_availability_button.dart';
 import '../widgets/home/vo_assignment_control.dart';
-import '../widgets/home/vo_assignment_dialog.dart';
 import '../providers/user_model.dart';
 
 class HomeScreenVO extends StatefulWidget {
@@ -145,10 +144,10 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
               ),
               //* Assignments ListTiles
               const AssignmentControl(),
-      
+
               //* Availability Toggle
               const AvailabilityButton(),
-      
+
               //* App Version Display
               SizedBox(
                 child: Column(

@@ -16,7 +16,7 @@ import "./screens/loading_screen.dart";
 import "./screens/auth_screen.dart";
 import './screens/vi_home_screen.dart';
 import './screens/vo_home_screen.dart';
-import './screens/assignments_screen.dart';
+import './screens/requests_screen.dart';
 import './screens/ratings_screen.dart';
 import './screens/hero_image_screen.dart';
 import 'package:find_my_path/providers/user_model.dart';
@@ -163,7 +163,7 @@ class _MyAppState extends State<MyApp> {
           QueryScreen.routeName: (context) => const QueryScreen(),
           QueryLoadingScreen.routeName: (context) => const QueryLoadingScreen(),
           ChatScreen.routeName: (context) => const ChatScreen(),
-          AssignmentsScreen.routeName: (context) => const AssignmentsScreen(),
+          RequestsScreen.routeName: (context) => const RequestsScreen(),
           RatingScreen.routeName: (context) => const RatingScreen(),
           HeroImageScreen.routeName: (context) => const HeroImageScreen(),
         });

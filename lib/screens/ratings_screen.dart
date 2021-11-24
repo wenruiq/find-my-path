@@ -1,5 +1,6 @@
+import 'package:find_my_path/widgets/requests/request_icon.dart';
 import 'package:flutter/material.dart';
-import '../widgets/assignments/assignment_icon.dart';
+import '../widgets/requests/request_icon.dart';
 
 //TODO: Update this to show badges - refer to tele saved msgs
 //! currently used for testing widgets only
@@ -16,7 +17,7 @@ class RatingScreen extends StatelessWidget {
         title: Text("My Ratings"),
       ),
       body: const Center(
-        child: AssignmentIcon(name: "Alex"),
+        child: RequestIcon(name: "Alex"),
       ),
     );
   }
