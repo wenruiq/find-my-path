@@ -34,8 +34,14 @@ class RequestsList extends StatelessWidget {
           ),
         Expanded(
           child: data.isEmpty
-              ? const Center(
-                  child: Text("No Pending Requests"),
+              ? Center(
+                  child: Text(
+                    "No Pending Requests",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.grey[600],
+                    ),
+                  ),
                 )
               : ListView.builder(
                   itemCount: data.length,

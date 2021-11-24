@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../widgets/home/vo_rating.dart';
 import '../widgets/home/vo_availability_button.dart';
-import '../widgets/requests/vo_requests_control.dart';
+import '../widgets/requests/requests_control.dart';
 import '../providers/user_model.dart';
 
 class HomeScreenVO extends StatefulWidget {
