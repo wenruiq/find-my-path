@@ -198,7 +198,7 @@ class _QueryFormState extends State<QueryForm> {
                   TextFormField(
                       key: const ValueKey('endLocation'),
                       controller: _endLocationController,
-                      autocorrect: true,
+                      autocorrect: false,
                       textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(hintText: "Enter your destination"),
                       onSaved: (value) {

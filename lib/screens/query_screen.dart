@@ -4,10 +4,12 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:image_picker/image_picker.dart";
 import "package:firebase_storage/firebase_storage.dart";
+import "package:provider/provider.dart";
 
 import "../widgets/util/dismiss_keyboard.dart";
 import "../widgets/query/query_form.dart";
 import "../args/query_loading_screen_args.dart";
+import "../providers/user_model.dart";
 
 //* This screen is the form that VI needs to fill up to get a match
 class QueryScreen extends StatefulWidget {
@@ -58,6 +60,29 @@ class _QueryScreenState extends State<QueryScreen> {
         final url = await ref.getDownloadURL();
         //* Add imageURL to request document
         await docRef.update({'imageURL': url});
+        //* Add image message to auto send attached image
+        DocumentReference msgDocRef = docRef.collection("messages").doc();
+        String msgDocID = msgDocRef.id;
+        final bytes = await imageFile.readAsBytes();
+        final image = await decodeImageFromList(bytes);
+        Map<String, dynamic> userData = Provider.of<UserModel>(context, listen: false).data;
+        Map<String, String> author = {'id': userData['uid'], 'firstName': userData['displayName']};
+        await msgDocRef.set({
+          'author': author,
+          'createdAt': DateTime.now(),
+          'height': image.height.toDouble(),
+          'id': msgDocID,
+          'name': imageFile.name,
+          'size': bytes.length,
+          'uri': url,
+          'width': image.width.toDouble(),
+          'type': 'image'
+        });
+        DocumentReference msgDocRef2 = docRef.collection("messages").doc();
+        String msgDocID2 = msgDocRef.id;
+        String text = "Hi! Could you please guide me from '$currentLocationText' to '$endLocationText'?";
+        await msgDocRef2
+            .set({'author': author, 'createdAt': DateTime.now(), 'text': text, 'id': msgDocID2, 'type': 'text'});
       }
     } on FirebaseException catch (err) {
       if (err.message == null) {
