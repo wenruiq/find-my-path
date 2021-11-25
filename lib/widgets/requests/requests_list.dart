@@ -31,6 +31,9 @@ class RequestsList extends StatelessWidget {
           PulsingIndicator(
             icon: Ionicons.radio_outline,
             message: listenerMessage,
+            textColor: const Color(0xff1a3b7b),
+            bgColor: const Color(0xff1a3b7b).withOpacity(0),
+            onTapFn: () => {},
           ),
         Expanded(
           child: data.isEmpty

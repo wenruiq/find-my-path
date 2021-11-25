@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 class PulsingIndicator extends StatefulWidget {
   final String message;
   final IconData icon;
+  final Color bgColor;
+  final Color textColor;
+  final void Function() onTapFn;
 
   const PulsingIndicator({
     required this.icon,
     required this.message,
+    this.bgColor = Colors.white,
+    this.textColor = Colors.blue,
+    required this.onTapFn,
     Key? key,
   }) : super(key: key);
 
@@ -37,9 +43,9 @@ class _PulsingIndicatorState extends State<PulsingIndicator> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () => widget.onTapFn(),
       child: Container(
-        // color: Colors.white,
+        color: widget.bgColor,
         padding: const EdgeInsets.only(top: 8, bottom: 8),
         child: AnimatedBuilder(
           animation: _animation,
@@ -51,15 +57,13 @@ class _PulsingIndicatorState extends State<PulsingIndicator> with SingleTickerPr
                   padding: const EdgeInsets.only(right: 10.0),
                   child: Icon(
                     widget.icon,
-                    color: Theme.of(context).primaryColorDark.withOpacity(1 - _animationController.value),
+                    color: widget.textColor.withOpacity(1 - _animationController.value),
                   ),
                 ),
                 Text(
                   widget.message,
                   style: TextStyle(
-                    // fontWeight: FontWeight.bold,
-                    // color: Colors.cyan.withOpacity(_animationController.value / 4),
-                    color: Theme.of(context).primaryColorDark,
+                    color: widget.textColor,
                     fontSize: 16,
                   ),
                 ),
