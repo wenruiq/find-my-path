@@ -2,6 +2,8 @@ import "dart:io";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
 import "package:provider/provider.dart";
+import 'package:google_place/google_place.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import "../../widgets/query/current_location.dart";
 import "package:find_my_path/providers/location_model.dart";
@@ -28,7 +30,40 @@ class QueryForm extends StatefulWidget {
 }
 
 class _QueryFormState extends State<QueryForm> {
+  //* Google places
+  GooglePlace? googlePlace;
+  List<AutocompletePrediction> predictions = [];
+
+  //* Image Picking
   XFile? _imageFile;
+
+  @override
+  void initState() {
+    super.initState();
+
+    myFocusNode = FocusNode();
+
+    String apiKey = dotenv.env['GOOGLE_API_KEY'] as String;
+    googlePlace = GooglePlace(apiKey);
+
+    // //* Trick to run async await in initState
+    Future.delayed(Duration.zero, () async {
+      var result = await googlePlace!.autocomplete.get("Singapore");
+      if (result != null && result.predictions != null && mounted) {
+        setState(() {
+          predictions = result.predictions!;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    //* Clean up the focus node when the Form is disposed.
+    myFocusNode.dispose();
+
+    super.dispose();
+  }
 
   void _openCamera(BuildContext context) async {
     final pickedFile = await ImagePicker().pickImage(
@@ -121,6 +156,7 @@ class _QueryFormState extends State<QueryForm> {
   String _currentLocationText = '';
   String _endLocationText = '';
   String _status = '';
+  DetailsResult? placeDetails;
 
   //* Input Controllers
   final TextEditingController _endLocationController = TextEditingController();
@@ -157,94 +193,189 @@ class _QueryFormState extends State<QueryForm> {
     return;
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    myFocusNode = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    //* Clean up the focus node when the Form is disposed.
-    myFocusNode.dispose();
-
-    super.dispose();
-  }
-
+  int currentTab = 0;
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          //* Current location display
-          const CurrentLocation(),
-          const SizedBox(height: 25),
-          Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  //* endLocationText
-                  Text(
-                    "Where do you want to go?",
-                    style: TextStyle(fontSize: 24, color: Theme.of(context).primaryColor),
+    return IndexedStack(
+      index: currentTab,
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              //* Current location display
+              const CurrentLocation(),
+              const SizedBox(height: 25),
+              Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      //* endLocationText
+                      Text(
+                        "Where do you want to go?",
+                        style: TextStyle(fontSize: 24, color: Theme.of(context).primaryColor),
+                      ),
+                      TextFormField(
+                        key: const ValueKey('endLocation'),
+                        controller: _endLocationController,
+                        autocorrect: false,
+                        textCapitalization: TextCapitalization.words,
+                        decoration: const InputDecoration(hintText: "Enter your destination"),
+                        onSaved: (value) {
+                          _endLocationText = value.toString();
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter a destination.";
+                          }
+                        },
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            autoCompleteSearch(value);
+                          } else {
+                            if (predictions.isNotEmpty && mounted) {
+                              setState(() {
+                                predictions = [];
+                              });
+                            }
+                          }
+                        },
+                        onTap: () => {
+                          setState(() {
+                            currentTab = currentTab == 1 ? 0 : 1;
+                            myFocusNode.requestFocus();
+                          })
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //* imageURL
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Text(
+                          "Attach A Photo (Optional)",
+                          style: TextStyle(fontSize: 24, color: Theme.of(context).primaryColor),
+                        ),
+                      ),
+                      Center(
+                        child: _previewImage(),
+                      ),
+                    ],
                   ),
-                  TextFormField(
-                      key: const ValueKey('endLocation'),
-                      controller: _endLocationController,
-                      autocorrect: false,
-                      textCapitalization: TextCapitalization.words,
-                      decoration: const InputDecoration(hintText: "Enter your destination"),
-                      onSaved: (value) {
-                        _endLocationText = value.toString();
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter a destination.";
-                        }
-                      }),
-                  const SizedBox(
-                    height: 20,
+                ),
+              ),
+              //* Submit button
+              const SizedBox(height: 25),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.width * 0.13,
+                child: ElevatedButton(
+                  onPressed: () {
+                    FormState().save();
+                    _trySubmit();
+                  },
+                  child: const Text(
+                    "Send Request",
+                    style: TextStyle(fontSize: 24),
                   ),
-                  //* imageURL
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Text(
-                      "Attach A Photo (Optional)",
-                      style: TextStyle(fontSize: 24, color: Theme.of(context).primaryColor),
+                ),
+              ),
+            ],
+          ),
+        ),
+        //* Search page
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              TextField(
+                focusNode: myFocusNode,
+                decoration: InputDecoration(
+                  labelText: "Search",
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                      width: 2.0,
                     ),
                   ),
-                  Center(
-                    child: _previewImage(),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.black54,
+                      width: 2.0,
+                    ),
                   ),
-                ],
+                  suffixIcon: IconButton(
+                    icon: const Icon(
+                      Icons.clear,
+                      semanticLabel: "Tap to go back to form page",
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        currentTab = 0;
+                      });
+                    },
+                  ),
+                ),
+                onChanged: (value) {
+                  if (value.isNotEmpty) {
+                    autoCompleteSearch(value);
+                  } else {
+                    if (predictions.isNotEmpty && mounted) {
+                      setState(() {
+                        predictions = [];
+                      });
+                    }
+                  }
+                },
               ),
-            ),
-          ),
-          //* Submit button
-          const SizedBox(height: 25),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.width * 0.13,
-            child: ElevatedButton(
-              onPressed: () {
-                FormState().save();
-                _trySubmit();
-              },
-              child: const Text(
-                "Send Request",
-                style: TextStyle(fontSize: 24),
+              const SizedBox(
+                height: 10,
               ),
-            ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: predictions.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: const CircleAvatar(
+                        child: Icon(
+                          Icons.pin_drop,
+                          color: Colors.white,
+                        ),
+                      ),
+                      title: Text(predictions[index].description as String),
+                      onTap: () {
+                        _endLocationController.text = predictions[index].description as String;
+                        print(predictions[index].placeId);
+                        setState(() {
+                          currentTab = 0;
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+
+  void autoCompleteSearch(String value) async {
+    print("trying");
+    var result = await googlePlace!.autocomplete.get(value);
+    if (result != null && result.predictions != null && mounted) {
+      setState(() {
+        predictions = result.predictions!;
+      });
+    }
+  }
+
+  void getPlaceDetailsById(String placeId) {}
 }
