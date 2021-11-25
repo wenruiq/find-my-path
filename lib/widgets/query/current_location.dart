@@ -20,10 +20,10 @@ class _CurrentLocationState extends State<CurrentLocation> {
   void initState() {
     super.initState();
 
-    // //* Trick to run async await in initState
-    Future.delayed(Duration.zero, () async {
-      await dotenv.load(fileName: ".env");
-    });
+    // // //* Trick to run async await in initState
+    // Future.delayed(Duration.zero, () async {
+    //   await dotenv.load(fileName: ".env");
+    // });
 
     initLocationService();
   }

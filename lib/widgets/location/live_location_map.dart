@@ -32,8 +32,7 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
   late PolylinePoints polylinePoints;
 
   //* API KEY
-  // String apiKey = dotenv.env['GOOGLE_API_KEY'] as String;
-  String apiKey = 'AIzaSyDUyQtJR5_JyuAua4TJ_ydoG7bUNgEGduc';
+  String apiKey = dotenv.env['GOOGLE_API_KEY'] as String;
 
   //* For custom mark pin icons
   late BitmapDescriptor sourceIcon;
@@ -109,10 +108,13 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
     //TODO: Unhardcode endlocation
     LocationData b = LocationData.fromMap({"latitude": DEST_LOCATION.latitude, "longitude": DEST_LOCATION.longitude});
 
-    setState(() {
-      currentLocation = a;
-      endLocation = b;
-    });
+    // ignore: unnecessary_this
+    if (this.mounted) {
+      setState(() {
+        currentLocation = a;
+        endLocation = b;
+      });
+    }
   }
 
   @override
@@ -205,6 +207,7 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
 
   //* This draws polylines on map
   void setPolylines() async {
+    print("setting with key $apiKey");
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         apiKey,
         PointLatLng(
@@ -241,6 +244,7 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
       mapController?.animateCamera(CameraUpdate.newCameraPosition(cPosition));
 
       //* Set state so Flutter knows widget update is due
+      // ignore: unnecessary_this
       if (this.mounted) {
         setState(() {
           //* Create a new pin position with latest location
