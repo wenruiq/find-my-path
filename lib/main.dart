@@ -1,6 +1,7 @@
 import 'package:find_my_path/screens/query_loading_screen.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -21,8 +22,8 @@ import './screens/ratings_screen.dart';
 import './screens/hero_image_screen.dart';
 import './screens/review_screen.dart';
 //TODO: Delete after making video call work
-import './screens/test_video_call_screen.dart';
-import './screens/test_call_pickup_screen.dart';
+import 'screens/video_call_live_screen.dart';
+import 'screens/video_call_pickup_screen.dart';
 
 import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/providers/location_model.dart';
@@ -118,6 +119,14 @@ void main() async {
     ChangeNotifierProvider(create: (context) => LocationModel()),
     ChangeNotifierProvider(create: (context) => RequestModel()),
   ], child: const MyApp()));
+
+  //* This sets the android bottom nav bar background color haha can be used
+  //* Note: need hot restart, also seems to influence all other pages after it's set, nvm
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   SystemUiOverlayStyle(
+  //     systemNavigationBarColor: Colors.amberAccent,
+  //   ),
+  // );
 }
 
 class MyApp extends StatefulWidget {
@@ -155,7 +164,7 @@ class _MyAppState extends State<MyApp> {
     //? Doesn't work here
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       // NavKey.key.currentState!.pushNamed("/requests");
-       Navigator.pushNamed(context, "/requests");
+      Navigator.pushNamed(context, "/requests");
     });
   }
 
@@ -215,7 +224,7 @@ class _MyAppState extends State<MyApp> {
         ReviewScreen.routeName: (context) => const ReviewScreen(),
         //TODO: delete after enabling video call
         TestVideoCallScreen.routeName: (context) => const TestVideoCallScreen(),
-        TestCallPickupScreen.routeName: (context) => const TestCallPickupScreen(callerName: "Bob"),
+        VideoCallPickupScreen.routeName: (context) => const VideoCallPickupScreen(callerName: "Bob"),
       },
     );
   }

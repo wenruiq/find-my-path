@@ -22,6 +22,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   late StreamSubscription _statusSubscription;
+  late StreamSubscription _callSubscription;
 
   @override
   void initState() {
@@ -30,10 +31,13 @@ class _ChatScreenState extends State<ChatScreen> {
     //* Handles navigation when the other party exits the room
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       String requestID = Provider.of<RequestModel>(context, listen: false).rid;
+      String callID = Provider.of<RequestModel>(context, listen: false).cid;
       bool imVolunteer = Provider.of<UserModel>(context, listen: false).isVolunteer;
+
       _statusSubscription =
           FirebaseFirestore.instance.collection('requests').doc(requestID).snapshots().listen((snapshot) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
         if (data['status'] == "Completed") {
           if (!imVolunteer) {
             Navigator.pushNamedAndRemoveUntil(context, '/review', ModalRoute.withName('/'));
@@ -42,6 +46,26 @@ class _ChatScreenState extends State<ChatScreen> {
           }
         }
       });
+
+      //* Add Call Subscription here
+      _callSubscription = FirebaseFirestore.instance
+          .collection('requests')
+          .doc(requestID)
+          .collection('call')
+          .doc(callID)
+          .snapshots()
+          .listen((snapshot) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+        print("yey");
+
+        print("This is call subscription data");
+        print(data);
+
+        print(data['callerId']);
+        print(data['isCalling']);
+      });
+
     });
   }
 
@@ -67,7 +91,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (!imVolunteer) {
         Navigator.pushNamedAndRemoveUntil(context, '/review', ModalRoute.withName('/'));
       } else if (imVolunteer) {
-        Navigator.of(context).pop();
+        Navigator.pushNamedAndRemoveUntil(context, '/', ModalRoute.withName('/'));
       }
       //* Update Firestore status "Completed"
       DocumentReference requestRef = FirebaseFirestore.instance.collection('requests').doc(requestID);
