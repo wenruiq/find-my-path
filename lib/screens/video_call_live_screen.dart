@@ -43,6 +43,8 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
         ],
       );
 
+      initAgora();
+
       setState(() {
         _agoraLoaded = true;
       });
@@ -61,6 +63,10 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
         }
       });
     });
+  }
+
+  void initAgora() async {
+    await client.initialize();
   }
 
   @override
