@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
 import 'package:provider/provider.dart';
 import 'package:location/location.dart' as flutter_location;
@@ -57,7 +56,6 @@ class _CurrentLocationState extends State<CurrentLocation> {
     _locationData = await location.getLocation();
 
     //* Update current location to provider
-    //TODO: This is only for testing, we need this to be always up to date
     Provider.of<LocationModel>(context, listen: false).setCurrentLocationLT = {
       'lat': _locationData.latitude as double,
       'long': _locationData.longitude as double

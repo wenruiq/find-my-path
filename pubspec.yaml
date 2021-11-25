@@ -95,6 +95,8 @@ flutter:
     - assets/images/request_dialog_direction.svg
     - assets/images/request_dialog_travel.svg
     - .env
+    - assets/icons/destination_map_marker.png
+    - assets/icons/driving_pin.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
