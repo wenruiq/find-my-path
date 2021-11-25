@@ -11,6 +11,7 @@ import "package:image_picker/image_picker.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import 'package:ionicons/ionicons.dart';
 import "package:transparent_image/transparent_image.dart";
+import 'package:permission_handler/permission_handler.dart';
 
 import "../providers/request_model.dart";
 import "../providers/user_model.dart";
@@ -34,10 +35,12 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
+    //TODO: Chat Screen seems to load multiple times from queryLoading -> chat screen (logged 3 builds), need find out why
     //* Handles navigation when the other party exits the room
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       String requestID = Provider.of<RequestModel>(context, listen: false).rid;
       String callID = Provider.of<RequestModel>(context, listen: false).cid;
+      String userID = Provider.of<UserModel>(context, listen: false).uid;
       bool imVolunteer = Provider.of<UserModel>(context, listen: false).isVolunteer;
 
       _statusSubscription =
@@ -53,7 +56,7 @@ class _ChatScreenState extends State<ChatScreen> {
         }
       });
 
-      //* Add Call Subscription here
+      //* Video Call Updates Subscription
       _callSubscription = FirebaseFirestore.instance
           .collection('requests')
           .doc(requestID)
@@ -63,15 +66,22 @@ class _ChatScreenState extends State<ChatScreen> {
           .listen((snapshot) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
-        print("yey");
+        if (data['isCalling']) {
+          if (data['receiverID'] == userID) {
+            Navigator.pushNamed(context, "/callpickup", arguments: {
+              'callerName': data['callerName'],
+            });
+          } else {
+            print("Navigated to test call screen");
+            Navigator.pushNamed(context, '/testcallscreen');
+          }
+        }
 
-        print("This is call subscription data");
-        print(data);
-
-        print(data['callerId']);
-        print(data['isCalling']);
+        //TODO: Send a "Call Accepted / Call Declined message in chat room"
+        if (data['isDeclined']) {
+          print("Call declined");
+        }
       });
-
     });
   }
 
@@ -79,12 +89,42 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     _statusSubscription.cancel();
+    _callSubscription.cancel();
     super.dispose();
   }
 
-  //TODO: Handle Video Call
-  void _handleVideoPressed() {
-    return null;
+  //* Handle Video Call
+  void _handleVideoPressed(
+      String requestID, String callID, String callerID, String callerName, String receiverID) async {
+    DocumentReference videoCallRef =
+        FirebaseFirestore.instance.collection('requests').doc(requestID).collection('call').doc(callID);
+
+    await videoCallRef.update({
+      'callerID': callerID,
+      'callerName': callerName,
+      'receiverID': receiverID,
+      "isCalling": true,
+      "isDeclined": false,
+    });
+  }
+
+  //* Get Video Call Permissions
+  Future<bool> _handleVideoCallPermissions() async {
+    var cameraStatus = await Permission.camera.status;
+    var microphoneStatus = await Permission.microphone.status;
+
+    if (cameraStatus.isDenied || microphoneStatus.isDenied) {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.camera,
+        Permission.microphone,
+      ].request();
+    }
+
+    if (cameraStatus.isGranted && microphoneStatus.isGranted) {
+      return true;
+    }
+
+    return false;
   }
 
   //* Handle Exit Chat Room
@@ -246,10 +286,23 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     Map<String, dynamic> myUserData = Provider.of<UserModel>(context, listen: false).data;
     String myID = myUserData['uid'];
+    String myName = myUserData['displayName'];
     bool imVolunteer = myUserData['isVolunteer'];
     final _user = types.User(id: myUserData['uid'], firstName: myUserData['displayName']);
     Map<String, dynamic> requestData = Provider.of<RequestModel>(context, listen: false).data;
     String requestID = requestData['rid'];
+
+    //* Variable Setting for video call
+    String callReceiverID = "";
+    String callID = requestData['cid'];
+    String voID = requestData['voID'];
+    String viID = requestData['viID'];
+    if (myID == voID) {
+      callReceiverID = viID;
+    } else {
+      callReceiverID = voID;
+    }
+
     DocumentReference requestRef = FirebaseFirestore.instance.collection("requests").doc(requestID);
     //* FutureBuilder to get latest request data before page loads
     return FutureBuilder(
@@ -283,7 +336,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       size: 30,
                       semanticLabel: "Button to start video call",
                     ),
-                    onPressed: () => _handleVideoPressed(),
+                    onPressed: () async => await _handleVideoCallPermissions()
+                        ? _handleVideoPressed(requestID, callID, myID, myName, callReceiverID)
+                        : {},
                   ),
                   IconButton(
                     icon: const Icon(

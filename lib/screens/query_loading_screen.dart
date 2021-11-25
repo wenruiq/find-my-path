@@ -17,6 +17,14 @@ class QueryLoadingScreen extends StatefulWidget {
 }
 
 class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
+  //TODO: delete
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("Query loading loaded");
+  }
+
   void cancelRequest(String rid) async {
     Navigator.pop(context);
     DocumentReference requestRef = FirebaseFirestore.instance.collection("requests").doc(rid);

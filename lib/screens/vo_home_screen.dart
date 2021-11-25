@@ -69,6 +69,15 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
         });
   }
 
+  //* Handles appBar actions, can have more cases, now only logout
+  void onSelected(BuildContext context, String item) {
+    switch (item) {
+      case 'logout':
+        _logoutConfirmation();
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //* Listen to displayName from notifier
@@ -130,7 +139,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                       context,
                       SlideRoute(
                         routeName: '/callpickup',
-                        page: const VideoCallPickupScreen(callerName: "Alex"),
+                        page: const VideoCallPickupScreen(),
                       ),
                     ),
                     child: ClipOval(
@@ -184,14 +193,5 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
         ),
       ),
     );
-  }
-
-  //* Handles appBar actions, can have more cases, now only logout
-  void onSelected(BuildContext context, String item) {
-    switch (item) {
-      case 'logout':
-        _logoutConfirmation();
-        break;
-    }
   }
 }

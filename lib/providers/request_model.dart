@@ -39,8 +39,8 @@ class RequestModel with ChangeNotifier {
     if (requestData.containsKey('rid')) {
       _request['rid'] = requestData['rid'];
     }
-    if (requestData.containsKey('callDocId')) {
-      _request['cid'] = requestData['callDocId'];
+    if (requestData.containsKey('callDocID')) {
+      _request['cid'] = requestData['callDocID'];
     }
     if (requestData.containsKey('VI_ID')) {
       _request['viID'] = requestData['VI_ID'];

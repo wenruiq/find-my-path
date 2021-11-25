@@ -2,12 +2,19 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
   agora_rtc_engine:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: agora_rtc_engine
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.7"
+  agora_uikit:
+    dependency: "direct main"
+    description:
+      name: agora_uikit
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.4"
   archive:
     dependency: transitive
     description:
@@ -369,7 +376,7 @@ packages:
       name: flutter_plugin_android_lifecycle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.4"
+    version: "2.0.5"
   flutter_polyline_points:
     dependency: "direct main"
     description:
@@ -702,6 +709,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.11.1"
+  permission_handler:
+    dependency: "direct main"
+    description:
+      name: permission_handler
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "8.3.0"
+  permission_handler_platform_interface:
+    dependency: transitive
+    description:
+      name: permission_handler_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.7.0"
   petitparser:
     dependency: transitive
     description:
@@ -916,7 +937,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.0"
+    version: "2.3.1"
   xdg_directories:
     dependency: transitive
     description:

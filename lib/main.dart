@@ -218,7 +218,7 @@ class _MyAppState extends State<MyApp> {
         ReviewScreen.routeName: (context) => const ReviewScreen(),
         //TODO: delete after enabling video call
         TestVideoCallScreen.routeName: (context) => const TestVideoCallScreen(),
-        VideoCallPickupScreen.routeName: (context) => const VideoCallPickupScreen(callerName: "Bob"),
+        VideoCallPickupScreen.routeName: (context) => const VideoCallPickupScreen(),
       },
     );
   }

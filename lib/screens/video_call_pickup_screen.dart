@@ -1,19 +1,19 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_storage/firebase_storage.dart";
+import "package:provider/provider.dart";
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:marquee/marquee.dart';
+
+import "../providers/request_model.dart";
+import "../providers/user_model.dart";
 
 //TODO: Add https://pub.dev/packages/flutter_ringtone_player if got time
 class VideoCallPickupScreen extends StatefulWidget {
   static const routeName = '/callpickup';
 
-  final String callerName;
-  // final double size;
-  // final Color color;
-
   const VideoCallPickupScreen({
-    required this.callerName,
-    // this.size = 80,
-    // this.color = Colors.tealAccent,
     Key? key,
   }) : super(key: key);
 
@@ -26,13 +26,40 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
 
   @override
   void initState() {
+    super.initState();
+    print("Vid Call Pickup loaded");
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 3000),
       lowerBound: 0.5,
       vsync: this,
     )..repeat();
 
-    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      String userID = Provider.of<UserModel>(context, listen: false).uid;
+      String requestID = Provider.of<RequestModel>(context, listen: false).rid;
+      String callID = Provider.of<RequestModel>(context, listen: false).cid;
+      //* PRobably a good idea to implement call model now that i see it..
+      //TODO: insert call model stuff here
+
+      // _callSubscription = FirebaseFirestore.instance
+      //     .collection('requests')
+      //     .doc(requestID)
+      //     .collection('call')
+      //     .doc(callID)
+      //     .snapshots()
+      //     .listen((snapshot) {
+      //   Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+      // if (data['receiverID'] != userID && !data['isCalling']) {
+      //   Navigator.of(context).pop();
+      // }
+
+      // if (data['isActive']) {
+      //   Navigator.pushNamedAndRemoveUntil(context, '/testcallscreen', ModalRoute.withName('/chat'));
+      // }
+      // });
+    });
   }
 
   @override
@@ -41,13 +68,31 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
     super.dispose();
   }
 
-  void _endCallFunction() {
+  void _endCallFunction(String requestID, String callID) async {
+    DocumentReference videoCallRef =
+        FirebaseFirestore.instance.collection('requests').doc(requestID).collection('call').doc(callID);
+
+    await videoCallRef.update({
+      'callerID': "",
+      "callerName": "",
+      "receiverID": "",
+      "isCalling": false,
+      "isDeclined": true,
+    });
+
     Navigator.pop(context);
   }
 
-  void _startCallFunction() {
-    //TODO: Change this to navigate back to chat instead
-    Navigator.pushNamedAndRemoveUntil(context, '/testcallscreen', ModalRoute.withName('/'));
+  void _startCallFunction(String requestID, String callID) async {
+    DocumentReference videoCallRef =
+        FirebaseFirestore.instance.collection('requests').doc(requestID).collection('call').doc(callID);
+
+    await videoCallRef.update({
+      "isCalling": false,
+      "isActive": true,
+    });
+
+    Navigator.pushNamedAndRemoveUntil(context, '/testcallscreen', ModalRoute.withName('/chat'));
   }
 
   //* Function that returns the ripple effect for _buildRipplingCircle
@@ -99,6 +144,15 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
 
   @override
   Widget build(BuildContext context) {
+    String callerName;
+
+    // String userID = Provider.of<UserModel>(context, listen: false).uid;
+    String requestID = Provider.of<RequestModel>(context, listen: false).rid;
+    String callID = Provider.of<RequestModel>(context, listen: false).cid;
+
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    callerName = arguments['callerName'] ?? "Unknown";
+
     return Scaffold(
       body: Container(
         //* Padding controls how close the two action buttons are to each other
@@ -146,7 +200,7 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
                     Padding(
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: AutoSizeText(
-                        widget.callerName,
+                        callerName,
                         maxLines: 1,
                         textAlign: TextAlign.start,
                         minFontSize: 35,
@@ -157,7 +211,7 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
                         overflowReplacement: SizedBox(
                           height: 45,
                           child: Marquee(
-                            text: widget.callerName,
+                            text: callerName,
                             style: const TextStyle(
                               fontSize: 40,
                               color: Colors.white,
@@ -200,7 +254,7 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
                           padding: const EdgeInsets.only(bottom: 15.0),
                           child: ElevatedButton(
                             //! onPressed for Decline Call
-                            onPressed: _endCallFunction,
+                            onPressed: () => _endCallFunction(requestID, callID),
                             child: const Icon(
                               Icons.call_end,
                               size: 38,
@@ -234,7 +288,7 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
                           padding: const EdgeInsets.only(bottom: 15.0),
                           child: ElevatedButton(
                             //! onPressed for accept call
-                            onPressed: _startCallFunction,
+                            onPressed: () => _startCallFunction(requestID, callID),
                             child: const Icon(
                               Icons.call,
                               size: 38,

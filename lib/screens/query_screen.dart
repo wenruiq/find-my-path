@@ -94,14 +94,16 @@ class _QueryScreenState extends State<QueryScreen> {
         'currentLocationText': currentLocationText,
         'endLocationText': endLocationText,
         'status': status,
-        'callDocId': callRef.id,
+        'callDocID': callRef.id,
       });
 
       await callRef.set({
-        "callerId": "",
-        "receiverId": "",
+        "callerID": "",
+        "callerName": "",
+        "receiverID": "",
         "isCalling": false,
         "isActive": false,
+        "isDeclined": false,
       });
 
       if (imageFile != null) {
