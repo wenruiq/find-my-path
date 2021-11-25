@@ -48,10 +48,10 @@ class _QueryFormState extends State<QueryForm> {
       FileImage fileImage = FileImage(File(filePath));
       String heroTag = 'queryImage';
       //* Hero Image
-      return Semantics(
-        label: 'Photo currently attached',
-        child: Column(children: <Widget>[
-          GestureDetector(
+      return Column(children: <Widget>[
+        Semantics(
+          label: "The photo currently attached",
+          child: GestureDetector(
             child: Hero(
               tag: heroTag,
               child: Container(
@@ -69,24 +69,24 @@ class _QueryFormState extends State<QueryForm> {
               Navigator.pushNamed(context, '/heroImage', arguments: HeroImageScreenArgs(heroTag, filePath, ''));
             },
           ),
-          const SizedBox(height: 25),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.width * 0.13,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                  primary: Theme.of(context).primaryColor,
-                  onSurface: Theme.of(context).primaryColor,
-                  side: BorderSide(color: Theme.of(context).primaryColor)),
-              onPressed: () => _openCamera(context),
-              child: const Text(
-                "Retake Photo",
-                style: TextStyle(fontSize: 24),
-              ),
+        ),
+        const SizedBox(height: 25),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: MediaQuery.of(context).size.width * 0.13,
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+                primary: Theme.of(context).primaryColor,
+                onSurface: Theme.of(context).primaryColor,
+                side: BorderSide(color: Theme.of(context).primaryColor)),
+            onPressed: () => _openCamera(context),
+            child: const Text(
+              "Retake Photo",
+              style: TextStyle(fontSize: 24),
             ),
           ),
-        ]),
-      );
+        ),
+      ]);
     }
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.45,

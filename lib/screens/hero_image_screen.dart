@@ -30,21 +30,24 @@ class _HeroImageScreenState extends State<HeroImageScreen> {
     final args = ModalRoute.of(context)!.settings.arguments as HeroImageScreenArgs;
     return SafeArea(
       child: Scaffold(
-        body: GestureDetector(
-          child: Center(
-            child: Hero(
-              tag: args.tag,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  image: DecorationImage(image: _imageProvier(args.imageURL, args.filePath), fit: BoxFit.fitWidth),
+        body: Semantics(
+          label: 'Enlarged view of photo, double tap to go back to chat room',
+          child: GestureDetector(
+            child: Center(
+              child: Hero(
+                tag: args.tag,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    image: DecorationImage(image: _imageProvier(args.imageURL, args.filePath), fit: BoxFit.fitWidth),
+                  ),
                 ),
               ),
             ),
+            onTap: () {
+              Navigator.pop(context);
+            },
           ),
-          onTap: () {
-            Navigator.pop(context);
-          },
         ),
       ),
     );

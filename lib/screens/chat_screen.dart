@@ -1,5 +1,6 @@
 import 'dart:async';
 import "dart:io";
+import 'package:cached_network_image/cached_network_image.dart';
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -9,11 +10,13 @@ import "package:provider/provider.dart";
 import "package:image_picker/image_picker.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import 'package:ionicons/ionicons.dart';
+import "package:transparent_image/transparent_image.dart";
 
 import "../providers/request_model.dart";
 import "../providers/user_model.dart";
 import "../screens/loading_screen.dart";
 import "../widgets/stream_indicator/pulsing_indicator.dart";
+import "../../args/hero_image_screen_args.dart";
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -182,7 +185,7 @@ class _ChatScreenState extends State<ChatScreen> {
   List<types.Message> processFirebaseMessages(List<DocumentSnapshot> messagesList) {
     List<types.Message> messagesListProcessed = messagesList.map((DocumentSnapshot messageDoc) {
       Map<String, dynamic> dataMap = messageDoc.data() as Map<String, dynamic>;
-      final author = types.User(id: dataMap['author']['id'], firstName: dataMap['author']['firstName']);
+      final author = types.User(id: dataMap['author']['id'], firstName: dataMap['author']['firstName'] + " says:");
       int createdAt = dataMap['createdAt'].toDate().millisecondsSinceEpoch;
       String id = dataMap['id'];
       if (dataMap['type'] == 'text') {
@@ -310,6 +313,30 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                               inputTextStyle: const TextStyle(fontSize: 20),
                             ),
+                            imageMessageBuilder: (msg, {messageWidth = 300}) {
+                              String id = msg.id;
+                              String uri = msg.uri;
+                              return Semantics(
+                                label: "A photo sent to the chat",
+                                child: GestureDetector(
+                                  child: Hero(
+                                    tag: id,
+                                    child: FadeInImage.memoryNetwork(
+                                      placeholder: kTransparentImage,
+                                      image: uri,
+                                      height: 250,
+                                      width: 250,
+                                      alignment: Alignment.topCenter,
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/heroImage',
+                                        arguments: HeroImageScreenArgs(id, '', uri));
+                                  },
+                                ),
+                              );
+                            },
                           ),
                           Align(
                             child: PulsingIndicator(

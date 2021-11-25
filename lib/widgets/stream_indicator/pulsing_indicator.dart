@@ -42,34 +42,37 @@ class _PulsingIndicatorState extends State<PulsingIndicator> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => widget.onTapFn(),
-      child: Container(
-        color: widget.bgColor,
-        padding: const EdgeInsets.only(top: 8, bottom: 8),
-        child: AnimatedBuilder(
-          animation: _animation,
-          builder: (context, _) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: Icon(
-                    widget.icon,
-                    color: widget.textColor.withOpacity(1 - _animationController.value),
+    return Semantics(
+      label: "Double tap here to show live location on google maps",
+      child: InkWell(
+        onTap: () => widget.onTapFn(),
+        child: Container(
+          color: widget.bgColor,
+          padding: const EdgeInsets.only(top: 8, bottom: 8),
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (context, _) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: Icon(
+                      widget.icon,
+                      color: widget.textColor.withOpacity(1 - _animationController.value),
+                    ),
                   ),
-                ),
-                Text(
-                  widget.message,
-                  style: TextStyle(
-                    color: widget.textColor,
-                    fontSize: 16,
+                  Text(
+                    widget.message,
+                    style: TextStyle(
+                      color: widget.textColor,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
