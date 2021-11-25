@@ -133,12 +133,15 @@ class _QueryScreenState extends State<QueryScreen> {
           'width': image.width.toDouble(),
           'type': 'image'
         });
-        DocumentReference msgDocRef2 = docRef.collection("messages").doc();
-        String msgDocID2 = msgDocRef.id;
-        String text = "Hi! Could you please guide me from '$currentLocationText' to '$endLocationText'?";
-        await msgDocRef2
-            .set({'author': author, 'createdAt': DateTime.now(), 'text': text, 'id': msgDocID2, 'type': 'text'});
       }
+      //* Create first message automatically
+      Map<String, dynamic> userData = Provider.of<UserModel>(context, listen: false).data;
+      Map<String, String> author = {'id': userData['uid'], 'firstName': userData['displayName']};
+      DocumentReference msgDocRef2 = docRef.collection("messages").doc();
+      String msgDocID2 = msgDocRef2.id;
+      String text = "Hi! Could you please guide me from '$currentLocationText' to '$endLocationText'?";
+      await msgDocRef2
+          .set({'author': author, 'createdAt': DateTime.now(), 'text': text, 'id': msgDocID2, 'type': 'text'});
     } on FirebaseException catch (err) {
       if (err.message == null) {
         throw Exception("Firebase Error submitting query form.");

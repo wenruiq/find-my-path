@@ -166,7 +166,7 @@ class _QueryFormState extends State<QueryForm> {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
 
-    if (isValid) {
+    if (isValid && placeDetails != null) {
       //* save() fires the onSave() method attached to each TextFormField
       _formKey.currentState!.save();
       var userData = Provider.of<UserModel>(context, listen: false).data;
@@ -174,8 +174,9 @@ class _QueryFormState extends State<QueryForm> {
       _viDisplayName = userData['displayName'];
       _date = DateTime.now();
       _currentLocationLT = Provider.of<LocationModel>(context, listen: false).currenLocationLT;
-      //TODO: Handle endLocationLT, using Safra Punggol For Now;
-      _endLocationLT = {'lat': 1.409840, 'long': 103.905824};
+      double endLocationLat = placeDetails!.geometry!.location!.lat as double;
+      double endLocationLng = placeDetails!.geometry!.location!.lng as double;
+      _endLocationLT = {'lat': endLocationLat, 'long': endLocationLng};
       _currentLocationText = Provider.of<LocationModel>(context, listen: false).currentLocationText;
       _status = 'Pending';
       widget.submitFn(
@@ -220,37 +221,41 @@ class _QueryFormState extends State<QueryForm> {
                         "Where do you want to go?",
                         style: TextStyle(fontSize: 24, color: Theme.of(context).primaryColor),
                       ),
-                      TextFormField(
-                        key: const ValueKey('endLocation'),
-                        controller: _endLocationController,
-                        autocorrect: false,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: const InputDecoration(hintText: "Enter your destination"),
-                        onSaved: (value) {
-                          _endLocationText = value.toString();
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter a destination.";
-                          }
-                        },
-                        onChanged: (value) {
-                          if (value.isNotEmpty) {
-                            autoCompleteSearch(value);
-                          } else {
-                            if (predictions.isNotEmpty && mounted) {
-                              setState(() {
-                                predictions = [];
-                              });
+                      Semantics(
+                        label: "Tap to start searching for your destination",
+                        child: TextFormField(
+                          key: const ValueKey('endLocation'),
+                          controller: _endLocationController,
+                          autocorrect: false,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: const InputDecoration(hintText: "Your destination"),
+                          onSaved: (value) {
+                            _endLocationText = value.toString();
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter a destination.";
                             }
-                          }
-                        },
-                        onTap: () => {
-                          setState(() {
-                            currentTab = currentTab == 1 ? 0 : 1;
-                            myFocusNode.requestFocus();
-                          })
-                        },
+                          },
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              autoCompleteSearch(value);
+                            } else {
+                              if (predictions.isNotEmpty && mounted) {
+                                setState(() {
+                                  predictions = [];
+                                });
+                              }
+                            }
+                          },
+                          onTap: () => {
+                            setState(() {
+                              currentTab = currentTab == 1 ? 0 : 1;
+                              myFocusNode.requestFocus();
+                            })
+                          },
+                          readOnly: true,
+                        ),
                       ),
                       const SizedBox(
                         height: 20,
@@ -294,70 +299,79 @@ class _QueryFormState extends State<QueryForm> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              TextField(
-                focusNode: myFocusNode,
-                decoration: InputDecoration(
-                  labelText: "Search",
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blue,
-                      width: 2.0,
+              Semantics(
+                label: "Input field to search for locations",
+                child: TextField(
+                  focusNode: myFocusNode,
+                  decoration: InputDecoration(
+                    labelText: "Search",
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black54,
+                        width: 2.0,
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(
+                        Icons.clear,
+                        semanticLabel: "Tap to go back to form page",
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          currentTab = 0;
+                        });
+                      },
                     ),
                   ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black54,
-                      width: 2.0,
-                    ),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: const Icon(
-                      Icons.clear,
-                      semanticLabel: "Tap to go back to form page",
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        currentTab = 0;
-                      });
-                    },
-                  ),
-                ),
-                onChanged: (value) {
-                  if (value.isNotEmpty) {
-                    autoCompleteSearch(value);
-                  } else {
-                    if (predictions.isNotEmpty && mounted) {
-                      setState(() {
-                        predictions = [];
-                      });
+                  onChanged: (value) {
+                    if (value.isNotEmpty) {
+                      autoCompleteSearch(value);
+                    } else {
+                      if (predictions.isNotEmpty && mounted) {
+                        setState(() {
+                          predictions = [];
+                        });
+                      }
                     }
-                  }
-                },
+                  },
+                ),
               ),
               const SizedBox(
                 height: 10,
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: predictions.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: const CircleAvatar(
-                        child: Icon(
-                          Icons.pin_drop,
-                          color: Colors.white,
+                child: Semantics(
+                  label: "List of search results",
+                  child: ListView.builder(
+                    itemCount: predictions.length,
+                    itemBuilder: (context, index) {
+                      return Semantics(
+                        label: "Search result number ${index + 1}",
+                        child: ListTile(
+                          leading: const CircleAvatar(
+                            child: Icon(
+                              Icons.pin_drop,
+                              color: Colors.white,
+                            ),
+                          ),
+                          title: Text(predictions[index].description as String),
+                          onTap: () {
+                            _endLocationController.text = predictions[index].description as String;
+                            getPlaceDetailsById(predictions[index].placeId as String);
+                            setState(() {
+                              currentTab = 0;
+                            });
+                          },
                         ),
-                      ),
-                      title: Text(predictions[index].description as String),
-                      onTap: () {
-                        _endLocationController.text = predictions[index].description as String;
-                        print(predictions[index].placeId);
-                        setState(() {
-                          currentTab = 0;
-                        });
-                      },
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -368,7 +382,6 @@ class _QueryFormState extends State<QueryForm> {
   }
 
   void autoCompleteSearch(String value) async {
-    print("trying");
     var result = await googlePlace!.autocomplete.get(value);
     if (result != null && result.predictions != null && mounted) {
       setState(() {
@@ -377,5 +390,12 @@ class _QueryFormState extends State<QueryForm> {
     }
   }
 
-  void getPlaceDetailsById(String placeId) {}
+  void getPlaceDetailsById(String placeId) async {
+    var result = await googlePlace!.details.get(placeId);
+    if (result != null && result.result != null && mounted) {
+      setState(() {
+        placeDetails = result.result;
+      });
+    }
+  }
 }
