@@ -4,14 +4,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-import "../util/loading.dart";
+import '../util/loading.dart';
+import '../../providers/request_model.dart';
+import '../../providers/user_model.dart';
 
-const double CAMERA_ZOOM = 16;
-const double CAMERA_TILT = 80;
-const double CAMERA_BEARING = 30;
-const LatLng SOURCE_LOCATION = LatLng(1.4003171, 103.9116707);
-const LatLng DEST_LOCATION = LatLng(1.409978, 103.905683);
+const double cameraZoom = 16;
+const double cameraTilt = 80;
+const double cameraBearing = 30;
 
 class LiveLocationMap extends StatefulWidget {
   const LiveLocationMap({Key? key}) : super(key: key);
@@ -21,7 +23,8 @@ class LiveLocationMap extends StatefulWidget {
 }
 
 class _LiveLocationMapState extends State<LiveLocationMap> {
-  late StreamSubscription _locationChangeSubscription;
+  late StreamSubscription _myLocationChangeSubscription;
+  late StreamSubscription _hisLocationChangeSubscription;
 
   GoogleMapController? mapController;
   Map<MarkerId, Marker> markers = {};
@@ -45,6 +48,9 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
   //* Wrapper around the location API
   late Location location;
 
+  int _counter = 0;
+  DatabaseError? _error;
+
   @override
   void initState() {
     super.initState();
@@ -59,11 +65,25 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
     polylinePoints = PolylinePoints();
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      //* Realtime Database
+      // DatabaseReference testRef = FirebaseDatabase.instance.reference();
+      // _hisLocationChangeSubscription = testRef.onValue.listen((Event event) {
+      //   print("received change@@@@@@@@@@@@@@22");
+      //   setState(() {
+      //     _error = null;
+      //     _counter = event.snapshot.value ?? 0;
+      //   });
+      // }, onError: (Object o) {
+      //   final DatabaseError error = o as DatabaseError;
+      //   setState(() {
+      //     _error = error;
+      //   });
+      // });
+
+      //TODO: VO needs to listen to realtimedatabase not his own location
       //* Subscribe to changes in the user's location
       //* by listening to the location's onLocationChanged event
-      print("Subscribed to onLocationChanged");
-      _locationChangeSubscription = location.onLocationChanged.listen((LocationData cLoc) {
-        print("Location changed...");
+      _myLocationChangeSubscription = location.onLocationChanged.listen((LocationData cLoc) {
         //* cLoc contains the user's current location in real time
         currentLocation = cLoc;
         //* Update pin on map since location changed
@@ -81,8 +101,7 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
   //* Dispose subscription
   @override
   void dispose() {
-    print("DISPOSING YO @@@@@@@22");
-    _locationChangeSubscription.cancel();
+    _myLocationChangeSubscription.cancel();
     super.dispose();
   }
 
@@ -101,48 +120,40 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
   }
 
   void setInitialLocation() async {
-    print("@@ Setting initial Location Data! @@");
-    //TODO: VO needs to get VI's location instead of his own
-    LocationData a = await location.getLocation();
+    //* Set endLocation using info from provider
+    Map<String, dynamic> requestData = Provider.of<RequestModel>(context, listen: false).data;
+    double endLat = requestData['endLocationLT']['lat'];
+    double endLong = requestData['endLocationLT']['long'];
+    LocationData endLocationData = LocationData.fromMap({"latitude": endLat, "longitude": endLong});
+    double startLat = requestData['currentLocationLT']['lat'];
+    double startLong = requestData['currentLocationLT']['long'];
+    LocationData currentLocationData = LocationData.fromMap({"latitude": startLat, "longitude": startLong});
 
-    //TODO: Unhardcode endlocation
-    LocationData b = LocationData.fromMap({"latitude": DEST_LOCATION.latitude, "longitude": DEST_LOCATION.longitude});
-
-    // ignore: unnecessary_this
-    if (this.mounted) {
+    if (mounted) {
       setState(() {
-        currentLocation = a;
-        endLocation = b;
+        currentLocation = currentLocationData;
+        endLocation = endLocationData;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Building");
     if (endLocation == null || currentLocation == null) {
-      print("Locations not initialized yet...");
       setInitialLocation();
       return const Loading(
         description: "Loading Google Maps",
       );
     } else {
-      //* Set initial camera position using SOURCE_LOCATION
-      //TODO: Should grab provider's currentLocationLT for this
-      CameraPosition initialCameraPosition = const CameraPosition(
-        zoom: CAMERA_ZOOM,
-        tilt: CAMERA_TILT,
-        bearing: CAMERA_BEARING,
-        target: SOURCE_LOCATION,
-      );
-      initialCameraPosition = CameraPosition(
+      //* Set initial camera position using currentLocation (which holds starting location)
+      CameraPosition initialCameraPosition = CameraPosition(
         target: LatLng(
           currentLocation!.latitude as double,
           currentLocation!.longitude as double,
         ),
-        zoom: CAMERA_ZOOM,
-        tilt: CAMERA_TILT,
-        bearing: CAMERA_BEARING,
+        zoom: cameraZoom,
+        tilt: cameraTilt,
+        bearing: cameraBearing,
       );
       return Column(
         children: <Widget>[
@@ -164,7 +175,6 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
   }
 
   void _onMapCreated(GoogleMapController controller) async {
-    print("@@@@@@ Map created la! @@@@@@");
     mapController = controller;
     await controller.setMapStyle(Utils.mapStyles);
     showPinsOnMap();
@@ -173,11 +183,6 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
   //* This step is just to show 2 pins on map, source and endlocation
   //* as well as draw the route in between
   void showPinsOnMap() {
-    print("@@@@@@ Showing pins la! @@@@@@");
-    if (endLocation != null) {
-      print("end not null obviously...");
-    }
-
     if (currentLocation != null && endLocation != null) {
       //* Get LagLng for source & endlocation to know where to place the pins
       var pinPosition = LatLng(currentLocation!.latitude as double, currentLocation!.longitude as double);
@@ -202,12 +207,13 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
       width: 2,
     );
     polylines[id] = polyline;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   //* This draws polylines on map
   void setPolylines() async {
-    print("setting with key $apiKey");
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         apiKey,
         PointLatLng(
@@ -231,21 +237,20 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
 
   void updatePinOnMap() async {
     if (currentLocation != null && mapController != null) {
-      print("Updating pin on map cuz location changed...");
+      print("@@ Updating pin on map cuz location changed... @@");
       //* Create a new CameraPosition instance every time the location changes,
       //* so the camera follows the pin as it moves with an animation
       CameraPosition cPosition = CameraPosition(
-        zoom: CAMERA_ZOOM,
-        tilt: CAMERA_TILT,
-        bearing: CAMERA_BEARING,
+        zoom: cameraZoom,
+        tilt: cameraTilt,
+        bearing: cameraBearing,
         target: LatLng(currentLocation!.latitude as double, currentLocation!.longitude as double),
       );
       //* Move camera with the new CameraPosition above
       mapController?.animateCamera(CameraUpdate.newCameraPosition(cPosition));
 
       //* Set state so Flutter knows widget update is due
-      // ignore: unnecessary_this
-      if (this.mounted) {
+      if (mounted) {
         setState(() {
           //* Create a new pin position with latest location
           var pinPosition = LatLng(currentLocation!.latitude as double, currentLocation!.longitude as double);

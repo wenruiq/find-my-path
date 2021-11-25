@@ -4,6 +4,7 @@ import "package:image_picker/image_picker.dart";
 import "package:provider/provider.dart";
 import 'package:google_place/google_place.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import "../../widgets/query/current_location.dart";
 import "package:find_my_path/providers/location_model.dart";
@@ -64,6 +65,16 @@ class _QueryFormState extends State<QueryForm> {
 
     super.dispose();
   }
+
+  // void testFunction() async {
+  //   DatabaseReference _counterRef = FirebaseDatabase.instance.reference().child('counter');
+  //   await _counterRef.set(ServerValue.increment(1));
+  //   print("Fired!");
+  //   final FirebaseDatabase database = FirebaseDatabase();
+  //   database.reference().child('counter').get().then((DataSnapshot? snapshot) {
+  //     print('Connected to directly configured database and read ${snapshot!.value}');
+  //   });
+  // }
 
   void _openCamera(BuildContext context) async {
     final pickedFile = await ImagePicker().pickImage(
@@ -284,6 +295,7 @@ class _QueryFormState extends State<QueryForm> {
                   onPressed: () {
                     FormState().save();
                     _trySubmit();
+                    // testFunction();
                   },
                   child: const Text(
                     "Send Request",
