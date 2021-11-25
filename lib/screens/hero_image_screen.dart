@@ -1,4 +1,5 @@
 import "dart:io";
+import 'package:cached_network_image/cached_network_image.dart';
 import "package:flutter/material.dart";
 
 import "../args/hero_image_screen_args.dart";
@@ -20,7 +21,8 @@ class _HeroImageScreenState extends State<HeroImageScreen> {
     if (imageURL == '') {
       return FileImage(File(filePath));
     }
-    return NetworkImage(imageURL);
+    return CachedNetworkImageProvider(imageURL);
+    // return NetworkImage(imageURL);
   }
 
   @override
@@ -28,21 +30,24 @@ class _HeroImageScreenState extends State<HeroImageScreen> {
     final args = ModalRoute.of(context)!.settings.arguments as HeroImageScreenArgs;
     return SafeArea(
       child: Scaffold(
-        body: GestureDetector(
-          child: Center(
-            child: Hero(
-              tag: args.tag,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  image: DecorationImage(image: _imageProvier(args.imageURL, args.filePath), fit: BoxFit.fitWidth),
+        body: Semantics(
+          label: 'Enlarged view of photo, double tap to go back to chat room',
+          child: GestureDetector(
+            child: Center(
+              child: Hero(
+                tag: args.tag,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    image: DecorationImage(image: _imageProvier(args.imageURL, args.filePath), fit: BoxFit.fitWidth),
+                  ),
                 ),
               ),
             ),
+            onTap: () {
+              Navigator.pop(context);
+            },
           ),
-          onTap: () {
-            Navigator.pop(context);
-          },
         ),
       ),
     );

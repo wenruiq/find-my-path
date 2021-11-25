@@ -1,16 +1,22 @@
 import 'dart:async';
 import "dart:io";
+import 'package:cached_network_image/cached_network_image.dart';
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:google_place/google_place.dart';
 import "package:provider/provider.dart";
 import "package:image_picker/image_picker.dart";
 import "package:firebase_storage/firebase_storage.dart";
+import 'package:ionicons/ionicons.dart';
+import "package:transparent_image/transparent_image.dart";
 
 import "../providers/request_model.dart";
 import "../providers/user_model.dart";
 import "../screens/loading_screen.dart";
+import "../widgets/stream_indicator/pulsing_indicator.dart";
+import "../../args/hero_image_screen_args.dart";
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -203,7 +209,7 @@ class _ChatScreenState extends State<ChatScreen> {
   List<types.Message> processFirebaseMessages(List<DocumentSnapshot> messagesList) {
     List<types.Message> messagesListProcessed = messagesList.map((DocumentSnapshot messageDoc) {
       Map<String, dynamic> dataMap = messageDoc.data() as Map<String, dynamic>;
-      final author = types.User(id: dataMap['author']['id'], firstName: dataMap['author']['firstName']);
+      final author = types.User(id: dataMap['author']['id'], firstName: dataMap['author']['firstName'] + " says:");
       int createdAt = dataMap['createdAt'].toDate().millisecondsSinceEpoch;
       String id = dataMap['id'];
       if (dataMap['type'] == 'text') {
@@ -215,16 +221,17 @@ class _ChatScreenState extends State<ChatScreen> {
         String name = dataMap['name'];
         int size = dataMap['size'];
         String uri = dataMap['uri'];
-        double width = dataMap['height'];
+        double width = dataMap['width'];
         return types.ImageMessage(
-            author: author,
-            createdAt: createdAt,
-            height: height,
-            id: id,
-            name: name,
-            size: size,
-            uri: uri,
-            width: width);
+          author: author,
+          createdAt: createdAt,
+          height: height,
+          id: id,
+          name: name,
+          size: size,
+          uri: uri,
+          width: width,
+        );
       }
       return types.TextMessage(
           author: author,
@@ -261,9 +268,12 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Scaffold(
               appBar: AppBar(
                 automaticallyImplyLeading: false,
-                title: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(hisDisplayName),
+                title: Semantics(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(hisDisplayName),
+                  ),
+                  label: "Volunteer's name",
                 ),
                 actions: <Widget>[
                   IconButton(
@@ -299,19 +309,70 @@ class _ChatScreenState extends State<ChatScreen> {
                     List<types.Message> messagesListProcessed = processFirebaseMessages(messagesList);
                     return SafeArea(
                       bottom: false,
-                      child: Chat(
-                        messages: messagesListProcessed,
-                        onSendPressed: _handleSendPressed,
-                        user: _user,
-                        showUserNames: true,
-                        onAttachmentPressed: () => _handleSendImage(requestID, latestRequestData),
-                        theme: DefaultChatTheme(
-                          inputBackgroundColor: Colors.grey.shade100,
-                          inputTextColor: Colors.black,
-                          inputTextCursorColor: Colors.black,
-                          primaryColor: const Color(0xff4a67a0),
-                          userAvatarNameColors: [Theme.of(context).primaryColor],
-                        ),
+                      child: Stack(
+                        children: [
+                          Chat(
+                            messages: messagesListProcessed,
+                            onSendPressed: _handleSendPressed,
+                            user: _user,
+                            showUserNames: true,
+                            onAttachmentPressed: () => _handleSendImage(requestID, latestRequestData),
+                            theme: DefaultChatTheme(
+                              inputBackgroundColor: Colors.grey.shade100,
+                              inputTextColor: Colors.black,
+                              inputTextCursorColor: Colors.black,
+                              primaryColor: const Color(0xff4a67a0),
+                              userAvatarNameColors: [Theme.of(context).primaryColor],
+                              sendButtonIcon: Icon(
+                                Icons.send_rounded,
+                                color: Theme.of(context).primaryColor,
+                                size: 26.0,
+                                semanticLabel: 'Send the message',
+                              ),
+                              attachmentButtonIcon: Icon(
+                                Icons.add_a_photo_rounded,
+                                color: Theme.of(context).primaryColor,
+                                size: 26.0,
+                                semanticLabel: 'Take a photo and send it to chat',
+                              ),
+                              inputTextStyle: const TextStyle(fontSize: 20),
+                            ),
+                            imageMessageBuilder: (msg, {messageWidth = 300}) {
+                              String id = msg.id;
+                              String uri = msg.uri;
+                              return Semantics(
+                                label: "A photo sent to the chat",
+                                child: GestureDetector(
+                                  child: Hero(
+                                    tag: id,
+                                    child: FadeInImage.memoryNetwork(
+                                      placeholder: kTransparentImage,
+                                      image: uri,
+                                      height: 250,
+                                      width: 250,
+                                      alignment: Alignment.topCenter,
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/heroImage',
+                                        arguments: HeroImageScreenArgs(id, '', uri));
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          Align(
+                            child: PulsingIndicator(
+                              icon: Ionicons.radio_outline,
+                              message: "Live Location Shared",
+                              bgColor: Colors.green.shade400,
+                              textColor: Colors.white,
+                              onTapFn: () => {print("haha")},
+                            ),
+                            alignment: Alignment.topCenter,
+                          ),
+                        ],
                       ),
                     );
                   } else {

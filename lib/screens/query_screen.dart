@@ -5,11 +5,13 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:image_picker/image_picker.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:provider/provider.dart";
+import 'package:location/location.dart';
 
 import "../widgets/util/dismiss_keyboard.dart";
 import "../widgets/query/query_form.dart";
 import "../args/query_loading_screen_args.dart";
 import "../providers/user_model.dart";
+import '../providers/location_model.dart';
 
 //* This screen is the form that VI needs to fill up to get a match
 class QueryScreen extends StatefulWidget {
@@ -21,6 +23,45 @@ class QueryScreen extends StatefulWidget {
 }
 
 class _QueryScreenState extends State<QueryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    //* Initialize flutter location service
+    initLocationService();
+  }
+
+  //* Get current location and pass to provider
+  void initLocationService() async {
+    Location location = Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+    Provider.of<LocationModel>(context, listen: false).setCurrentLocationLT = {
+      'lat': _locationData.latitude as double,
+      'long': _locationData.longitude as double
+    };
+  }
+
   //* Callback to be passed to query_form.dart
   void _submitQueryForm({
     required String viID,

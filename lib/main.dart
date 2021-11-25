@@ -28,7 +28,6 @@ import 'screens/video_call_pickup_screen.dart';
 import 'package:find_my_path/providers/user_model.dart';
 import 'package:find_my_path/providers/location_model.dart';
 import 'package:find_my_path/providers/request_model.dart';
-import 'package:find_my_path/constants/nav_key.dart';
 
 late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -72,7 +71,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     );
   }
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    NavKey.key.currentState!.pushNamed("/requests");
+    // Navigator.pushNamed(navigatorKey.currentContext as BuildContext, "/requests");
   });
 }
 
@@ -93,10 +92,6 @@ void main() async {
     );
     //* Initialize FlutterNotificationsPlugin Package
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    // const AndroidInitializationSettings initializationSettingsAndroid =
-    //     AndroidInitializationSettings('notification_icon');
-    // var settings = const InitializationSettings(android: initializationSettingsAndroid);
-    // flutterLocalNotificationsPlugin.initialize(settings);
 
     //* Create Android Notification Channel based on config above
     //* Use it to override the default FCM channel to enable heads up notifications
@@ -163,17 +158,17 @@ class _MyAppState extends State<MyApp> {
     });
     //? Doesn't work here
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // NavKey.key.currentState!.pushNamed("/requests");
-      Navigator.pushNamed(context, "/requests");
+      // Navigator.pushNamed(navigatorKey.currentContext as BuildContext, "/requests");
     });
   }
 
-  final navigatorKey = GlobalKey<NavigatorState>();
+  //? Doesn't work, hold on to it for now
+  // final navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Find My Path",
-      navigatorKey: navigatorKey,
+      // navigatorKey: navigatorKey,
       theme: customTheme,
       //* Listens to authStateChanges to know whether to log the user in/out
       home: StreamBuilder(
@@ -188,7 +183,6 @@ class _MyAppState extends State<MyApp> {
               return FutureBuilder<DocumentSnapshot>(
                 future: users.doc(uid).get(),
                 builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  //? Use snackbar to handle these errors?
                   if (snapshot.hasError) {
                     return const AuthScreen();
                   }
