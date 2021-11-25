@@ -79,6 +79,10 @@ class _QueryScreenState extends State<QueryScreen> {
       //* Create Firestore entry
       DocumentReference docRef = FirebaseFirestore.instance.collection("requests").doc();
       print("Creating request with ID: " + docRef.id);
+
+      DocumentReference callRef =
+          FirebaseFirestore.instance.collection("requests").doc(docRef.id).collection("call").doc();
+
       //* Navigate to query loading
       Navigator.pushNamed(context, '/queryloading', arguments: QueryLoadingScreenArgs(docRef.id));
       await docRef.set({
@@ -90,6 +94,14 @@ class _QueryScreenState extends State<QueryScreen> {
         'currentLocationText': currentLocationText,
         'endLocationText': endLocationText,
         'status': status,
+        'callDocId': callRef.id,
+      });
+
+      await callRef.set({
+        "callerId": "",
+        "receiverId": "",
+        "isCalling": false,
+        "isActive": false,
       });
 
       if (imageFile != null) {

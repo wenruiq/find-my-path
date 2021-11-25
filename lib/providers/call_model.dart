@@ -3,11 +3,9 @@ import 'package:flutter/foundation.dart';
 class Call with ChangeNotifier {
   final Map<String, dynamic> _call = {
     'callerId': '',
-    'callerName': '',
     'receiverId': '',
-    'receiverName': '',
-    'channelId': '',
-    'hasDialled': false,
+    'isCalling': false,
+    'isActive': false,
   };
 
   Map<String, dynamic> get data => _call;

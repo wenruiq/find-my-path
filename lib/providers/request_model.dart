@@ -14,6 +14,7 @@ class RequestModel with ChangeNotifier {
     'endLocationText': '',
     'date': DateTime.now(),
     'status': '',
+    'cid': '',
   };
 
   //* Get all
@@ -31,11 +32,15 @@ class RequestModel with ChangeNotifier {
   String get endLocationText => _request['endLocationText'];
   DateTime get date => _request['date'];
   String get status => _request['status'];
+  String get cid => _request['cid'];
 
   //* Set all data
   set setRequestData(Map<String, dynamic> requestData) {
     if (requestData.containsKey('rid')) {
       _request['rid'] = requestData['rid'];
+    }
+    if (requestData.containsKey('callDocId')) {
+      _request['cid'] = requestData['callDocId'];
     }
     if (requestData.containsKey('VI_ID')) {
       _request['viID'] = requestData['VI_ID'];

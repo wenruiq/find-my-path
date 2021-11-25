@@ -84,6 +84,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                 final Map<String, dynamic> toReturn = data;
                 //* stores requestID into the newly generated list
                 toReturn["rid"] = document.id;
+
                 return toReturn;
               }).toList();
             }

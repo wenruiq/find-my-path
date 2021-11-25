@@ -9,6 +9,9 @@ import '../widgets/home/vo_availability_button.dart';
 import '../widgets/requests/requests_control.dart';
 import '../providers/user_model.dart';
 
+import '../widgets/util/slide_route.dart';
+import '../screens/video_call_pickup_screen.dart';
+
 class HomeScreenVO extends StatefulWidget {
   const HomeScreenVO({Key? key}) : super(key: key);
   static const routeName = '/homeVO';
@@ -118,9 +121,18 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                     height: 20,
                   ),
                   //* imageURL
-                  //TODO: Replace this with upload profile pic after implementing video call properly
+
+                  //TODO: Remove this testing interactions
+                  //!: Replace this with upload profile pic after implementing video call properly
                   InkResponse(
-                    onTap: () => Navigator.pushNamed(context, '/testpickupscreen'),
+                    // onTap: () => Navigator.pushNamed(context, '/callpickup'),
+                    onTap: () => Navigator.push(
+                      context,
+                      SlideRoute(
+                        routeName: '/callpickup',
+                        page: const VideoCallPickupScreen(callerName: "Alex"),
+                      ),
+                    ),
                     child: ClipOval(
                       child: Image.network(
                         'https://i.redd.it/z3xftphdln041.png',
