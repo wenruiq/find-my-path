@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_storage/firebase_storage.dart";
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import "package:provider/provider.dart";
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:marquee/marquee.dart';
@@ -28,6 +29,14 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
   void initState() {
     super.initState();
     print("Vid Call Pickup loaded");
+
+    FlutterRingtonePlayer.play(
+      android: AndroidSounds.ringtone,
+      ios: IosSounds.glass,
+      looping: true, // Android only - API >= 28
+      volume: 0.6, // Android only - API >= 28
+      asAlarm: false, // Android only - all APIs
+    );
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 3000),
@@ -64,6 +73,7 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
 
   @override
   void dispose() {
+    FlutterRingtonePlayer.stop();
     _animationController.dispose();
     super.dispose();
   }
