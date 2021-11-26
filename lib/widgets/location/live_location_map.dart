@@ -10,6 +10,8 @@ import 'package:firebase_database/firebase_database.dart';
 import '../util/loading.dart';
 import '../../providers/request_model.dart';
 import '../../providers/user_model.dart';
+import '../../data/realtime_location.dart';
+import '../../data/realtime_location_dao.dart';
 
 const double cameraZoom = 16;
 const double cameraTilt = 80;
@@ -23,8 +25,8 @@ class LiveLocationMap extends StatefulWidget {
 }
 
 class _LiveLocationMapState extends State<LiveLocationMap> {
-  late StreamSubscription _myLocationChangeSubscription;
-  late StreamSubscription _hisLocationChangeSubscription;
+  StreamSubscription? _myLocationChangeSubscription;
+  StreamSubscription? _hisLocationChangeSubscription;
 
   GoogleMapController? mapController;
   Map<MarkerId, Marker> markers = {};
@@ -48,47 +50,46 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
   //* Wrapper around the location API
   late Location location;
 
-  int _counter = 0;
-  DatabaseError? _error;
-
   @override
   void initState() {
     super.initState();
-
-    //* Load .env to get API KEY later
-    // Future.delayed(Duration.zero, () async {
-    //   await dotenv.load(fileName: ".env");
-    // });
 
     //* Create an instance of location
     location = Location();
     polylinePoints = PolylinePoints();
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      //* Realtime Database
-      // DatabaseReference testRef = FirebaseDatabase.instance.reference();
-      // _hisLocationChangeSubscription = testRef.onValue.listen((Event event) {
-      //   print("received change@@@@@@@@@@@@@@22");
-      //   setState(() {
-      //     _error = null;
-      //     _counter = event.snapshot.value ?? 0;
-      //   });
-      // }, onError: (Object o) {
-      //   final DatabaseError error = o as DatabaseError;
-      //   setState(() {
-      //     _error = error;
-      //   });
-      // });
+      //* Get Role
+      bool imVolunteer = Provider.of<UserModel>(context, listen: false).isVolunteer;
 
-      //TODO: VO needs to listen to realtimedatabase not his own location
-      //* Subscribe to changes in the user's location
-      //* by listening to the location's onLocationChanged event
-      _myLocationChangeSubscription = location.onLocationChanged.listen((LocationData cLoc) {
-        //* cLoc contains the user's current location in real time
-        currentLocation = cLoc;
-        //* Update pin on map since location changed
-        updatePinOnMap();
-      });
+      final RealtimeLocationDAO realtimeLocationDAO = RealtimeLocationDAO();
+
+      if (imVolunteer) {
+        DatabaseReference _realtimeLocationRef = FirebaseDatabase.instance.reference().child('realtimeLocation');
+        _hisLocationChangeSubscription = _realtimeLocationRef.onValue.listen((event) {
+          print("Event heard");
+          var snapshot = event.snapshot;
+          var value = snapshot.value;
+          print("VO Setting VI's location at !!!!");
+          print(value);
+          currentLocation =
+              LocationData.fromMap({"latitude": double.parse(value['lat']), "longitude": double.parse(value['long'])});
+          updatePinOnMap();
+        });
+      } else if (!imVolunteer) {
+        //* Subscribe to changes in the user's location
+        //* by listening to the location's onLocationChanged event
+        _myLocationChangeSubscription = location.onLocationChanged.listen((LocationData cLoc) {
+          //* cLoc contains the user's current location in real time
+          currentLocation = cLoc;
+          //* Update pin on map since location changed
+          updatePinOnMap();
+          double lat = cLoc.latitude as double;
+          double long = cLoc.longitude as double;
+          RealtimeLocation loc = RealtimeLocation(lat, long);
+          realtimeLocationDAO.saveRealtimeLocation(loc);
+        });
+      }
     });
 
     //* Set custom marker pins
@@ -101,8 +102,13 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
   //* Dispose subscription
   @override
   void dispose() {
-    _myLocationChangeSubscription.cancel();
     super.dispose();
+    if (_myLocationChangeSubscription != null) {
+      _myLocationChangeSubscription!.cancel();
+    }
+    if (_hisLocationChangeSubscription != null) {
+      _hisLocationChangeSubscription!.cancel();
+    }
   }
 
   //* Need this to use custom icons when showing pins on map
