@@ -27,7 +27,7 @@ class BadgesBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
+        children: const <Widget>[
           Text(
             "View My Badges",
             textAlign: TextAlign.center,
