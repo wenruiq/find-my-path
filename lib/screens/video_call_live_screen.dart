@@ -143,6 +143,9 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     String requestID = Provider.of<RequestModel>(context, listen: false).rid;
     String callID = Provider.of<RequestModel>(context, listen: false).cid;
 
+    String micMuteStatusAccessibility = _isMicMuted ? "muted" : "not muted";
+    String videoToggleStatusAccessibility = _isVideoDisabled ? "disabled" : "enabled";
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -187,6 +190,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                         onPressed: _handleMicToggle,
                         child: Icon(
                           _isMicMuted ? Icons.mic_off : Icons.mic,
+                          semanticLabel: "Button for toggling mic, curently $micMuteStatusAccessibility",
                           color: _isMicMuted ? Colors.white : Colors.blueAccent,
                           size: 20.0,
                         ),
@@ -200,6 +204,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                         onPressed: () => _handleEndCall(requestID, callID),
                         child: const Icon(
                           Icons.call_end,
+                          semanticLabel: "End video call and return to chat screen",
                           size: 38,
                         ),
                         style: ButtonStyle(
@@ -220,6 +225,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                         onPressed: () => client.sessionController.switchCamera(),
                         child: const Icon(
                           Icons.switch_camera,
+                          semanticLabel: "Switch camera between front and back cameras",
                           color: Colors.blueAccent,
                           size: 20.0,
                         ),
@@ -233,6 +239,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                         onPressed: _handleCameraToggle,
                         child: Icon(
                           _isVideoDisabled ? Icons.videocam_off : Icons.videocam,
+                          semanticLabel:
+                              "Button for toggling video visibility curently $videoToggleStatusAccessibility",
                           color: _isVideoDisabled ? Colors.white : Colors.blueAccent,
                           size: 20.0,
                         ),

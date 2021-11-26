@@ -21,6 +21,7 @@ import './screens/requests_screen.dart';
 import './screens/ratings_screen.dart';
 import './screens/hero_image_screen.dart';
 import './screens/review_screen.dart';
+import './screens/badge_screen.dart';
 import 'screens/video_call_live_screen.dart';
 import 'screens/video_call_pickup_screen.dart';
 
@@ -222,6 +223,7 @@ class _MyAppState extends State<MyApp> {
         ReviewScreen.routeName: (context) => const ReviewScreen(),
         VideoCallScreen.routeName: (context) => const VideoCallScreen(),
         VideoCallPickupScreen.routeName: (context) => const VideoCallPickupScreen(),
+        BadgeScreen.routeName: (context) => const BadgeScreen(),
       },
     );
   }

@@ -35,6 +35,13 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     DocumentSnapshot snapshot = await users.doc(uid).get();
     Map<String, dynamic> userData = snapshot.data() as Map<String, dynamic>;
     Provider.of<UserModel>(context, listen: false).setUserData = {'uid': uid, ...userData};
+
+    //TODO: delete after clearing badges usage
+    print("This is user data");
+    print(userData);
+    var badges = Provider.of<UserModel>(context, listen: false).badges;
+    print("Badges info: ");
+    print(badges["listener"]);
   }
 
   void _logoutConfirmation() {
@@ -83,6 +90,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
     //* Listen to displayName from notifier
     //* There are other getters, check out /providers/user_model.dart
     var displayName = Provider.of<UserModel>(context).displayName;
+    Map<String, dynamic> badges = Provider.of<UserModel>(context, listen: false).badges;
 
     //* Listen to isAvailable to handle notification subscription
     var isAvailable = Provider.of<UserModel>(context).isAvailable;
@@ -160,9 +168,8 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                   ),
                   const SizedBox(height: 5),
                   //* Star Rating
-                  const BadgesBar(
-                    rating: 5,
-                    reviewCount: 7,
+                  BadgesBar(
+                    badges: badges,
                   ),
                 ],
               ),

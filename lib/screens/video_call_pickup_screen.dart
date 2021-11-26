@@ -167,13 +167,14 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
                 Column(
                   children: [
                     //* Styling for Incoming Call Text
-                    const Padding(
-                      padding: EdgeInsets.only(
+                    Padding(
+                      padding: const EdgeInsets.only(
                         bottom: 20,
                       ),
                       child: Text(
                         "Incoming Call",
-                        style: TextStyle(
+                        semanticsLabel: "Incoming Call From $callerName",
+                        style: const TextStyle(
                           fontSize: 24,
                           color: Colors.white,
                           fontWeight: FontWeight.w300,
@@ -237,24 +238,28 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(bottom: 15.0),
-                          child: ElevatedButton(
-                            //! onPressed for Decline Call
-                            onPressed: () => _endCallFunction(requestID, callID),
-                            child: const Icon(
-                              Icons.call_end,
-                              size: 38,
-                            ),
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                const CircleBorder(),
+                          child: Semantics(
+                            label: "Decline call and return to chat room",
+                            child: ElevatedButton(
+                              //! onPressed for Decline Call
+                              onPressed: () => _endCallFunction(requestID, callID),
+                              child: const Icon(
+                                Icons.call_end,
+                                size: 38,
                               ),
-                              padding: MaterialStateProperty.all(
-                                const EdgeInsets.all(20),
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all(
+                                  const CircleBorder(),
+                                ),
+                                padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(20),
+                                ),
+                                backgroundColor: MaterialStateProperty.all(Colors.red), // <-- Button color
+                                overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
+                                  if (states.contains(MaterialState.pressed))
+                                    return Colors.red[300]; // <-- Splash color
+                                }),
                               ),
-                              backgroundColor: MaterialStateProperty.all(Colors.red), // <-- Button color
-                              overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                                if (states.contains(MaterialState.pressed)) return Colors.red[300]; // <-- Splash color
-                              }),
                             ),
                           ),
                         ),
@@ -271,24 +276,27 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(bottom: 15.0),
-                          child: ElevatedButton(
-                            //! onPressed for accept call
-                            onPressed: () => _startCallFunction(requestID, callID),
-                            child: const Icon(
-                              Icons.call,
-                              size: 38,
-                            ),
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                const CircleBorder(),
+                          child: Semantics(
+                            label: "Accept and enter video call",
+                            child: ElevatedButton(
+                              //! onPressed for accept call
+                              onPressed: () => _startCallFunction(requestID, callID),
+                              child: const Icon(
+                                Icons.call,
+                                size: 38,
                               ),
-                              padding: MaterialStateProperty.all(
-                                const EdgeInsets.all(20),
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all(
+                                  const CircleBorder(),
+                                ),
+                                padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(20),
+                                ),
+                                backgroundColor: MaterialStateProperty.all(Colors.green), // <-- Button color
+                                overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
+                                  if (states.contains(MaterialState.pressed)) Colors.green[300]; // <-- Splash color
+                                }),
                               ),
-                              backgroundColor: MaterialStateProperty.all(Colors.green), // <-- Button color
-                              overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                                if (states.contains(MaterialState.pressed)) Colors.green[300]; // <-- Splash color
-                              }),
                             ),
                           ),
                         ),

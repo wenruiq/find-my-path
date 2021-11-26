@@ -6,7 +6,13 @@ class UserModel extends ChangeNotifier {
     'email': '',
     'displayName': '',
     'isVolunteer': true,
-    'isAvailable': false
+    'isAvailable': false,
+    'badges': {
+      "listener": 0,
+      "expert": 0,
+      "friendly": 0,
+      "personality": 0,
+    },
   };
 
   //* Get all data
@@ -18,6 +24,7 @@ class UserModel extends ChangeNotifier {
   String get uid => _user['uid'];
   String get email => _user['email'];
   String get displayName => _user['displayName'];
+  Map<String, dynamic> get badges => _user['badges'];
 
   //* Set all data
   set setUserData(Map<String, dynamic> userData) {
@@ -26,7 +33,7 @@ class UserModel extends ChangeNotifier {
     _user['displayName'] = userData['displayName'];
     _user['isVolunteer'] = userData['isVolunteer'];
     _user['isAvailable'] = userData['isAvailable'];
-
+    _user['badges'] = userData['badges'];
     notifyListeners();
   }
 
