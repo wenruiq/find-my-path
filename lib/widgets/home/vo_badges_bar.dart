@@ -28,6 +28,13 @@ class BadgesBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: const <Widget>[
+          Padding(
+            padding: EdgeInsets.only(bottom: 2.0),
+            child: Icon(
+              Icons.star_rate_rounded,
+              color: Colors.amber,
+            ),
+          ),
           Text(
             "View My Badges",
             textAlign: TextAlign.center,

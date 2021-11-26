@@ -160,7 +160,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                   ),
                   //* displayName
                   Padding(
-                    padding: const EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 20, bottom: 5),
                     child: Text(
                       displayName,
                       style: const TextStyle(fontSize: 28),
