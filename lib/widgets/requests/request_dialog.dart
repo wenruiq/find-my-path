@@ -64,6 +64,7 @@ class RequestDialog extends StatelessWidget {
     );
 
     return AlertDialog(
+      semanticLabel: "This is a popup dialog with details about the request that you selected to view",
       actionsAlignment: MainAxisAlignment.spaceEvenly,
       contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       title: FittedBox(
@@ -91,7 +92,7 @@ class RequestDialog extends StatelessWidget {
                     imageLoc1,
                     fit: BoxFit.contain,
                     // color: Colors.red,
-                    semanticsLabel: "Test Semantics Label",
+                    semanticsLabel: "Pathfinding request image showing a person holding a map looking at a road sign",
                   ),
                 ),
                 SizedBox(
@@ -164,26 +165,28 @@ class RequestDialog extends StatelessWidget {
                       ),
 
                       //* Divider Row
-                      Padding(
-                        padding: const EdgeInsets.only(top: 3, bottom: 1),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.more_vert,
-                              color: Colors.grey[300],
-                              size: 28,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(2, 0, 3, 0),
-                                child: Divider(
-                                  height: 5,
-                                  thickness: 0.2,
-                                  color: Colors.grey[400],
+                      ExcludeSemantics(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 3, bottom: 1),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.more_vert,
+                                color: Colors.grey[300],
+                                size: 28,
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(2, 0, 3, 0),
+                                  child: Divider(
+                                    height: 5,
+                                    thickness: 0.2,
+                                    color: Colors.grey[400],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
 

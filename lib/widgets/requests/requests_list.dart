@@ -28,24 +28,30 @@ class RequestsList extends StatelessWidget {
     return Column(
       children: [
         if (type == "request_stream")
-          PulsingIndicator(
-            icon: Ionicons.radio_outline,
-            message: listenerMessage,
-            textColor: const Color(0xff1a3b7b),
-            bgColor: const Color(0xff1a3b7b).withOpacity(0),
-            onTapFn: () => {},
+          Semantics(
+            label: "The page is receiving live updates for requests",
+            child: PulsingIndicator(
+              icon: Ionicons.radio_outline,
+              message: listenerMessage,
+              textColor: const Color(0xff1a3b7b),
+              bgColor: const Color(0xff1a3b7b).withOpacity(0),
+              onTapFn: () => {},
+            ),
           ),
         Expanded(
           child: data.isEmpty
-              ? Center(
-                  child: Text(
-                    "No Pending Requests",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.grey[600],
+              ? Semantics(
+                label: "There are no requests for pathfinding assistance at the moment",
+                child: Center(
+                    child: Text(
+                      "No Pending Requests",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.grey[600],
+                      ),
                     ),
                   ),
-                )
+              )
               : ListView.builder(
                   itemCount: data.length,
                   itemBuilder: (ctx, index) {

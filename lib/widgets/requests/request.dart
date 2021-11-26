@@ -97,47 +97,57 @@ class _RequestState extends State<Request> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ListTile(
-              //* Defines the gap between leading and the title/subtitle section
-              minLeadingWidth: 20,
-              leading: RequestIcon(name: viName),
-              title: Text(
-                viName,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      "From: " + currentLocation,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "To: " + endLocation,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+            Semantics(
+              label: "Pathfinding request by $viName: from $currentLocation to $endLocation",
+              child: ListTile(
+                //* Defines the gap between leading and the title/subtitle section
+                minLeadingWidth: 20,
+                leading: ExcludeSemantics(child: RequestIcon(name: viName)),
+                title: ExcludeSemantics(
+                  child: Text(
+                    viName,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              trailing: widget.type == "request_stream"
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: OutlinedButton(
-                        onPressed: () => onView(),
-                        child: const Text("View"),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: Theme.of(context).primaryColor,
+                subtitle: ExcludeSemantics(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                          "From: " + currentLocation,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "To: " + endLocation,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                trailing: widget.type == "request_stream"
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: OutlinedButton(
+                          onPressed: () => onView(),
+                          child: Semantics(
+                            label: "Double tap to view this request in detail",
+                            child: const Text("View"),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  : null,
-              isThreeLine: true,
+                      )
+                    : null,
+                isThreeLine: true,
+              ),
             ),
           ],
         ),
