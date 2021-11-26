@@ -4,7 +4,7 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_messaging/firebase_messaging.dart";
 import 'package:provider/provider.dart';
 
-import '../widgets/home/vo_rating.dart';
+import '../widgets/home/vo_badges_bar.dart';
 import '../widgets/home/vo_availability_button.dart';
 import '../widgets/requests/requests_control.dart';
 import '../providers/user_model.dart';
@@ -129,20 +129,19 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                   const SizedBox(
                     height: 20,
                   ),
-                  //* imageURL
-
-                  //TODO: Remove this testing interactions
-                  //!: Replace this with upload profile pic after implementing video call properly
+                  //* Display Photo
+                  //TODO: Replace this with upload profile pic after implementing video call properly
                   InkResponse(
-                    // onTap: () => Navigator.pushNamed(context, '/callpickup'),
-                    onTap: () => Navigator.push(
-                      context,
-                      SlideRoute(
-                        routeName: '/callpickup',
-                        page: const VideoCallPickupScreen(),
-                      ),
-                    ),
+                    onTap: () => {},
+                    // onTap: () => Navigator.push(
+                    //   context,
+                    //   SlideRoute(
+                    //     routeName: '/callpickup',
+                    //     page: const VideoCallPickupScreen(),
+                    //   ),
+                    // ),
                     child: ClipOval(
+                      //TODO: Update this with real user display photo
                       child: Image.network(
                         'https://i.redd.it/z3xftphdln041.png',
                         height: 190,
@@ -161,7 +160,7 @@ class _HomeScreenVOState extends State<HomeScreenVO> {
                   ),
                   const SizedBox(height: 5),
                   //* Star Rating
-                  const Rating(
+                  const BadgesBar(
                     rating: 5,
                     reviewCount: 7,
                   ),

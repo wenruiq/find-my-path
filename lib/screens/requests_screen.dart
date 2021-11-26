@@ -44,7 +44,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
       _feed = FirebaseFirestore.instance
           .collection('users/$volunteerID/requests')
           .where("VO_ID", isEqualTo: volunteerID)
-          .where("status", isEqualTo: "Completed")
+          // .where("status", isEqualTo: "Completed")
           .snapshots();
     }
 

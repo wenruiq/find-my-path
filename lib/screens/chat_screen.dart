@@ -65,6 +65,9 @@ class _ChatScreenState extends State<ChatScreen> {
           .listen((snapshot) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
+        //* If isCalling set to true (i.e. someone is calling the other person)
+        //* If receiver is me, go to CallPickUp screen
+        //* If caller is me, go straight to Call screen
         if (data['isCalling']) {
           if (data['receiverID'] == userID) {
             Navigator.pushNamed(context, "/callpickup", arguments: {
@@ -72,13 +75,8 @@ class _ChatScreenState extends State<ChatScreen> {
             });
           } else {
             print("Navigated to test call screen");
-            Navigator.pushNamed(context, '/testcallscreen');
+            Navigator.pushNamed(context, '/call');
           }
-        }
-
-        //TODO: Send a "Call Accepted / Call Declined message in chat room"
-        if (data['isDeclined']) {
-          print("Call declined");
         }
       });
     });
@@ -92,12 +90,15 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  //* Handle Video Call
+  //* Function for when user clicks the Video Call button
+  //* Updates Firebase Call document assigned to this chat document when it's pressed
   void _handleVideoPressed(
       String requestID, String callID, String callerID, String callerName, String receiverID) async {
     DocumentReference videoCallRef =
         FirebaseFirestore.instance.collection('requests').doc(requestID).collection('call').doc(callID);
 
+    //* Populate call document with who is calling, who is receiving, and isCalling to true
+    //* isCalling is used by call listener in initState() to navigate
     await videoCallRef.update({
       'callerID': callerID,
       'callerName': callerName,
@@ -107,13 +108,14 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  //* Get Video Call Permissions
+  //* Get Video Call Permissions from User after clicking video call button
+  //* Won't enter video call or update firebase if user refuses to share permission
   Future<bool> _handleVideoCallPermissions() async {
     var cameraStatus = await Permission.camera.status;
     var microphoneStatus = await Permission.microphone.status;
 
     if (cameraStatus.isDenied || microphoneStatus.isDenied) {
-      Map<Permission, PermissionStatus> statuses = await [
+      await [
         Permission.camera,
         Permission.microphone,
       ].request();
@@ -136,7 +138,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (!imVolunteer) {
         Navigator.pushNamedAndRemoveUntil(context, '/review', ModalRoute.withName('/'));
       } else if (imVolunteer) {
-        Navigator.pushNamedAndRemoveUntil(context, '/', ModalRoute.withName('/'));
+        Navigator.pushReplacementNamed(context, '/');
       }
       //* Update Firestore status "Completed"
       DocumentReference requestRef = FirebaseFirestore.instance.collection('requests').doc(requestID);
@@ -294,7 +296,7 @@ class _ChatScreenState extends State<ChatScreen> {
     Map<String, dynamic> requestData = Provider.of<RequestModel>(context, listen: false).data;
     String requestID = requestData['rid'];
 
-    //* Variable Setting for video call
+    //* Setting required variables for video call
     String callReceiverID = "";
     String callID = requestData['cid'];
     String voID = requestData['voID'];

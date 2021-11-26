@@ -1,15 +1,17 @@
+import 'package:find_my_path/screens/review_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../screens/ratings_screen.dart';
+import '../../screens/review_screen.dart';
 import '../util/slide_route.dart';
 
 //TODO: Change this into badges of some sort instead of star reviews
 
-class Rating extends StatelessWidget {
+class BadgesBar extends StatelessWidget {
   final double rating;
   final int reviewCount;
 
-  const Rating({
+  const BadgesBar({
     required this.rating,
     required this.reviewCount,
     Key? key,
@@ -32,8 +34,8 @@ class Rating extends StatelessWidget {
       onTap: () => Navigator.push(
         context,
         SlideRoute(
-          routeName: '/ratings',
-          page: const RatingScreen(),
+          routeName: '/review',
+          page: const ReviewScreen(),
         ),
       ),
       child: Row(

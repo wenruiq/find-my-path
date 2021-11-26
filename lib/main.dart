@@ -1,7 +1,6 @@
 import 'package:find_my_path/screens/query_loading_screen.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -22,7 +21,6 @@ import './screens/requests_screen.dart';
 import './screens/ratings_screen.dart';
 import './screens/hero_image_screen.dart';
 import './screens/review_screen.dart';
-//TODO: Delete after making video call work
 import 'screens/video_call_live_screen.dart';
 import 'screens/video_call_pickup_screen.dart';
 
@@ -222,8 +220,7 @@ class _MyAppState extends State<MyApp> {
         RatingScreen.routeName: (context) => const RatingScreen(),
         HeroImageScreen.routeName: (context) => const HeroImageScreen(),
         ReviewScreen.routeName: (context) => const ReviewScreen(),
-        //TODO: delete after enabling video call
-        TestVideoCallScreen.routeName: (context) => const TestVideoCallScreen(),
+        VideoCallScreen.routeName: (context) => const VideoCallScreen(),
         VideoCallPickupScreen.routeName: (context) => const VideoCallPickupScreen(),
       },
     );

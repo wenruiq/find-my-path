@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
-import "package:firebase_storage/firebase_storage.dart";
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import "package:provider/provider.dart";
 import 'package:auto_size_text/auto_size_text.dart';
@@ -10,7 +8,6 @@ import 'package:marquee/marquee.dart';
 import "../providers/request_model.dart";
 import "../providers/user_model.dart";
 
-//TODO: Add https://pub.dev/packages/flutter_ringtone_player if got time
 class VideoCallPickupScreen extends StatefulWidget {
   static const routeName = '/callpickup';
 
@@ -23,13 +20,14 @@ class VideoCallPickupScreen extends StatefulWidget {
 }
 
 class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with SingleTickerProviderStateMixin {
+  //* Controller for waves on display photo
   late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    print("Vid Call Pickup loaded");
 
+    //* Ringtone, looping is true, requires calling stop() at dispose
     FlutterRingtonePlayer.play(
       android: AndroidSounds.ringtone,
       ios: IosSounds.glass,
@@ -38,37 +36,12 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
       asAlarm: false, // Android only - all APIs
     );
 
+    //* Display pic waves effect
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 3000),
       lowerBound: 0.5,
       vsync: this,
     )..repeat();
-
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      String userID = Provider.of<UserModel>(context, listen: false).uid;
-      String requestID = Provider.of<RequestModel>(context, listen: false).rid;
-      String callID = Provider.of<RequestModel>(context, listen: false).cid;
-      //* PRobably a good idea to implement call model now that i see it..
-      //TODO: insert call model stuff here
-
-      // _callSubscription = FirebaseFirestore.instance
-      //     .collection('requests')
-      //     .doc(requestID)
-      //     .collection('call')
-      //     .doc(callID)
-      //     .snapshots()
-      //     .listen((snapshot) {
-      //   Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-
-      // if (data['receiverID'] != userID && !data['isCalling']) {
-      //   Navigator.of(context).pop();
-      // }
-
-      // if (data['isActive']) {
-      //   Navigator.pushNamedAndRemoveUntil(context, '/testcallscreen', ModalRoute.withName('/chat'));
-      // }
-      // });
-    });
   }
 
   @override
@@ -78,6 +51,7 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
     super.dispose();
   }
 
+  //* Updates firebase and leaves this screen if user hangs up
   void _endCallFunction(String requestID, String callID) async {
     DocumentReference videoCallRef =
         FirebaseFirestore.instance.collection('requests').doc(requestID).collection('call').doc(callID);
@@ -93,6 +67,7 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
     Navigator.pop(context);
   }
 
+  //* Updates firebase and brings user to video call page when user accepts
   void _startCallFunction(String requestID, String callID) async {
     DocumentReference videoCallRef =
         FirebaseFirestore.instance.collection('requests').doc(requestID).collection('call').doc(callID);
@@ -102,7 +77,8 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
       "isActive": true,
     });
 
-    Navigator.pushNamedAndRemoveUntil(context, '/testcallscreen', ModalRoute.withName('/chat'));
+    //* Replaces this page with call page on context so when user leaves call return to chat
+    Navigator.pushNamedAndRemoveUntil(context, '/call', ModalRoute.withName('/chat'));
   }
 
   //* Function that returns the ripple effect for _buildRipplingCircle
@@ -155,11 +131,10 @@ class _VideoCallPickupScreenState extends State<VideoCallPickupScreen> with Sing
   @override
   Widget build(BuildContext context) {
     String callerName;
-
-    // String userID = Provider.of<UserModel>(context, listen: false).uid;
     String requestID = Provider.of<RequestModel>(context, listen: false).rid;
     String callID = Provider.of<RequestModel>(context, listen: false).cid;
 
+    //* callerName is passed in from chat room
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     callerName = arguments['callerName'] ?? "Unknown";
 

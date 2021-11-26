@@ -1,28 +1,28 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:agora_uikit/agora_uikit.dart';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import "package:provider/provider.dart";
-import "../configs/agora_config.dart";
-import "../providers/request_model.dart";
-import '../widgets/requests/request_icon.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class TestVideoCallScreen extends StatefulWidget {
-  static const routeName = '/testcallscreen';
+import "../configs/agora_config.dart";
+import "../providers/request_model.dart";
 
-  const TestVideoCallScreen({Key? key}) : super(key: key);
+class VideoCallScreen extends StatefulWidget {
+  static const routeName = '/call';
+
+  const VideoCallScreen({Key? key}) : super(key: key);
 
   @override
-  State<TestVideoCallScreen> createState() => _TestVideoCallScreenState();
+  State<VideoCallScreen> createState() => _VideoCallScreenState();
 }
 
-class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
+class _VideoCallScreenState extends State<VideoCallScreen> {
   late StreamSubscription _callSubscription;
   late AgoraClient client;
 
+  //* local state for displaying loader / toggling video call control button UI
   bool _agoraLoaded = false;
   bool _isVideoDisabled = false;
   bool _isMicMuted = false;
@@ -35,31 +35,45 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
       String requestID = Provider.of<RequestModel>(context, listen: false).rid;
       String callID = Provider.of<RequestModel>(context, listen: false).cid;
 
+      //* Initialize Agora Client
       client = AgoraClient(
         agoraConnectionData: AgoraConnectionData(
           appId: appID,
           channelName: callID,
         ),
+        //* Configure video call settings
+        //* REF - https://docs.agora.io/en/Interactive%20Broadcast/video_profile_android?platform=Android
         agoraChannelData: AgoraChannelData(
+          //* Increases capturing of human voice
           audioProfile: AudioProfile.SpeechStandard,
+          //* Increase this to increase video quality
           videoEncoderConfiguration: VideoEncoderConfiguration(
             dimensions: VideoDimensions(width: 1280, height: 720),
             frameRate: VideoFrameRate.Fps30,
             bitrate: 3420,
+            //* Prevents users from changing their display orientation
             orientationMode: VideoOutputOrientationMode.FixedPortrait,
           ),
+          //* Displays higher quality video if possible
           enableDualStreamMode: true,
+          //* Makes stream fallback to low resolution stream instead of completely disconnecting when network is bad
           localPublishFallbackOption: StreamFallbackOptions.VideoStreamLow,
           remoteSubscribeFallbackOption: StreamFallbackOptions.VideoStreamLow,
         ),
+        //* Pass in permissions status for Agora to prompt users for permissions if necessary
+        //? Not sure if receiver of call will have errors if permissions not enabled, dont think so
+        //? As the permissions are manually asked when user click the video call button, hence
+        //? the person receiving the call does not have that
         enabledPermission: [
           Permission.camera,
           Permission.microphone,
         ],
       );
 
+      //* async function to initialize the AgoraClient (aka connect to server)
       initAgora();
 
+      //* Change page from loading to actual UI
       setState(() {
         _agoraLoaded = true;
       });
@@ -73,6 +87,8 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
           .listen((snapshot) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
+        //* Returns both users in the call to the chat screen
+        //* This condition is only met when one user hangs up
         if (!data['isActive'] && !data['isCalling']) {
           client.sessionController.endCall();
           Navigator.pop(context);
@@ -91,31 +107,25 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
     _callSubscription.cancel();
     client.sessionController.dispose();
     super.dispose();
-
-    print("Session controller disposed");
   }
 
+  //* Extraction of Agora UI Kit's mic toggle function as the UI is not updating
   void _handleMicToggle() {
+    client.sessionController.toggleMute();
     setState(() {
       _isMicMuted = !_isMicMuted;
     });
-    client.sessionController.toggleMute();
   }
 
+  //* Extraction of Agora UI Kit's camera toggle function as the UI is not updating
   void _handleCameraToggle() async {
     client.sessionController.toggleCamera();
     setState(() {
       _isVideoDisabled = !_isVideoDisabled;
     });
-
-    var status = await Permission.camera.status;
-    // if (value.isLocalVideoDisabled && status.isDenied) {
-    //   await Permission.camera.request();
-    // }
-    // value = value.copyWith(isLocalVideoDisabled: !(value.isLocalVideoDisabled));
-    // await value.engine?.muteLocalVideoStream(value.isLocalVideoDisabled);
   }
 
+  //* Method to update firestore that one user has ended call, listener in initState will kick user out of this screen
   void _handleEndCall(String requestID, String callID) async {
     DocumentReference videoCallRef =
         FirebaseFirestore.instance.collection('requests').doc(requestID).collection('call').doc(callID);
@@ -135,15 +145,18 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.black,
         body: _agoraLoaded
             ? Stack(
                 children: <Widget>[
+                  //* Video Call UI template
                   AgoraVideoViewer(
                     client: client,
-                    showNumberOfUsers: true,
                     layoutType: Layout.floating,
                     showAVState: true,
+                    //* Defines the top layer (smaller vid) size
                     floatingLayoutContainerHeight: MediaQuery.of(context).size.height * 0.15,
+                    //* Custom disabled video widget design
                     disabledVideoWidget: Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(25),
@@ -163,10 +176,13 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                       ),
                     ),
                   ),
+                  //* Video Call Buttons UI - replaced buttons with their buttons from source code
                   AgoraVideoButtons(
                     client: client,
+                    //* List is empty to remove default buttons
                     enabledButtons: const [],
                     extraButtons: [
+                      //* Toggle Mic Button
                       RawMaterialButton(
                         onPressed: _handleMicToggle,
                         child: Icon(
@@ -179,8 +195,8 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                         fillColor: _isMicMuted ? Colors.redAccent : Colors.white,
                         padding: const EdgeInsets.all(12.0),
                       ),
+                      //* End Call Button
                       ElevatedButton(
-                        //! onPressed for Decline Call
                         onPressed: () => _handleEndCall(requestID, callID),
                         child: const Icon(
                           Icons.call_end,
@@ -199,6 +215,7 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                           }),
                         ),
                       ),
+                      //* Switch Camera Button
                       RawMaterialButton(
                         onPressed: () => client.sessionController.switchCamera(),
                         child: const Icon(
@@ -211,6 +228,7 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                         fillColor: Colors.white,
                         padding: const EdgeInsets.all(12.0),
                       ),
+                      //* Toggle Camera On/Off button
                       RawMaterialButton(
                         onPressed: _handleCameraToggle,
                         child: Icon(
@@ -227,6 +245,7 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                   ),
                 ],
               )
+            //* Loader if agora not initialized
             : const Center(
                 child: CircularProgressIndicator(),
               ),
