@@ -5,14 +5,17 @@ import "package:provider/provider.dart";
 import 'package:google_place/google_place.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'dart:async';
 
 import "../../widgets/query/current_location.dart";
 import "package:find_my_path/providers/location_model.dart";
 import "package:find_my_path/providers/user_model.dart";
 import "../../args/hero_image_screen_args.dart";
+import "../../data/realtime_location.dart";
+import "../../data/realtime_location_dao.dart";
 
 class QueryForm extends StatefulWidget {
-  const QueryForm({Key? key, required this.submitFn}) : super(key: key);
+  QueryForm({Key? key, required this.submitFn}) : super(key: key);
 
   final void Function(
       {required String viID,
@@ -26,6 +29,8 @@ class QueryForm extends StatefulWidget {
       required BuildContext context,
       XFile? imageFile}) submitFn;
 
+  final RealtimeLocationDAO realtimeLocationDAO = RealtimeLocationDAO();
+
   @override
   _QueryFormState createState() => _QueryFormState();
 }
@@ -37,6 +42,8 @@ class _QueryFormState extends State<QueryForm> {
 
   //* Image Picking
   XFile? _imageFile;
+
+  late StreamSubscription _hisLocationChangeSubscription;
 
   @override
   void initState() {
@@ -56,25 +63,38 @@ class _QueryFormState extends State<QueryForm> {
         });
       }
     });
+
+    //TODO: Remove test
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      //* Listen
+      DatabaseReference _realtimeLocationRef = FirebaseDatabase.instance.reference().child('realtimeLocation');
+      _hisLocationChangeSubscription = _realtimeLocationRef.onValue.listen((event) {
+        print("Event heard");
+
+        var snapshot = event.snapshot;
+        var value = snapshot.value;
+        print("value is @@");
+        print(value['lat'].runtimeType);
+        double lat = double.parse(value['lat']);
+        print(lat.runtimeType);
+      });
+    });
   }
 
   @override
   void dispose() {
     //* Clean up the focus node when the Form is disposed.
     myFocusNode.dispose();
-
+    _hisLocationChangeSubscription.cancel();
     super.dispose();
   }
 
-  // void testFunction() async {
-  //   DatabaseReference _counterRef = FirebaseDatabase.instance.reference().child('counter');
-  //   await _counterRef.set(ServerValue.increment(1));
-  //   print("Fired!");
-  //   final FirebaseDatabase database = FirebaseDatabase();
-  //   database.reference().child('counter').get().then((DataSnapshot? snapshot) {
-  //     print('Connected to directly configured database and read ${snapshot!.value}');
-  //   });
-  // }
+  //TODO: Remove test
+  void testFunction() async {
+    final location = RealtimeLocation(1.3345, 103.456);
+    widget.realtimeLocationDAO.saveRealtimeLocation(location);
+    print("DONE");
+  }
 
   void _openCamera(BuildContext context) async {
     final pickedFile = await ImagePicker().pickImage(
