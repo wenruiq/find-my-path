@@ -41,9 +41,20 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
         CollectionReference users = FirebaseFirestore.instance.collection('users');
-        await users
-            .doc(userCredential.user?.uid)
-            .set({'email': email, 'displayName': displayName, 'isVolunteer': isVolunteer, 'isAvailable': false});
+        await users.doc(userCredential.user?.uid).set({
+          'email': email,
+          'displayName': displayName,
+          'isVolunteer': isVolunteer,
+          'isAvailable': false,
+          'badges': isVolunteer
+              ? {
+                  'friendly': 0,
+                  'listener': 0,
+                  'expert': 0,
+                  'personality': 0,
+                }
+              : {},
+        });
       }
     } on FirebaseAuthException catch (err) {
       String message = 'An network error occurred, please try again later.';
