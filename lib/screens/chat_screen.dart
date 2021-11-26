@@ -322,137 +322,139 @@ class _ChatScreenState extends State<ChatScreen> {
             onWillPop: () async {
               return false;
             },
-            child: Scaffold(
-              appBar: AppBar(
-                automaticallyImplyLeading: false,
-                title: Semantics(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(hisDisplayName),
+            child: Semantics(
+              label: "$hisDisplayName has accepted your request, you are on the chat screen with him",
+              child: Scaffold(
+                appBar: AppBar(
+                  automaticallyImplyLeading: false,
+                  title: Semantics(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(hisDisplayName),
+                    ),
+                    label: "Volunteer's name",
                   ),
-                  label: "Volunteer's name",
+                  actions: <Widget>[
+                    IconButton(
+                      icon: const Icon(
+                        Icons.videocam_rounded,
+                        color: Colors.white,
+                        size: 30,
+                        semanticLabel: "Button to start video call",
+                      ),
+                      onPressed: () async => await _handleVideoCallPermissions()
+                          ? _handleVideoPressed(requestID, callID, myID, myName, callReceiverID)
+                          : {},
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.exit_to_app_rounded,
+                        color: Colors.white,
+                        size: 26,
+                        semanticLabel: "Button to end session and exit the room permanently",
+                      ),
+                      onPressed: () => _handleExit(myID, imVolunteer, requestID, latestRequestData),
+                    ),
+                  ],
                 ),
-                actions: <Widget>[
-                  IconButton(
-                    icon: const Icon(
-                      Icons.videocam_rounded,
-                      color: Colors.white,
-                      size: 30,
-                      semanticLabel: "Button to start video call",
-                    ),
-                    onPressed: () async => await _handleVideoCallPermissions()
-                        ? _handleVideoPressed(requestID, callID, myID, myName, callReceiverID)
-                        : {},
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.exit_to_app_rounded,
-                      color: Colors.white,
-                      size: 26,
-                      semanticLabel: "Button to end session and exit the room permanently",
-                    ),
-                    onPressed: () => _handleExit(myID, imVolunteer, requestID, latestRequestData),
-                  ),
-                ],
-              ),
-              //* StreamBuilder to listen to new messages
-              body: StreamBuilder(
-                stream: requestRef.collection("messages").orderBy("createdAt", descending: true).snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    //* Process data from Firebase
-                    QuerySnapshot messagesQuerySnapshot = snapshot.data as QuerySnapshot;
-                    List<DocumentSnapshot> messagesList = messagesQuerySnapshot.docs;
-                    //* Convert data to List<types.Message>
-                    //* messagesListProcessed is used to build messages
-                    List<types.Message> messagesListProcessed = processFirebaseMessages(messagesList);
-                    return SafeArea(
-                      bottom: false,
-                      child: Stack(children: [
-                        IndexedStack(
-                          index: currentTab,
-                          children: <Widget>[
-                            Chat(
-                              messages: messagesListProcessed,
-                              onSendPressed: _handleSendPressed,
-                              user: _user,
-                              showUserNames: true,
-                              onAttachmentPressed: () => _handleSendImage(requestID, latestRequestData),
-                              theme: DefaultChatTheme(
-                                inputBackgroundColor: Colors.grey.shade100,
-                                inputTextColor: Colors.black,
-                                inputTextCursorColor: Colors.black,
-                                primaryColor: const Color(0xff4a67a0),
-                                userAvatarNameColors: [Theme.of(context).primaryColor],
-                                sendButtonIcon: Icon(
-                                  Icons.send_rounded,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 26.0,
-                                  semanticLabel: 'Send the message',
-                                ),
-                                attachmentButtonIcon: Icon(
-                                  Icons.add_a_photo_rounded,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 26.0,
-                                  semanticLabel: 'Take a photo and send it to chat',
-                                ),
-                                inputTextStyle: const TextStyle(fontSize: 20),
-                              ),
-                              imageMessageBuilder: (msg, {messageWidth = 300}) {
-                                String id = msg.id;
-                                String uri = msg.uri;
-                                return Semantics(
-                                  label: "A photo sent to the chat",
-                                  child: GestureDetector(
-                                    child: Hero(
-                                      tag: id,
-                                      child: FadeInImage.memoryNetwork(
-                                        placeholder: kTransparentImage,
-                                        image: uri,
-                                        height: 250,
-                                        width: 250,
-                                        alignment: Alignment.topCenter,
-                                        fit: BoxFit.fitWidth,
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.pushNamed(context, '/heroImage',
-                                          arguments: HeroImageScreenArgs(id, '', uri));
-                                    },
+                //* StreamBuilder to listen to new messages
+                body: StreamBuilder(
+                  stream: requestRef.collection("messages").orderBy("createdAt", descending: true).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      //* Process data from Firebase
+                      QuerySnapshot messagesQuerySnapshot = snapshot.data as QuerySnapshot;
+                      List<DocumentSnapshot> messagesList = messagesQuerySnapshot.docs;
+                      //* Convert data to List<types.Message>
+                      //* messagesListProcessed is used to build messages
+                      List<types.Message> messagesListProcessed = processFirebaseMessages(messagesList);
+                      return SafeArea(
+                        bottom: false,
+                        child: Stack(children: [
+                          IndexedStack(
+                            index: currentTab,
+                            children: <Widget>[
+                              Chat(
+                                messages: messagesListProcessed,
+                                onSendPressed: _handleSendPressed,
+                                user: _user,
+                                showUserNames: true,
+                                onAttachmentPressed: () => _handleSendImage(requestID, latestRequestData),
+                                theme: DefaultChatTheme(
+                                  inputBackgroundColor: Colors.grey.shade100,
+                                  inputTextColor: Colors.black,
+                                  inputTextCursorColor: Colors.black,
+                                  primaryColor: const Color(0xff4a67a0),
+                                  userAvatarNameColors: [Theme.of(context).primaryColor],
+                                  sendButtonIcon: Icon(
+                                    Icons.send_rounded,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 26.0,
+                                    semanticLabel: 'Send the message',
                                   ),
-                                );
-                              },
-                            ),
-                            //* Map implementation here
-                            const LiveLocationMap(),
-                          ],
-                        ),
-                        Semantics(
-                          label: atMap ? "Button to go back to chat room" : "Button to show live location on map",
-                          child: Align(
-                            child: PulsingIndicator(
-                              icon: Ionicons.radio_outline,
-                              message: atMap ? "Return to Chat Room" : "Live Location Shared",
-                              bgColor: Colors.green.shade400,
-                              textColor: Colors.white,
-                              onTapFn: () => {
-                                setState(() {
-                                  currentTab = currentTab == 1 ? 0 : 1;
-                                  atMap = atMap ? false : true;
-                                })
-                              },
-                            ),
-                            alignment: Alignment.topCenter,
+                                  attachmentButtonIcon: Icon(
+                                    Icons.add_a_photo_rounded,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 26.0,
+                                    semanticLabel: 'Take a photo and send it to chat',
+                                  ),
+                                  inputTextStyle: const TextStyle(fontSize: 20),
+                                ),
+                                imageMessageBuilder: (msg, {messageWidth = 300}) {
+                                  String id = msg.id;
+                                  String uri = msg.uri;
+                                  return Semantics(
+                                    label: "A photo sent to the chat",
+                                    child: GestureDetector(
+                                      child: Hero(
+                                        tag: id,
+                                        child: FadeInImage.memoryNetwork(
+                                          placeholder: kTransparentImage,
+                                          image: uri,
+                                          height: 250,
+                                          width: 250,
+                                          alignment: Alignment.topCenter,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pushNamed(context, '/heroImage',
+                                            arguments: HeroImageScreenArgs(id, '', uri));
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                              //* Map implementation here
+                              const LiveLocationMap(),
+                            ],
                           ),
-                        ),
-                      ]),
-                    );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
+                          ExcludeSemantics(
+                            child: Align(
+                              child: PulsingIndicator(
+                                icon: Ionicons.radio_outline,
+                                message: atMap ? "Return to Chat Room" : "Live Location Shared",
+                                bgColor: Colors.green.shade400,
+                                textColor: Colors.white,
+                                onTapFn: () => {
+                                  setState(() {
+                                    currentTab = currentTab == 1 ? 0 : 1;
+                                    atMap = atMap ? false : true;
+                                  })
+                                },
+                              ),
+                              alignment: Alignment.topCenter,
+                            ),
+                          ),
+                        ]),
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           );

@@ -96,123 +96,145 @@ class _AuthFormState extends State<AuthForm> {
                   key: _formKey,
                   child: Column(
                     children: <Widget>[
-                      TextFormField(
-                          key: const ValueKey('email'),
-                          controller: _emailController,
-                          autocorrect: false,
-                          textCapitalization: TextCapitalization.none,
-                          enableSuggestions: false,
-                          focusNode: myFocusNode,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please enter an email.";
-                            }
-                            bool emailValid =
-                                RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                    .hasMatch(value);
-                            if (!emailValid) {
-                              return "Please enter a valid email.";
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(labelText: 'Email'),
-                          onSaved: (value) {
-                            _email = value.toString();
-                          }),
-                      const SizedBox(height: 10),
-                      if (!_isLogin)
-                        TextFormField(
-                            key: const ValueKey('displayName'),
-                            autocorrect: true,
-                            textCapitalization: TextCapitalization.words,
+                      Semantics(
+                        label: "Enter the email for login",
+                        child: TextFormField(
+                            key: const ValueKey('email'),
+                            controller: _emailController,
+                            autocorrect: false,
+                            textCapitalization: TextCapitalization.none,
                             enableSuggestions: false,
+                            focusNode: myFocusNode,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "Please enter a display name.";
+                                return "Please enter an email.";
                               }
-                              if (value.length < 4) {
-                                return 'Display name must be at least 4 characters long.';
+                              bool emailValid =
+                                  RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(value);
+                              if (!emailValid) {
+                                return "Please enter a valid email.";
                               }
                               return null;
                             },
-                            decoration: const InputDecoration(labelText: 'Display Name'),
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(labelText: 'Email'),
                             onSaved: (value) {
-                              _displayName = value.toString();
+                              _email = value.toString();
                             }),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                          key: const ValueKey('password'),
-                          controller: _passwordController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please enter a password.";
-                            }
-                            if (value.length < 8) {
-                              return 'Password must be at least 8 characters long.';
-                            }
-                            return null;
-                          },
-                          decoration: const InputDecoration(labelText: 'Password'),
-                          obscureText: true,
-                          onSaved: (value) {
-                            _password = value.toString();
-                          }),
+                      ),
                       const SizedBox(height: 10),
                       if (!_isLogin)
-                        TextFormField(
-                          key: const ValueKey('confirmPassword'),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please confirm your password.";
-                            }
-                            if (value != _passwordController.text) {
-                              return 'Passwords don\'t match.';
-                            }
-                            return null;
-                          },
-                          decoration: const InputDecoration(labelText: 'Confirm Password'),
-                          obscureText: true,
+                        Semantics(
+                          label: "Enter the nickname you want to use on FindMyPath",
+                          child: TextFormField(
+                              key: const ValueKey('displayName'),
+                              autocorrect: true,
+                              textCapitalization: TextCapitalization.words,
+                              enableSuggestions: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please enter a display name.";
+                                }
+                                if (value.length < 4) {
+                                  return 'Display name must be at least 4 characters long.';
+                                }
+                                return null;
+                              },
+                              decoration: const InputDecoration(labelText: 'Display Name'),
+                              onSaved: (value) {
+                                _displayName = value.toString();
+                              }),
+                        ),
+                      const SizedBox(height: 10),
+                      Semantics(
+                        label: 'Enter the password for login',
+                        child: TextFormField(
+                            key: const ValueKey('password'),
+                            controller: _passwordController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please enter a password.";
+                              }
+                              if (value.length < 8) {
+                                return 'Password must be at least 8 characters long.';
+                              }
+                              return null;
+                            },
+                            decoration: const InputDecoration(labelText: 'Password'),
+                            obscureText: true,
+                            onSaved: (value) {
+                              _password = value.toString();
+                            }),
+                      ),
+                      const SizedBox(height: 10),
+                      if (!_isLogin)
+                        Semantics(
+                          label: 'Enter your password again for confirmation',
+                          child: TextFormField(
+                            key: const ValueKey('confirmPassword'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please confirm your password.";
+                              }
+                              if (value != _passwordController.text) {
+                                return 'Passwords don\'t match.';
+                              }
+                              return null;
+                            },
+                            decoration: const InputDecoration(labelText: 'Confirm Password'),
+                            obscureText: true,
+                          ),
                         ),
                       const SizedBox(height: 10),
                       if (!_isLogin)
-                        CheckboxListTile(
-                            title: const Text("I am a volunteer", style: TextStyle(fontSize: 18)),
-                            value: _isVolunteer,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isVolunteer = value!;
-                              });
-                            }),
+                        Semantics(
+                          label: 'Check the box on the right if you are a volunteer',
+                          child: CheckboxListTile(
+                              title: const Text("I am a volunteer", style: TextStyle(fontSize: 18)),
+                              value: _isVolunteer,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isVolunteer = value!;
+                                });
+                              }),
+                        ),
                       if (_isLogin) const SizedBox(height: 10),
                       if (widget.isLoading) const CircularProgressIndicator(),
                       if (!widget.isLoading)
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: ElevatedButton(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(30, 12, 30, 12),
-                              child: Text(_isLogin ? 'Login' : 'Sign Up', style: const TextStyle(fontSize: 20)),
+                        Semantics(
+                          label: "hahaha",
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: ElevatedButton(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(30, 12, 30, 12),
+                                child: Text(_isLogin ? 'Login' : 'Sign Up', style: const TextStyle(fontSize: 20)),
+                              ),
+                              onPressed: _trySubmit,
                             ),
-                            onPressed: _trySubmit,
                           ),
                         ),
                       if (!widget.isLoading)
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            textStyle: Theme.of(context).textTheme.caption,
+                        Semantics(
+                          label:
+                              _isLogin ? "Tap here to sign up an account" : "Tap here if you already have an account",
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              textStyle: Theme.of(context).textTheme.caption,
+                            ),
+                            child: Text(_isLogin ? 'Create new account' : 'I already have an account',
+                                style: const TextStyle(fontSize: 16)),
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              _emailController.clear();
+                              _passwordController.clear();
+                              myFocusNode.requestFocus();
+                              setState(() {
+                                _isLogin = !_isLogin;
+                              });
+                            },
                           ),
-                          child: Text(_isLogin ? 'Create new account' : 'I already have an account',
-                              style: const TextStyle(fontSize: 16)),
-                          onPressed: () {
-                            FocusScope.of(context).unfocus();
-                            _emailController.clear();
-                            _passwordController.clear();
-                            myFocusNode.requestFocus();
-                            setState(() {
-                              _isLogin = !_isLogin;
-                            });
-                          },
                         )
                     ],
                   ),

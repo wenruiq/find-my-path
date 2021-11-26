@@ -46,44 +46,47 @@ class _QueryLoadingScreenState extends State<QueryLoadingScreen> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as QueryLoadingScreenArgs;
     String requestID = args.requestID;
-    return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false, centerTitle: true, title: const Text("Finding...")),
-      body: SafeArea(
-        child: StreamBuilder(
-            stream: FirebaseFirestore.instance.collection('requests').doc(requestID).snapshots(),
-            builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.exists) {
-                  String status = snapshot.data!['status'];
-                  if (status == "Ongoing") {
-                    navigateToChatRoom(snapshot.data!.data() as Map<String, dynamic>, requestID);
+    return Semantics(
+      label: "Searching for a volunteer screen, press cancel at the bottom of the screen to go back to request form",
+      child: Scaffold(
+        appBar: AppBar(automaticallyImplyLeading: false, centerTitle: true, title: const Text("Finding...")),
+        body: SafeArea(
+          child: StreamBuilder(
+              stream: FirebaseFirestore.instance.collection('requests').doc(requestID).snapshots(),
+              builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.exists) {
+                    String status = snapshot.data!['status'];
+                    if (status == "Ongoing") {
+                      navigateToChatRoom(snapshot.data!.data() as Map<String, dynamic>, requestID);
+                    }
                   }
                 }
-              }
-              //* Show loader no matter what
-              return Stack(children: <Widget>[
-                const Loading(description: "Finding A Volunteer..."),
-                Positioned.fill(
-                  bottom: MediaQuery.of(context).size.height * 0.13,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        primary: Theme.of(context).primaryColor,
-                        onSurface: Theme.of(context).primaryColor,
-                        side: BorderSide(color: Theme.of(context).primaryColor),
-                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-                      ),
-                      onPressed: () => cancelRequest(requestID),
-                      child: const Text(
-                        "Cancel Request",
-                        style: TextStyle(fontSize: 24),
+                //* Show loader no matter what
+                return Stack(children: <Widget>[
+                  const Loading(description: "Finding A Volunteer..."),
+                  Positioned.fill(
+                    bottom: MediaQuery.of(context).size.height * 0.13,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          primary: Theme.of(context).primaryColor,
+                          onSurface: Theme.of(context).primaryColor,
+                          side: BorderSide(color: Theme.of(context).primaryColor),
+                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                        ),
+                        onPressed: () => cancelRequest(requestID),
+                        child: const Text(
+                          "Cancel Request",
+                          style: TextStyle(fontSize: 24),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ]);
-            }),
+                ]);
+              }),
+        ),
       ),
     );
   }

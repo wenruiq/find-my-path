@@ -66,44 +66,53 @@ class _HomeScreenVIState extends State<HomeScreenVI> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("FindMyPath",
-            style: TextStyle(
-              fontFamily: "OleoScript",
-              color: Colors.white,
-              fontSize: 25,
-            )),
-      ),
-      body: SafeArea(
-        child: LayoutBuilder(builder: (BuildContext context, BoxConstraints viewportConstraint) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: viewportConstraint.maxHeight,
+    return Semantics(
+      label: "You are logged in and on the home screen",
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Semantics(
+            label: "App name",
+            child: const Text("FindMyPath",
+                style: TextStyle(
+                  fontFamily: "OleoScript",
+                  color: Colors.white,
+                  fontSize: 25,
+                )),
+          ),
+        ),
+        body: SafeArea(
+          child: LayoutBuilder(builder: (BuildContext context, BoxConstraints viewportConstraint) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: viewportConstraint.maxHeight,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Semantics(
+                      label: "Tap here to start filling up a simple form to request for help",
+                      child: ButtonVI(
+                        icon: Icons.forum_outlined,
+                        tooltip: 'Search For A Volunteer',
+                        label: "Ask For Help",
+                        onButtonPress: () => Navigator.pushNamed(context, "/query"),
+                      ),
+                    ),
+                    ButtonVI(
+                      icon: Icons.logout,
+                      tooltip: 'Logout',
+                      label: "Logout",
+                      onButtonPress: _logoutConfirmation,
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  ButtonVI(
-                    icon: Icons.forum_outlined,
-                    tooltip: 'Search For A Volunteer',
-                    label: "Ask For Help",
-                    onButtonPress: () => Navigator.pushNamed(context, "/query"),
-                  ),
-                  ButtonVI(
-                    icon: Icons.logout,
-                    tooltip: 'Logout',
-                    label: "Logout",
-                    onButtonPress: _logoutConfirmation,
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }

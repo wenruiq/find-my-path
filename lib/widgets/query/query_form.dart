@@ -154,19 +154,22 @@ class _QueryFormState extends State<QueryForm> {
         ),
       ]);
     }
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.45,
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: OutlinedButton.icon(
-        icon: Icon(
-          Icons.upload_file,
-          size: 60,
-          color: Theme.of(context).primaryColor,
-        ),
-        onPressed: () => _openCamera(context),
-        label: const Text(
-          "Take A Photo",
-          style: TextStyle(fontSize: 30),
+    return Semantics(
+      label: "Tap here to take a photo to attach to the request",
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.45,
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: OutlinedButton.icon(
+          icon: Icon(
+            Icons.upload_file,
+            size: 60,
+            color: Theme.of(context).primaryColor,
+          ),
+          onPressed: () => _openCamera(context),
+          label: const Text(
+            "Take A Photo",
+            style: TextStyle(fontSize: 30),
+          ),
         ),
       ),
     );

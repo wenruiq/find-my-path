@@ -155,16 +155,19 @@ class _QueryScreenState extends State<QueryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DismissKeyboard(
-      child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: const Text("Enter Details"),
-          ),
-          body: SafeArea(
-              child: QueryForm(
-            submitFn: _submitQueryForm,
-          ))),
+    return Semantics(
+      label: "You are on the request form screen enter the details for a request",
+      child: DismissKeyboard(
+        child: Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: const Text("Enter Details"),
+            ),
+            body: SafeArea(
+                child: QueryForm(
+              submitFn: _submitQueryForm,
+            ))),
+      ),
     );
   }
 }

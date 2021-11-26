@@ -7,7 +7,7 @@ import 'package:location/location.dart' as flutter_location;
 import 'package:find_my_path/providers/location_model.dart';
 
 class CurrentLocation extends StatefulWidget {
-  const CurrentLocation({Key? key}) : super(key: key);
+  const CurrentLocation({Key? key}) : super(key: key );
 
   @override
   _CurrentLocationState createState() => _CurrentLocationState();
