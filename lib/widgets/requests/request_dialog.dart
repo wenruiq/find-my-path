@@ -36,7 +36,7 @@ class RequestDialog extends StatelessWidget {
             "Cancel",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-          ),
+          ),  
           style: OutlinedButton.styleFrom(
             side: BorderSide(color: Colors.grey.shade400),
           ),
