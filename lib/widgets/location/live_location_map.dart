@@ -13,8 +13,8 @@ import '../../providers/user_model.dart';
 import '../../data/realtime_location.dart';
 import '../../data/realtime_location_dao.dart';
 
-const double cameraZoom = 16;
-const double cameraTilt = 80;
+const double cameraZoom = 18;
+const double cameraTilt = 0;
 const double cameraBearing = 30;
 
 class LiveLocationMap extends StatefulWidget {
@@ -113,7 +113,7 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
 
   //* Need this to use custom icons when showing pins on map
   void setSourceAndDestinationIcons() async {
-    BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.0), 'assets/icons/driving_pin.png')
+    BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.0), 'assets/icons/location_map_marker.png')
         .then((onValue) {
       sourceIcon = onValue;
     });

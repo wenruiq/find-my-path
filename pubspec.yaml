@@ -101,6 +101,7 @@ flutter:
     - .env
     - assets/icons/destination_map_marker.png
     - assets/icons/driving_pin.png
+    - assets/icons/location_map_marker.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
