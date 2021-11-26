@@ -79,10 +79,13 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DismissKeyboard(
-      child: Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
-          body: SafeArea(child: AuthForm(submitFn: _submitAuthForm, isLoading: _isLoading))),
+    return Semantics(
+      label: "You're on the login screen",
+      child: DismissKeyboard(
+        child: Scaffold(
+            backgroundColor: Theme.of(context).primaryColor,
+            body: SafeArea(child: AuthForm(submitFn: _submitAuthForm, isLoading: _isLoading))),
+      ),
     );
   }
 }
