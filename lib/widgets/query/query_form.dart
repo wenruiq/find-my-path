@@ -417,7 +417,11 @@ class _QueryFormState extends State<QueryForm> {
   }
 
   void autoCompleteSearch(String value) async {
-    var result = await googlePlace!.autocomplete.get(value);
+    var result = await googlePlace!.autocomplete.get(
+      value,
+      //* Limit search results by country
+      components: [Component("country", "sg")],
+    );
     if (result != null && result.predictions != null && mounted) {
       setState(() {
         predictions = result.predictions!;
