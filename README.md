@@ -21,8 +21,6 @@ To run the application, the following needs to be installed:
 - Android Studios (instructions included in Flutter installation guide as well)
 - iOS Simulator for Windows (Mac users can use the inbuilt Simulator app)
 
-Note: iOS Simulator not necessary as of now, features are optimized for android devices
-
 You will also need a Firebase account if you don't have one. (https://firebase.google.com/)
 
 ## VSC Configuration
