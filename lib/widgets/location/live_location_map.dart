@@ -113,7 +113,8 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
 
   //* Need this to use custom icons when showing pins on map
   void setSourceAndDestinationIcons() async {
-    BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.0), 'assets/icons/location_map_marker.png')
+    BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(devicePixelRatio: 2.0), 'assets/icons/location_map_marker.png')
         .then((onValue) {
       sourceIcon = onValue;
     });
@@ -221,15 +222,17 @@ class _LiveLocationMapState extends State<LiveLocationMap> {
   //* This draws polylines on map
   void setPolylines() async {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        apiKey,
-        PointLatLng(
-          currentLocation!.latitude as double,
-          currentLocation!.longitude as double,
-        ),
-        PointLatLng(
-          endLocation!.latitude as double,
-          endLocation!.longitude as double,
-        ));
+      apiKey,
+      PointLatLng(
+        currentLocation!.latitude as double,
+        currentLocation!.longitude as double,
+      ),
+      PointLatLng(
+        endLocation!.latitude as double,
+        endLocation!.longitude as double,
+      ),
+      travelMode: TravelMode.walking,
+    );
 
     if (result.points.isNotEmpty) {
       List<PointLatLng> points = result.points;
