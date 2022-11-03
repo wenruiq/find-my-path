@@ -47,21 +47,19 @@ A strong emphasis is placed on providing excellent <b>accessibility support</b> 
 <img src="http://g.recordit.co/IhEny78so1.gif" width="300px"/>
 
 ### Requesting for Help (Vision Impaired User)
-#### Search for Destination & Attach Photo
-<img src="http://g.recordit.co/nmJQUxPvD9.gif" width="300px"/>
+
+#### Search for Destination
+<img src="http://g.recordit.co/iRLizcrbcx.gif" width="300px"/>
+
+#### Attach Photo and Send Request
+<img src="http://g.recordit.co/UmMrm1CIX2.gif" width="300px"/>
 
 ### Accepting a Request (Volunteer User)
 #### Push Notifications & Acceptance
-<img src="http://g.recordit.co/Fu87ZnSrNF.gif" width="300px"/>
+<img src="http://g.recordit.co/D74n16lyKb.gif" width="300px"/>
 
-#### Text and Image Messaging
-<img src="http://g.recordit.co/tgkOnLPpLb.gif" width="300px"/>
-
-#### Live Location Sharing & Navigating
+#### Messaging and Location Sharing
 <img src="http://g.recordit.co/wpUgJoAU2f.gif" width="300px"/>
-
-#### Video Call
-<img src="http://g.recordit.co/jp4LpYryt9.gif" width="600px"/>
 
 ### Volunteer Reviews
 <img src="http://g.recordit.co/1a3iMRZjHG.gif" width="300px"/>
