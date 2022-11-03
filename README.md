@@ -9,15 +9,18 @@
   Crowd-sourced Navigation Mobile App for the Vision Impaired
   </br>
   </br>
+  Co-developed by <a href="https://github.com/wenruiq">Wenrui</a> and <a href="https://github.com/lifuhuang97">Lifu</a> for nonprofit organisation -  <a href="https://www.etch.sg/">Etch Empathy</a>
+  </br>
+  </br>
   <a href="https://github.com/wenruiq/find-my-path">Explore the docs</a> · 
   <a href="https://github.com/wenruiq/find-my-path/issues">Report Bug</a> ·
   <a href="https://github.com/wenruiq/find-my-path/issues">Request Feature</a>
+  </br>
 </p>
 
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
-
 * [About the Project](#about-the-project)
 * [Built With](#built-with)
 * [Key Features](#key-features)
