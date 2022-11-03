@@ -21,6 +21,15 @@
 * [About the Project](#about-the-project)
 * [Built With](#built-with)
 * [Key Features](#key-features)
+  * [Login](#login)
+  * [Requesting for Help (Vision Impaired User)](#requesting-for-help-vision-impaired-user)
+    * [Search for Destination](#search-for-destination)
+    * [Attach Photo and Submit Request](#attach-photo-and-submit-request)
+  * [Accepting a Request (Volunteer User)](#accepting-a-request-volunteer-user)
+    * [Push Notifications](#push-notifications)
+    * [Accept a Request](#accept-a-request)
+    * [Messaging and Location Sharing](#messaging-and-location-sharing)
+  * [Write a Reviews](#write-a-reviews)
 * [Getting Started](#getting-started)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
@@ -51,7 +60,7 @@ A strong emphasis is placed on providing excellent <b>accessibility support</b> 
 #### Search for Destination
 <img src="http://g.recordit.co/iRLizcrbcx.gif" width="300px"/>
 
-#### Attach Photo and Send Request
+#### Attach Photo and Submit Request
 <img src="http://g.recordit.co/UmMrm1CIX2.gif" width="300px"/>
 
 ### Accepting a Request (Volunteer User)
@@ -64,7 +73,7 @@ A strong emphasis is placed on providing excellent <b>accessibility support</b> 
 #### Messaging and Location Sharing
 <img src="http://g.recordit.co/wpUgJoAU2f.gif" width="300px"/>
 
-### Volunteer Reviews
+### Write a Review
 <img src="http://g.recordit.co/1a3iMRZjHG.gif" width="300px"/>
 
 
