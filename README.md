@@ -1,21 +1,52 @@
-# Team Pathfinders - FindMyPath
-FindMyPath is a mobile application developed for Etch Empathy during the undertaking of IS483 IS Project Experience (Final Year Project) at Singapore Management University.
+<p align="center">
+  <a align="center" href="https://www.youtube.com/watch?v=_0UtxdBEp9M" target="_blank"> <img src="https://user-images.githubusercontent.com/58852708/199702596-44521737-fee3-4abe-8359-f05048072333.png" alt="Watch the video" width="480" height="270" border="10" target="_blank" /></a>
+    </br>
+    (Click Image to View YouTube Demo)
+</p>
+ 
+<h3 align="center">Find My Path</h3>
+<p align="center">
+  Crowd-sourced Navigation Mobile App for the Vision Impaired
+  </br>
+  </br>
+  <a href="https://github.com/wenruiq/find-my-path">Explore the docs</a> · 
+  <a href="https://github.com/wenruiq/find-my-path/issues">Report Bug</a> ·
+  <a href="https://github.com/wenruiq/find-my-path/issues">Request Feature</a>
+</p>
 
-https://www.youtube.com/watch?v=_0UtxdBEp9M
 
-Initiated in AY2021/2022 Term 1.
+<!-- TABLE OF CONTENTS -->
+## Table of Contents
 
-# Introduction
-Welcome to the code repository for FindMyPath.
+* [About the Project](#about-the-project)
+* [Built With](#built-with)
+* [Key Features](#key-features)
+* [Getting Started](#getting-started)
+* [Roadmap](#roadmap)
+* [Contributing](#contributing)
+* [License](#license)
+* [Contact](#contact)
 
-This project is a proof-of-concept mobile application which allows vision impaired users to make requests for help, connecting them to available volunteers within their country. Using real-time location services, live video/audio feed, and a built-in messaging system, the volunteer can help guide the vision impaired to their desired destination safely.
+## About the Project
 
-## Background
-This project uses Flutter, an open-source UI software development kit created by Google, for its frontend interface and Firebase, a Backend-as-a-Service app development platform for its backend needs.
+Find My Path is a proof-of-concept Flutter mobile application which helps vision impaired users make requests for navigation assistances, connecting them to available volunteers within the country.
 
-# Configuration
+Using real-time location services, live video/audio feed, and a built-in text & image messaging system, the volunteer can help guide the vision impaired user to their desired destinations safely.
 
-## Dependencies
+A strong emphasis is placed on providing excellent <b>accessibility support</b> for the users, especially in terms of screen-reading capabilities.
+
+## Built With
+* [Flutter](https://flutter.dev/)
+* [Firebase](https://firebase.google.com/)
+* [Google Places](https://developers.google.com/maps/documentation/places/web-service/overview)
+* [Google Directions](https://developers.google.com/maps/documentation/directions/overview)
+* [Agora](https://www.agora.io/en/)
+
+## Key Features
+
+## Getting Started
+
+### Dependencies
 To run the application, the following needs to be installed:
 
 - Visual Studio Code (VSC)
@@ -25,7 +56,7 @@ To run the application, the following needs to be installed:
 
 You will also need a Firebase account if you don't have one. (https://firebase.google.com/)
 
-## VSC Configuration
+### VSCode Configuration
 
 If you have worked on Flutter projects before, skip this section
 
@@ -33,7 +64,7 @@ If you have worked on Flutter projects before, skip this section
 - Search for "Dart" and "Flutter"
 - Install both extensions
 
-## Launch Guide
+### Launch Guide
 
 - Ensure that your android emulator is launched (or plug in a real android device)
 - At the bottom right hand corner of VSC, check that your emulator is detected (as shown below)
@@ -54,7 +85,7 @@ flutter run
 
 ![image](https://user-images.githubusercontent.com/54570187/144275072-e98a516b-dafc-45c6-a5ab-d63e2a1cacb3.png)
 
-## Firebase CLI Setup Guide
+### Firebase CLI Setup Guide
 
 If you prefer to work with Firebase using the terminal, you can configure firebase as shown below
 
@@ -72,7 +103,7 @@ firebase use --add #add in firebase project
 firebase serve 
 ```
 
-# Repository Folder Structure
+### Repository Folder Structure
 
 ```
 /assets - images used
@@ -87,7 +118,7 @@ firebase serve
 /lib/widgets/[feature] - widgets used for a specific feature
 ```
 
-# Firestore Data Structure
+### Firestore Data Structure
 
 ```
 users/[userID] - All user details are stored here (does not include passwords)
@@ -96,5 +127,33 @@ users/[userID]/requests - All completed requests by a specific user are stored h
 requests/[requestID] - All requests (Pending/Ongoing/Completed) are stored here
 requests/[requestID]/messages - All messages sent in the chat room are stored here
 requests/[requestID]/call - A document used for storing call state
-
 ```
+## Roadmap
+
+See the [open issues](https://github.com/wenruiq/find-my-path/issues) for a list of proposed features (and known issues)
+
+
+
+## Contributing
+
+The open source community is such an amazing place for us to be inspired, learn, and create. I **greatly appreciate** any contributions you make to this project!
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AwesomeFeatures`)
+3. Commit your Changes (`git commit -m 'Added some awesome features'`)
+4. Push to the Branch (`git push origin feature/AmazingFeatures`)
+5. Open a Pull Request
+
+
+
+## License
+Distributed under the **[MIT license](http://opensource.org/licenses/mit-license.php)**
+
+
+
+## Contact
+
+Wenrui - wenrui119@gmail.com
+
+Project Link: [https://github.com/wenruiq/find-my-path](https://github.com/wenruiq/find-my-path)
+
