@@ -193,5 +193,7 @@ Distributed under the **[MIT license](http://opensource.org/licenses/mit-license
 
 Wenrui - wenrui119@gmail.com
 
+Lifu - lifuhuang97@gmail.com
+
 Project Link: [https://github.com/wenruiq/find-my-path](https://github.com/wenruiq/find-my-path)
 
