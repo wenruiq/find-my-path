@@ -43,6 +43,8 @@ A strong emphasis is placed on providing excellent <b>accessibility support</b> 
 * [Agora](https://www.agora.io/en/)
 
 ## Key Features
+### Login
+<img src="http://g.recordit.co/IhEny78so1.gif" width="300px"/>
 
 ## Getting Started
 
