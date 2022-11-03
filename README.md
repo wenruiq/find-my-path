@@ -55,8 +55,11 @@ A strong emphasis is placed on providing excellent <b>accessibility support</b> 
 <img src="http://g.recordit.co/UmMrm1CIX2.gif" width="300px"/>
 
 ### Accepting a Request (Volunteer User)
-#### Push Notifications & Acceptance
-<img src="http://g.recordit.co/D74n16lyKb.gif" width="300px"/>
+#### Push Notifications
+<img src="http://g.recordit.co/PBBh4htITo.gif" width="300px"/>
+
+#### Accept a Request
+<img src="http://g.recordit.co/1ZbE17k7pS.gif" width="300px"/>
 
 #### Messaging and Location Sharing
 <img src="http://g.recordit.co/wpUgJoAU2f.gif" width="300px"/>
