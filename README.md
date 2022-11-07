@@ -1,5 +1,5 @@
 <p align="center">
-  <a align="center" href="https://www.youtube.com/watch?v=_0UtxdBEp9M" target="_blank"> <img src="https://user-images.githubusercontent.com/58852708/199702596-44521737-fee3-4abe-8359-f05048072333.png" alt="Watch the video" width="480" height="270" border="10" target="_blank" /></a>
+  <a align="center" href="https://youtu.be/_0UtxdBEp9M?t=20" target="_blank"> <img src="https://user-images.githubusercontent.com/58852708/199702596-44521737-fee3-4abe-8359-f05048072333.png" alt="Watch the video" width="480" height="270" border="10" target="_blank" /></a>
     </br>
     (Click Image to View YouTube Demo)
 </p>
