@@ -44,7 +44,7 @@
 
 ## About the Project
 
-Find My Path is an MVP mobile app designed to connect 50,000+ visual impaired people in Singapore to volunteers for navigational assistance.
+Find My Path is an MVP mobile app designed to connect 50,000+ visually impaired people in Singapore to volunteers for navigational assistance.
 
 Using real-time location services, live video/audio feed, and a built-in text & image messaging system, the volunteer can help guide the vision impaired user to their desired destinations safely.
 
