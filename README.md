@@ -35,7 +35,8 @@
     * [Push Notifications](#push-notifications)
     * [Accept a Request](#accept-a-request)
     * [Messaging and Location Sharing](#messaging-and-location-sharing)
-  * [Write a Reviews](#write-a-reviews)
+  * [Video Call](#video-call)
+  * [Write a Review](#write-a-review)
 * [Getting Started](#getting-started)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
@@ -78,6 +79,9 @@ A strong emphasis is placed on providing excellent <b>accessibility support</b> 
 
 #### Messaging and Location Sharing
 <img src="http://g.recordit.co/wpUgJoAU2f.gif" width="300px"/>
+
+### Video Call
+See demo in <a align="center" href="https://youtu.be/_0UtxdBEp9M?t=32" target="_blank">video</a>
 
 ### Write a Review
 <img src="http://g.recordit.co/1a3iMRZjHG.gif" width="300px"/>
