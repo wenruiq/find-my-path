@@ -1,5 +1,5 @@
 <p align="center">
-  <a align="center" href="https://youtu.be/_0UtxdBEp9M?t=20" target="_blank"> <img src="https://user-images.githubusercontent.com/58852708/199702596-44521737-fee3-4abe-8359-f05048072333.png" alt="Watch the video" width="480" height="270" border="10" target="_blank" /></a>
+  <a align="center" href="https://youtu.be/_0UtxdBEp9M?t=21" target="_blank"> <img src="https://user-images.githubusercontent.com/58852708/199702596-44521737-fee3-4abe-8359-f05048072333.png" alt="Watch the video" width="480" height="270" border="10" target="_blank" /></a>
     </br>
     (Click Image to View YouTube Demo)
 </p>
@@ -9,13 +9,16 @@
   Crowd-sourced Navigation Mobile App for the Vision Impaired
   </br>
   </br>
-  Co-developed by <a href="https://github.com/wenruiq">Wenrui</a> and <a href="https://github.com/lifuhuang97">Lifu</a> for nonprofit organisation -  <a href="https://www.etch.sg/">Etch Empathy</a>
+  Co-developed by <a href="https://github.com/wenruiq">Wenrui</a> and <a href="https://github.com/lifuhuang97">Lifu</a> for non-profit organisation -  <a href="https://www.etch.sg/">Etch Empathy</a>
   </br>
   </br>
   <a href="https://github.com/wenruiq/find-my-path">Explore the docs</a> · 
   <a href="https://github.com/wenruiq/find-my-path/issues">Report Bug</a> ·
   <a href="https://github.com/wenruiq/find-my-path/issues">Request Feature</a>
   </br>
+  </br>
+  </br>
+  <img align="center" src="https://user-images.githubusercontent.com/58852708/201275895-178d9c59-4200-447e-a2f9-e7dacbc1117f.png"/ width="500px">
 </p>
 
 
@@ -41,7 +44,7 @@
 
 ## About the Project
 
-Find My Path is a proof-of-concept Flutter mobile application which helps vision impaired users make requests for navigation assistances, connecting them to available volunteers within the country.
+Find My Path is an MVP mobile app designed to connect the 50,000+ visual impaired people in Singapore to volunteers for navigational assistance.
 
 Using real-time location services, live video/audio feed, and a built-in text & image messaging system, the volunteer can help guide the vision impaired user to their desired destinations safely.
 
